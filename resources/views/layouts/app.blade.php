@@ -105,7 +105,7 @@
                             <li>काठमाडौं, नेपाल</li>
                             <li>editorial@vankokhabar.com.np</li>
                             <li>+977-1-4567890</li>
-                            <li>Facebook • Instagram • X</li>
+                            <li>Facebook • Instagram</li>
                         </ul>
                     </div>
                 </div>

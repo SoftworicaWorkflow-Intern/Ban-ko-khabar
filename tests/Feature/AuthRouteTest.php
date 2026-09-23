@@ -13,6 +13,19 @@ class AuthRouteTest extends TestCase
             'password' => 'Admin@123',
         ]);
 
-        $response->assertRedirect();
+        $response->assertRedirect('/admin');
+    }
+
+    public function test_registration_requires_matching_password_confirmation(): void
+    {
+        $response = $this->from('/register')->post('/register', [
+            'name' => 'Test User',
+            'email' => 'testuser@example.com',
+            'password' => 'Secret123',
+            'password_confirmation' => 'Secret123',
+        ]);
+
+        $response->assertRedirect('/');
+        $this->assertDatabaseHas('users', ['email' => 'testuser@example.com']);
     }
 }

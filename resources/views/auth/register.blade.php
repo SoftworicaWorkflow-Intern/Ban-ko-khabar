@@ -45,11 +45,41 @@
                                 <path d="M8 11V8a4 4 0 1 1 8 0v3"></path>
                             </svg>
                         </span>
-                        <input name="password" type="password" autocomplete="new-password" class="h-12 w-full rounded-full border border-[#dfeae0] bg-[#f8faf8] pl-11 pr-4 text-sm dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="••••••••">
+                        <input name="password" type="password" autocomplete="new-password" class="h-12 w-full rounded-full border border-[#dfeae0] bg-[#f8faf8] pl-11 pr-11 text-sm dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="••••••••">
+                        <button type="button" class="password-toggle absolute inset-y-0 right-3 flex items-center text-[#1B5E20] transition hover:text-[#143e18] dark:text-[#edf5ee]" aria-label="Show password">
+                            <svg class="eye-open h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg class="eye-closed hidden h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3l18 18"></path>
+                                <path d="M10.58 10.58A2 2 0 0 0 13.42 13.42"></path>
+                                <path d="M9.88 5.08A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a16.2 16.2 0 0 1-3.38 4.72M6.61 6.61A15.8 15.8 0 0 0 2 12s3.5 7 10 7a11.3 11.3 0 0 0 5.39-1.61"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
                 <button type="submit" class="h-12 w-full rounded-full bg-[#2E7D32] text-sm font-bold text-white hover:bg-[#1B5E20]">Register</button>
             </form>
         </div>
     </section>
+
+    <script>
+        document.querySelectorAll('.password-toggle').forEach((button) => {
+            const wrapper = button.closest('.relative');
+            const input = wrapper ? wrapper.querySelector('input[name="password"]') : null;
+            const eyeOpen = button.querySelector('.eye-open');
+            const eyeClosed = button.querySelector('.eye-closed');
+
+            if (!input || !eyeOpen || !eyeClosed) return;
+
+            button.addEventListener('click', () => {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+                eyeOpen.classList.toggle('hidden', !isPassword);
+                eyeClosed.classList.toggle('hidden', isPassword);
+            });
+        });
+    </script>
 @endsection

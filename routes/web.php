@@ -32,7 +32,7 @@ Route::middleware('guest')->group(function () {
 
         request()->session()->regenerate();
 
-        return redirect()->intended('/');
+        return redirect()->route('admin.dashboard');
     });
 
     Route::get('/register', function () {
