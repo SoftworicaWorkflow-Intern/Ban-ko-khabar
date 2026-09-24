@@ -6,7 +6,9 @@
         <meta name="description" content="वनको खबर - नेपाली वन, वातावरण, जलवायु परिवर्तन र वन्यजन्तु समाचारको आधुनिक पोर्टल।">
         <link rel="icon" type="image/png" href="{{ asset('image/fev icon.png') }}">
         <title>@yield('title', 'वनको खबर | नेपाली वन र वातावरण समाचार')</title>
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @endif
     </head>
     <body class="bg-[#F8FAF5] text-[#212121] antialiased transition-colors duration-300 dark:bg-[#0f1720] dark:text-[#edf5ee]">
         <header class="sticky top-0 z-50 border-b border-green-900/10 bg-white/80 backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-[#0f1720]/80">
