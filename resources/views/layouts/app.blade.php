@@ -6,6 +6,7 @@
         <meta name="description" content="वनको खबर - नेपाली वन, वातावरण, जलवायु परिवर्तन र वन्यजन्तु समाचारको आधुनिक पोर्टल।">
         <link rel="icon" type="image/png" href="{{ asset('image/fev icon.png') }}">
         <title>@yield('title', 'वनको खबर | नेपाली वन र वातावरण समाचार')</title>
+        {{-- In production, Vite assets are served from the compiled build manifest. --}}
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @endif
