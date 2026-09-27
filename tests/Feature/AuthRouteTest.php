@@ -6,14 +6,20 @@ use Tests\TestCase;
 
 class AuthRouteTest extends TestCase
 {
-    public function test_login_post_is_supported(): void
+    public function test_login_post_redirects_regular_users_to_home(): void
     {
-        $response = $this->post('/login', [
-            'email' => 'admin@vankokhabar.com',
-            'password' => 'Admin@123',
+        $user = \App\Models\User::factory()->create([
+            'email' => 'user@example.com',
+            'password' => 'Secret123',
+            'role' => 'user',
         ]);
 
-        $response->assertRedirect('/admin');
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'Secret123',
+        ]);
+
+        $response->assertRedirect('/');
     }
 
     public function test_registration_requires_matching_password_confirmation(): void
@@ -27,5 +33,20 @@ class AuthRouteTest extends TestCase
 
         $response->assertRedirect('/');
         $this->assertDatabaseHas('users', ['email' => 'testuser@example.com']);
+    }
+
+    public function test_static_footer_pages_are_available(): void
+    {
+        $this->get('/privacy')->assertOk();
+        $this->get('/terms')->assertOk();
+        $this->get('/support')->assertOk();
+    }
+
+    public function test_home_page_has_pagination_links(): void
+    {
+        $response = $this->get('/?page=2');
+
+        $response->assertOk();
+        $response->assertSee('page=2');
     }
 }

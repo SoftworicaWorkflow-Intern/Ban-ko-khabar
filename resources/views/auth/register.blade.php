@@ -3,7 +3,7 @@
 @section('title', 'Register | वनको खबर')
 
 @section('content')
-    <section class="mx-auto max-w-md px-4 py-20 sm:px-6 lg:px-8">
+    <section class="mx-auto min-h-screen max-w-md bg-[#F8FAF5] px-4 py-20 sm:px-6 lg:px-8">
         <div class="rounded-[30px] bg-white p-8 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
             <div class="mb-8 text-center">
                 <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2E7D32] to-[#1B5E20] text-2xl text-white">🌿</div>

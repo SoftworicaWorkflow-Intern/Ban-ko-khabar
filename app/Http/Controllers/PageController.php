@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\News;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class PageController extends Controller
 {
@@ -184,20 +190,54 @@ class PageController extends Controller
         ];
     }
 
-    public function home()
+    private function homeHighlights(): array
+    {
+        return [
+            ['title' => 'वन निगरानी', 'label' => 'Field Report', 'icon' => '🌲', 'description' => 'वन क्षेत्रको दृश्य स्थिति र नवाचार'],
+            ['title' => 'प्रकृति पर्यटन', 'label' => 'Travel Guide', 'icon' => '🦌', 'description' => 'पर्यटन र संरक्षण बीचको संतुलन'],
+            ['title' => 'जल संरक्षण', 'label' => 'Water Watch', 'icon' => '💧', 'description' => 'नदी र जलाशयको स्थिरता'],
+            ['title' => 'वन्यजन्तु', 'label' => 'Wildlife', 'icon' => '🦏', 'description' => 'जीवविविधता र आवास संरक्षण'],
+            ['title' => 'आग्लो फायर', 'label' => 'Risk Monitor', 'icon' => '🔥', 'description' => 'द्वितीय श्रेणी वनमा जोखिम'],
+            ['title' => 'ग्रामिण वन', 'label' => 'Community', 'icon' => '🌱', 'description' => 'स्थानीय नेतृत्वमा संरक्षण'],
+            ['title' => 'मौसम परिवर्तन', 'label' => 'Climate', 'icon' => '🌦️', 'description' => 'पर्यावरणीय परिवर्तन र असर'],
+            ['title' => 'शिक्षा अभियान', 'label' => 'Youth', 'icon' => '🎓', 'description' => 'विद्यार्थीलाई संरक्षण शिक्षा'],
+            ['title' => 'निती अनुगमन', 'label' => 'Policy', 'icon' => '📜', 'description' => 'सरकारी नीति र प्रभाव'],
+            ['title' => 'संकट व्यवस्थापन', 'label' => 'Response', 'icon' => '🚑', 'description' => 'जंगली घटनामा तत्काल सहयोग'],
+            ['title' => 'पर्यावरण सर्वेक्षण', 'label' => 'Survey', 'icon' => '📊', 'description' => 'डाटा आधारित संरक्षण रिपोर्ट'],
+            ['title' => 'स्थानीय आवाज', 'label' => 'Voices', 'icon' => '🗣️', 'description' => 'समुदायका कथाहरू र अनुभव'],
+        ];
+    }
+
+    public function home(Request $request)
     {
         $news = $this->newsItems();
         $featured = $news[0];
         $sideFeatures = array_slice($news, 1, 3);
-        $latest = array_slice($news, 2, 6);
+
+        $perPage = 6;
+        $page = max(1, (int) $request->query('page', 1));
+        $latestItems = array_slice($news, 2);
+        $paginatedLatest = new LengthAwarePaginator(
+            array_slice($latestItems, ($page - 1) * $perPage, $perPage),
+            count($latestItems),
+            $perPage,
+            $page,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
         $trending = array_slice($news, 0, 5);
 
         return view('home', [
             'featured' => $featured,
             'sideFeatures' => $sideFeatures,
-            'latest' => $latest,
+            'latest' => $paginatedLatest->items(),
+            'pagination' => $paginatedLatest,
             'trending' => $trending,
             'categories' => $this->categoryCards(),
+            'highlights' => $this->homeHighlights(),
             'breakingNews' => ['अलगै नेपालको जंगलमा जलवायु अनुकूलन योजना लागू हुँदै', 'सामुदायिक वनमा २,५०० बिरुवा रोपण सम्पन्न', 'हिमालपारका नदीहरूमा शुद्ध पानी संरक्षणमा नयाँ नीति'],
             'gallery' => array_slice($this->galleryItems(), 0, 6),
         ]);
@@ -260,6 +300,21 @@ class PageController extends Controller
         return view('contact');
     }
 
+    public function privacy()
+    {
+        return view('privacy');
+    }
+
+    public function terms()
+    {
+        return view('terms');
+    }
+
+    public function support()
+    {
+        return view('support');
+    }
+
     public function gallery()
     {
         return view('gallery', [
@@ -268,11 +323,56 @@ class PageController extends Controller
         ]);
     }
 
+    public function category(string $slug)
+    {
+        $categories = [
+            'forest-conservation' => [
+                'title' => 'वन संरक्षण',
+                'description' => 'वन संरक्षण, सामुदायिक वन, र वातावरणीय लचिलोपनका विषयमा तथ्यपरक समाचार र रिपोर्टहरू।',
+                'hero' => 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'wildlife' => [
+                'title' => 'वन्यजन्तु',
+                'description' => 'वन्यजन्तु संरक्षण, आवासको सुरक्षा, र प्राकृतिक विविधताको संरक्षणसँग सम्बन्धित खबरहरू।',
+                'hero' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'environment' => [
+                'title' => 'वातावरण',
+                'description' => 'भौतिक वातावरण, जलस्रोत, र संधै सुरुचिरा विषयवस्तुमा आधारित रिपोर्टिङ।',
+                'hero' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'climate-change' => [
+                'title' => 'जलवायु परिवर्तन',
+                'description' => 'जलवायु परिवर्तन, ग्लेशियर घट्ने phenomena, र जनजीवनमा असर पार्ने विषयहरू।',
+                'hero' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=80',
+            ],
+        ];
+
+        $category = $categories[$slug] ?? $categories['forest-conservation'];
+        $filtered = array_values(array_filter($this->newsItems(), fn ($item) => ($item['category_slug'] ?? '') === $slug || $slug === 'forest-conservation' && $item['category_slug'] === 'forest-conservation'));
+
+        if (empty($filtered) && $slug !== 'forest-conservation') {
+            $filtered = array_values(array_filter($this->newsItems(), fn ($item) => $item['category'] === $category['title']));
+        }
+
+        if (empty($filtered)) {
+            $filtered = $this->newsItems();
+        }
+
+        return view('category', [
+            'category' => $category,
+            'articles' => $filtered,
+        ]);
+    }
+
     public function adminDashboard()
     {
+        $newsCount = News::count();
+        $userCount = User::count();
+
         return view('admin.dashboard', [
-            'newsCount' => count($this->newsItems()),
-            'userCount' => 1284,
+            'newsCount' => $newsCount,
+            'userCount' => $userCount,
             'commentCount' => 436,
             'viewCount' => 82460,
             'subscriberCount' => 3074,
@@ -283,6 +383,187 @@ class PageController extends Controller
                 ['label' => 'वातावरण', 'value' => 18],
                 ['label' => 'जलवायु परिवर्तन', 'value' => 15],
             ],
+            'userName' => Auth::user()->name ?? 'Admin User',
+            'lastLogin' => 'Today, 10:42 AM',
+        ]);
+    }
+
+    public function adminArticles()
+    {
+        $items = News::query()->with('category')->latest()->get();
+
+        return $this->adminSection('Articles', 'Newsroom content and publishing pipeline', [
+            ['label' => 'Published', 'value' => (string) $items->count(), 'meta' => '+12% this month'],
+            ['label' => 'Drafts', 'value' => (string) $items->where('status', 'draft')->count(), 'meta' => '3 need review'],
+            ['label' => 'Pending', 'value' => (string) $items->where('status', 'pending')->count(), 'meta' => '2 urgent'],
+        ], $items, 'articles', [
+            'tableColumns' => ['Title', 'Category', 'Date', 'Views', 'Actions'],
+        ]);
+    }
+
+    public function adminCategories()
+    {
+        $items = Category::query()->withCount('news')->latest()->get();
+
+        return $this->adminSection('Categories', 'Editorial sections and topic coverage', [
+            ['label' => 'Total categories', 'value' => (string) $items->count(), 'meta' => '2 new this quarter'],
+            ['label' => 'Top category', 'value' => 'Forest', 'meta' => '32% of traffic'],
+            ['label' => 'Avg. engagement', 'value' => '78%', 'meta' => '+6 pts'],
+        ], $items, 'categories', [
+            'tableColumns' => ['Name', 'News count', 'Status', 'Actions'],
+        ]);
+    }
+
+    public function adminGallery()
+    {
+        $items = News::query()->whereNotNull('image_url')->latest()->take(8)->get();
+
+        return $this->adminSection('Gallery', 'Uploaded photos, media, and visual stories', [
+            ['label' => 'Photos', 'value' => (string) $items->count(), 'meta' => '+84 this week'],
+            ['label' => 'Videos', 'value' => '63', 'meta' => '5 in review'],
+            ['label' => 'Approved', 'value' => '94%', 'meta' => 'quality checks passed'],
+        ], $items, 'gallery', [
+            'tableColumns' => ['Title', 'Category', 'Image', 'Status'],
+        ]);
+    }
+
+    public function adminUsers()
+    {
+        $users = User::query()->latest()->limit(8)->get();
+
+        if ($users->isEmpty()) {
+            $users = collect([
+                ['name' => 'Admin User', 'email' => 'admin@vankokhabar.com', 'role' => 'admin'],
+                ['name' => 'Editor One', 'email' => 'editor@vankokhabar.com', 'role' => 'editor'],
+                ['name' => 'Reporter One', 'email' => 'reporter@vankokhabar.com', 'role' => 'reporter'],
+            ]);
+        }
+
+        return $this->adminSection('Users', 'Audience growth, roles, and community activity', [
+            ['label' => 'Total users', 'value' => (string) $users->count(), 'meta' => '+9% this month'],
+            ['label' => 'Admins', 'value' => (string) $users->where('role', 'admin')->count(), 'meta' => '2 active today'],
+            ['label' => 'Editors', 'value' => (string) $users->whereIn('role', ['editor', 'reporter'])->count(), 'meta' => '7 online now'],
+        ], $users, 'users', [
+            'tableColumns' => ['Name', 'Email', 'Role', 'Status'],
+        ]);
+    }
+
+    public function adminReports()
+    {
+        return $this->adminSection('Reports', 'Analytics, engagement, and summaries', [
+            ['label' => 'Traffic', 'value' => '84.6K', 'meta' => '+18% vs last month'],
+            ['label' => 'Bounce rate', 'value' => '28%', 'meta' => 'down from 35%'],
+            ['label' => 'Avg. time', 'value' => '4m 12s', 'meta' => '+28 sec'],
+        ], [
+            ['title' => 'Weekly traffic report', 'status' => 'Ready', 'meta' => 'Auto-generated Monday'],
+            ['title' => 'Engagement summary', 'status' => 'Updated', 'meta' => 'After yesterday drop'],
+            ['title' => 'Revenue / sponsor overview', 'status' => 'Draft', 'meta' => 'Awaiting final numbers'],
+        ], 'reports', [
+            'tableColumns' => ['Report', 'Status', 'Updated'],
+        ]);
+    }
+
+    public function adminSettings()
+    {
+        $user = Auth::user();
+
+        return $this->adminSection('Settings', 'Site preferences, publishing rules, and controls', [
+            ['label' => 'Themes', 'value' => '2', 'meta' => 'Default + dark mode'],
+            ['label' => 'Automation', 'value' => '5', 'meta' => 'Rules enabled'],
+            ['label' => 'Alerts', 'value' => '12', 'meta' => '2 critical'],
+        ], [
+            ['title' => 'Site configuration', 'status' => 'Active', 'meta' => 'Updated yesterday'],
+            ['title' => 'Publishing rules', 'status' => 'Enabled', 'meta' => 'Quality gates active'],
+            ['title' => 'Notifications', 'status' => 'Monitoring', 'meta' => 'Slack + email active'],
+        ], 'settings', [
+            'tableColumns' => ['Setting', 'Value', 'Last update'],
+            'lastPasswordChanged' => $user?->password_changed_at ? $user->password_changed_at->format('Y-m-d H:i') : '2026-09-10 09:12',
+        ]);
+    }
+
+    public function storeArticle(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:news'],
+            'excerpt' => ['nullable', 'string'],
+            'content' => ['nullable', 'string'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'status' => ['required', 'in:draft,published,pending'],
+            'image_url' => ['nullable', 'url'],
+            'author' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        News::create([
+            ...$validated,
+            'views' => 0,
+        ]);
+
+        return redirect()->route('admin.articles')->with('success', 'Article created successfully.');
+    }
+
+    public function storeCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:categories'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        Category::create($validated);
+
+        return redirect()->route('admin.categories')->with('success', 'Category created successfully.');
+    }
+
+    public function deleteArticle(int $id)
+    {
+        $article = News::findOrFail($id);
+        $article->delete();
+
+        return redirect()->route('admin.articles')->with('success', 'Article deleted.');
+    }
+
+    public function deleteCategory(int $id)
+    {
+        $category = Category::findOrFail($id);
+        $category->delete();
+
+        return redirect()->route('admin.categories')->with('success', 'Category deleted.');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = Auth::user();
+
+        if (! $user || ! Hash::check($request->input('current_password'), $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        $user->password = Hash::make($request->input('password'));
+        $user->password_changed_at = now();
+        $user->save();
+
+        return redirect()->route('admin.settings')->with('success', 'Password updated.');
+    }
+
+    private function adminSection(string $title, string $subtitle, array $stats, $items, string $pageType = 'dashboard', array $meta = [])
+    {
+        return view('admin.page', [
+            'pageTitle' => $title,
+            'subtitle' => $subtitle,
+            'stats' => $stats,
+            'items' => $items,
+            'pageType' => $pageType,
+            'tableColumns' => $meta['tableColumns'] ?? [],
+            'userName' => Auth::user()->name ?? 'Admin User',
+            'lastLogin' => 'Today, 10:42 AM',
+            'lastPasswordChanged' => $meta['lastPasswordChanged'] ?? '2026-09-10 09:12',
+            'cards' => $items,
         ]);
     }
 }

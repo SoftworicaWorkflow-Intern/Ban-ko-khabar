@@ -7,13 +7,18 @@ use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     */
     public function test_the_application_returns_a_successful_response(): void
     {
         $response = $this->get('/');
 
         $response->assertStatus(200);
+    }
+
+    public function test_home_page_has_more_than_twelve_sections(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $response->assertSee('वन र वातावरणको १२+ प्रमुख क्षेत्र');
     }
 }

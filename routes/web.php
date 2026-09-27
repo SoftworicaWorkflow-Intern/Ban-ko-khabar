@@ -12,6 +12,10 @@ Route::get('/search', [PageController::class, 'search'])->name('search');
 Route::get('/gallery', [PageController::class, 'gallery'])->name('gallery');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+Route::get('/support', [PageController::class, 'support'])->name('support');
+Route::get('/category/{slug}', [PageController::class, 'category'])->name('category.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', function () {
@@ -32,7 +36,7 @@ Route::middleware('guest')->group(function () {
 
         request()->session()->regenerate();
 
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('home');
     });
 
     Route::get('/register', function () {
@@ -50,6 +54,7 @@ Route::middleware('guest')->group(function () {
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role' => 'user',
         ]);
 
         Auth::login($user);
@@ -77,12 +82,23 @@ Route::middleware('guest')->group(function () {
 
         Auth::login($user);
 
-        return redirect()->route('admin.dashboard');
+        return redirect($user->isAdmin() ? route('admin.dashboard') : route('home'));
     });
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/admin', [PageController::class, 'adminDashboard'])->name('admin.dashboard');
+    Route::get('/admin/articles', [PageController::class, 'adminArticles'])->name('admin.articles');
+    Route::post('/admin/articles', [PageController::class, 'storeArticle'])->name('admin.articles.store');
+    Route::post('/admin/articles/{id}/delete', [PageController::class, 'deleteArticle'])->name('admin.articles.delete');
+    Route::get('/admin/categories', [PageController::class, 'adminCategories'])->name('admin.categories');
+    Route::post('/admin/categories', [PageController::class, 'storeCategory'])->name('admin.categories.store');
+    Route::post('/admin/categories/{id}/delete', [PageController::class, 'deleteCategory'])->name('admin.categories.delete');
+    Route::get('/admin/gallery', [PageController::class, 'adminGallery'])->name('admin.gallery');
+    Route::get('/admin/users', [PageController::class, 'adminUsers'])->name('admin.users');
+    Route::get('/admin/reports', [PageController::class, 'adminReports'])->name('admin.reports');
+    Route::get('/admin/settings', [PageController::class, 'adminSettings'])->name('admin.settings');
+    Route::post('/admin/settings/password', [PageController::class, 'updatePassword'])->name('admin.settings.password');
     Route::post('/admin/logout', function () {
         Auth::logout();
 

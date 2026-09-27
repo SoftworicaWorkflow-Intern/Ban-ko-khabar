@@ -123,6 +123,30 @@
                     </article>
                 @endforeach
             </div>
+
+            @if ($pagination->hasPages())
+                <div class="mt-10 flex justify-center">
+                    <nav class="inline-flex flex-wrap items-center gap-2 rounded-full border border-[#dfeae0] bg-white p-2 shadow-[0_14px_30px_rgba(19,41,26,0.05)] dark:border-white/10 dark:bg-[#17242b]">
+                        @if ($pagination->onFirstPage())
+                            <span class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#8aa091]">←</span>
+                        @else
+                            <a href="{{ $pagination->previousPageUrl() }}" class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#2E7D32] transition hover:bg-[#edf6ee]">←</a>
+                        @endif
+
+                        @foreach ($pagination->getUrlRange(1, $pagination->lastPage()) as $pageNumber => $pageUrl)
+                            <a href="{{ $pageUrl }}" class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition {{ $pageNumber == $pagination->currentPage() ? 'bg-[#2E7D32] text-white' : 'text-[#1B5E20] hover:bg-[#edf6ee] dark:text-[#edf5ee] dark:hover:bg-[#20332d]' }}">
+                                {{ $pageNumber }}
+                            </a>
+                        @endforeach
+
+                        @if ($pagination->hasMorePages())
+                            <a href="{{ $pagination->nextPageUrl() }}" class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#2E7D32] transition hover:bg-[#edf6ee]">→</a>
+                        @else
+                            <span class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#8aa091]">→</span>
+                        @endif
+                    </nav>
+                </div>
+            @endif
         </div>
     </section>
 
@@ -173,6 +197,24 @@
                     </article>
                 @endforeach
             </div>
+        </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div class="mb-10 text-center">
+            <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Insights</p>
+            <h2 class="mt-3 font-display text-3xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">वन र वातावरणको १२+ प्रमुख क्षेत्र</h2>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            @foreach($highlights as $item)
+                <div class="rounded-[24px] border border-[#dfeae0] bg-white p-5 shadow-[0_18px_45px_rgba(19,41,26,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(19,41,26,0.08)] dark:border-white/10 dark:bg-[#17242b]">
+                    <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#edf6ee] text-2xl dark:bg-[#20332d]">{{ $item['icon'] }}</div>
+                    <div class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#2E7D32]">{{ $item['label'] }}</div>
+                    <h3 class="mt-3 font-display text-xl font-bold text-[#1d2a1d] dark:text-[#edf5ee]">{{ $item['title'] }}</h3>
+                    <p class="mt-3 text-sm leading-6 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $item['description'] }}</p>
+                </div>
+            @endforeach
         </div>
     </section>
 
