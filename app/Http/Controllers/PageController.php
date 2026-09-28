@@ -214,7 +214,7 @@ class PageController extends Controller
         $featured = $news[0];
         $sideFeatures = array_slice($news, 1, 3);
 
-        $perPage = 6;
+        $perPage = 4;
         $page = max(1, (int) $request->query('page', 1));
         $latestItems = array_slice($news, 2);
         $paginatedLatest = new LengthAwarePaginator(
@@ -390,12 +390,12 @@ class PageController extends Controller
 
     public function adminArticles()
     {
-        $items = News::query()->with('category')->latest()->get();
+        $items = News::query()->with('category')->latest()->paginate(6)->withQueryString();
 
         return $this->adminSection('Articles', 'Newsroom content and publishing pipeline', [
-            ['label' => 'Published', 'value' => (string) $items->count(), 'meta' => '+12% this month'],
-            ['label' => 'Drafts', 'value' => (string) $items->where('status', 'draft')->count(), 'meta' => '3 need review'],
-            ['label' => 'Pending', 'value' => (string) $items->where('status', 'pending')->count(), 'meta' => '2 urgent'],
+            ['label' => 'Published', 'value' => (string) News::query()->where('status', 'published')->count(), 'meta' => '+12% this month'],
+            ['label' => 'Drafts', 'value' => (string) News::query()->where('status', 'draft')->count(), 'meta' => '3 need review'],
+            ['label' => 'Pending', 'value' => (string) News::query()->where('status', 'pending')->count(), 'meta' => '2 urgent'],
         ], $items, 'articles', [
             'tableColumns' => ['Title', 'Category', 'Date', 'Views', 'Actions'],
         ]);
@@ -403,10 +403,10 @@ class PageController extends Controller
 
     public function adminCategories()
     {
-        $items = Category::query()->withCount('news')->latest()->get();
+        $items = Category::query()->withCount('news')->latest()->paginate(6)->withQueryString();
 
         return $this->adminSection('Categories', 'Editorial sections and topic coverage', [
-            ['label' => 'Total categories', 'value' => (string) $items->count(), 'meta' => '2 new this quarter'],
+            ['label' => 'Total categories', 'value' => (string) Category::query()->count(), 'meta' => '2 new this quarter'],
             ['label' => 'Top category', 'value' => 'Forest', 'meta' => '32% of traffic'],
             ['label' => 'Avg. engagement', 'value' => '78%', 'meta' => '+6 pts'],
         ], $items, 'categories', [
@@ -416,10 +416,10 @@ class PageController extends Controller
 
     public function adminGallery()
     {
-        $items = News::query()->whereNotNull('image_url')->latest()->take(8)->get();
+        $items = News::query()->whereNotNull('image_url')->latest()->paginate(6)->withQueryString();
 
         return $this->adminSection('Gallery', 'Uploaded photos, media, and visual stories', [
-            ['label' => 'Photos', 'value' => (string) $items->count(), 'meta' => '+84 this week'],
+            ['label' => 'Photos', 'value' => (string) News::query()->whereNotNull('image_url')->count(), 'meta' => '+84 this week'],
             ['label' => 'Videos', 'value' => '63', 'meta' => '5 in review'],
             ['label' => 'Approved', 'value' => '94%', 'meta' => 'quality checks passed'],
         ], $items, 'gallery', [
@@ -429,37 +429,51 @@ class PageController extends Controller
 
     public function adminUsers()
     {
-        $users = User::query()->latest()->limit(8)->get();
+        $users = User::query()->latest()->paginate(8)->withQueryString();
 
-        if ($users->isEmpty()) {
-            $users = collect([
-                ['name' => 'Admin User', 'email' => 'admin@vankokhabar.com', 'role' => 'admin'],
-                ['name' => 'Editor One', 'email' => 'editor@vankokhabar.com', 'role' => 'editor'],
-                ['name' => 'Reporter One', 'email' => 'reporter@vankokhabar.com', 'role' => 'reporter'],
-            ]);
-        }
-
-        return $this->adminSection('Users', 'Audience growth, roles, and community activity', [
-            ['label' => 'Total users', 'value' => (string) $users->count(), 'meta' => '+9% this month'],
-            ['label' => 'Admins', 'value' => (string) $users->where('role', 'admin')->count(), 'meta' => '2 active today'],
-            ['label' => 'Editors', 'value' => (string) $users->whereIn('role', ['editor', 'reporter'])->count(), 'meta' => '7 online now'],
+        return $this->adminSection('Users', 'Registered accounts, roles, and access records', [
+            ['label' => 'Total users', 'value' => (string) User::query()->count(), 'meta' => '+9% this month'],
+            ['label' => 'Admins', 'value' => (string) User::query()->where('role', 'admin')->count(), 'meta' => '2 active today'],
+            ['label' => 'Editors', 'value' => (string) User::query()->whereIn('role', ['editor', 'reporter'])->count(), 'meta' => '7 online now'],
         ], $users, 'users', [
-            'tableColumns' => ['Name', 'Email', 'Role', 'Status'],
+            'tableColumns' => ['Name', 'Email', 'Role', 'Registered', 'Last login'],
         ]);
     }
 
     public function adminReports()
     {
-        return $this->adminSection('Reports', 'Analytics, engagement, and summaries', [
+        $reportSections = [
             ['label' => 'Traffic', 'value' => '84.6K', 'meta' => '+18% vs last month'],
             ['label' => 'Bounce rate', 'value' => '28%', 'meta' => 'down from 35%'],
             ['label' => 'Avg. time', 'value' => '4m 12s', 'meta' => '+28 sec'],
-        ], [
+            ['label' => 'Sessions', 'value' => '62.1K', 'meta' => '+9% this week'],
+            ['label' => 'Page views', 'value' => '214K', 'meta' => '+12% this week'],
+            ['label' => 'Subscribers', 'value' => '3,074', 'meta' => '+214 this month'],
+            ['label' => 'New stories', 'value' => '96', 'meta' => 'this month'],
+            ['label' => 'Ad revenue', 'value' => 'रू 48.2K', 'meta' => '+16% vs last month'],
+        ];
+
+        $businessGrowth = [
+            ['label' => 'New sponsors', 'value' => '6', 'meta' => '2 signed this week'],
+            ['label' => 'Renewed deals', 'value' => '11', 'meta' => '89% renewal rate'],
+            ['label' => 'Monthly growth', 'value' => '+22%', 'meta' => 'revenue vs last month'],
+            ['label' => 'Pipeline value', 'value' => 'रू 1.2M', 'meta' => 'open opportunities'],
+        ];
+
+        $items = $this->paginateArray([
             ['title' => 'Weekly traffic report', 'status' => 'Ready', 'meta' => 'Auto-generated Monday'],
             ['title' => 'Engagement summary', 'status' => 'Updated', 'meta' => 'After yesterday drop'],
             ['title' => 'Revenue / sponsor overview', 'status' => 'Draft', 'meta' => 'Awaiting final numbers'],
-        ], 'reports', [
+            ['title' => 'Audience retention report', 'status' => 'Ready', 'meta' => 'Generated Tuesday'],
+            ['title' => 'Search performance', 'status' => 'Ready', 'meta' => 'Top 20 keywords tracked'],
+            ['title' => 'Newsletter performance', 'status' => 'Updated', 'meta' => 'Open rate 41%'],
+            ['title' => 'Category-wise readership', 'status' => 'Draft', 'meta' => 'Awaiting final numbers'],
+            ['title' => 'Sponsor impressions', 'status' => 'Ready', 'meta' => 'Generated Wednesday'],
+        ], 4);
+
+        return $this->adminSection('Reports', 'Analytics, engagement, and summaries', $reportSections, $items, 'reports', [
             'tableColumns' => ['Report', 'Status', 'Updated'],
+            'businessGrowth' => $businessGrowth,
         ]);
     }
 
@@ -467,17 +481,23 @@ class PageController extends Controller
     {
         $user = Auth::user();
 
+        $items = $this->paginateArray([
+            ['title' => 'Site configuration', 'status' => 'Active', 'meta' => 'Updated yesterday'],
+            ['title' => 'Publishing rules', 'status' => 'Enabled', 'meta' => 'Quality gates active'],
+            ['title' => 'Notifications', 'status' => 'Monitoring', 'meta' => 'Slack + email active'],
+            ['title' => 'Theme & branding', 'status' => 'Active', 'meta' => 'Updated last week'],
+            ['title' => 'Comment moderation', 'status' => 'Enabled', 'meta' => 'Auto-hold flagged'],
+            ['title' => 'Backup schedule', 'status' => 'Daily', 'meta' => '03:00 AM NPT'],
+        ], 3);
+
         return $this->adminSection('Settings', 'Site preferences, publishing rules, and controls', [
             ['label' => 'Themes', 'value' => '2', 'meta' => 'Default + dark mode'],
             ['label' => 'Automation', 'value' => '5', 'meta' => 'Rules enabled'],
             ['label' => 'Alerts', 'value' => '12', 'meta' => '2 critical'],
-        ], [
-            ['title' => 'Site configuration', 'status' => 'Active', 'meta' => 'Updated yesterday'],
-            ['title' => 'Publishing rules', 'status' => 'Enabled', 'meta' => 'Quality gates active'],
-            ['title' => 'Notifications', 'status' => 'Monitoring', 'meta' => 'Slack + email active'],
-        ], 'settings', [
+        ], $items, 'settings', [
             'tableColumns' => ['Setting', 'Value', 'Last update'],
             'lastPasswordChanged' => $user?->password_changed_at ? $user->password_changed_at->format('Y-m-d H:i') : '2026-09-10 09:12',
+            'lastLogin' => $user?->last_login_at ? $user->last_login_at->format('M d, Y, h:i A') : 'No record yet',
         ]);
     }
 
@@ -523,12 +543,74 @@ class PageController extends Controller
         return redirect()->route('admin.articles')->with('success', 'Article deleted.');
     }
 
+    public function updateCategory(Request $request, int $id)
+    {
+        $category = Category::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:categories,slug,'.$category->id],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        $category->update($validated);
+
+        return redirect()->route('admin.categories')->with('success', 'Category updated.');
+    }
+
     public function deleteCategory(int $id)
     {
         $category = Category::findOrFail($id);
         $category->delete();
 
         return redirect()->route('admin.categories')->with('success', 'Category deleted.');
+    }
+
+    public function storeGallery(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:news'],
+            'image_url' => ['required', 'url'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'status' => ['nullable', 'in:draft,published,pending'],
+        ]);
+
+        News::create([
+            ...$validated,
+            'status' => $validated['status'] ?? 'published',
+            'views' => 0,
+            'author' => Auth::user()?->name ?? 'Admin',
+        ]);
+
+        return redirect()->route('admin.gallery')->with('success', 'Photo added to gallery.');
+    }
+
+    public function deleteGallery(int $id)
+    {
+        $photo = News::findOrFail($id);
+        $photo->delete();
+
+        return redirect()->route('admin.gallery')->with('success', 'Photo removed from gallery.');
+    }
+
+    public function storeAdmin(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'in:admin,editor,reporter'],
+        ]);
+
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
+        ]);
+
+        return redirect()->route('admin.settings')->with('success', 'Account created.');
     }
 
     public function updatePassword(Request $request)
@@ -551,6 +633,26 @@ class PageController extends Controller
         return redirect()->route('admin.settings')->with('success', 'Password updated.');
     }
 
+    /**
+     * Paginate a plain array of rows so array-backed pages support ?page= links.
+     *
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return LengthAwarePaginator<int, array<string, mixed>>
+     */
+    private function paginateArray(array $rows, int $perPage): LengthAwarePaginator
+    {
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $total = count($rows);
+
+        return new LengthAwarePaginator(
+            array_slice($rows, ($page - 1) * $perPage, $perPage),
+            $total,
+            $perPage,
+            $page,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+    }
+
     private function adminSection(string $title, string $subtitle, array $stats, $items, string $pageType = 'dashboard', array $meta = [])
     {
         return view('admin.page', [
@@ -561,8 +663,9 @@ class PageController extends Controller
             'pageType' => $pageType,
             'tableColumns' => $meta['tableColumns'] ?? [],
             'userName' => Auth::user()->name ?? 'Admin User',
-            'lastLogin' => 'Today, 10:42 AM',
+            'lastLogin' => $meta['lastLogin'] ?? (Auth::user()?->last_login_at?->format('M d, Y, h:i A') ?? 'No record yet'),
             'lastPasswordChanged' => $meta['lastPasswordChanged'] ?? '2026-09-10 09:12',
+            'businessGrowth' => $meta['businessGrowth'] ?? [],
             'cards' => $items,
         ]);
     }

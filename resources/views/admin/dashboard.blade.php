@@ -6,79 +6,38 @@
     <style>
         body { background: #edf3f7; }
         header, footer { display: none !important; }
-        .dashboard-shell { min-height: 100vh; }
+        .dashboard-shell { height: 100vh; width: 100%; overflow: hidden; }
         .sidebar-item.active {
-            background: rgba(255,255,255,0.12);
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.14);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+        }
+        #adminSidebar.is-collapsed {
+            width: 82px;
+        }
+        #adminSidebar.is-collapsed .sidebar-label,
+        #adminSidebar.is-collapsed .sidebar-brand-text,
+        #adminSidebar.is-collapsed .sidebar-footer-widget {
+            display: none;
+        }
+        #adminSidebar.is-collapsed .sidebar-item {
+            justify-content: center;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
         }
         .stat-card {
             border: 1px solid rgba(15, 40, 77, 0.06);
         }
     </style>
 
-    <section class="dashboard-shell mx-auto max-w-[1600px] px-3 py-4 sm:px-5 lg:px-6">
-        <div class="flex overflow-hidden rounded-[26px] bg-[#edf4f8] shadow-[0_28px_80px_rgba(11,30,52,0.14)] ring-1 ring-[#dfeaf2]">
-            <aside class="w-[250px] bg-[#173b27] p-4 text-white">
-                <div class="flex items-center gap-3 border-b border-white/10 pb-4">
-                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10">
-                        <img src="{{ asset('image/fev icon.png') }}" alt="वनको खबर icon" class="h-8 w-8 rounded-xl object-cover">
-                    </div>
-                    <div>
-                        <div class="text-xl font-bold leading-none">गण्डकी आज</div>
-                        <div class="mt-1 text-[10px] uppercase tracking-[0.26em] text-[#dfeee0]">Newsroom</div>
-                    </div>
-                </div>
+    <section class="dashboard-shell w-full">
+        <div class="relative flex h-full overflow-hidden bg-[#edf4f8] shadow-[0_28px_80px_rgba(11,30,52,0.14)] ring-1 ring-[#dfeaf2]">
+            @include('admin.partials.sidebar')
 
-                <nav class="mt-6 space-y-2">
-                    <a href="{{ route('admin.dashboard') }}" class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }} flex items-center justify-between rounded-2xl px-3 py-3 text-sm font-medium text-white">
-                        <span class="flex items-center gap-3">
-                            <span class="h-2.5 w-2.5 rounded-full bg-[#98d28e]"></span>
-                            Dashboard
-                        </span>
-                        <span class="rounded-full bg-[#98d28e] px-2 py-1 text-[10px] font-bold text-[#173b27]">Live</span>
-                    </a>
-                    <a href="{{ route('admin.articles') }}" class="sidebar-item {{ request()->routeIs('admin.articles') ? 'active' : '' }} flex items-center rounded-2xl px-3 py-3 text-sm font-medium text-[#dfeee0] transition hover:bg-white/5 hover:text-white">Articles</a>
-                    <a href="{{ route('admin.categories') }}" class="sidebar-item {{ request()->routeIs('admin.categories') ? 'active' : '' }} flex items-center rounded-2xl px-3 py-3 text-sm font-medium text-[#dfeee0] transition hover:bg-white/5 hover:text-white">Categories</a>
-                    <a href="{{ route('admin.gallery') }}" class="sidebar-item {{ request()->routeIs('admin.gallery') ? 'active' : '' }} flex items-center rounded-2xl px-3 py-3 text-sm font-medium text-[#dfeee0] transition hover:bg-white/5 hover:text-white">Gallery</a>
-                    <a href="{{ route('admin.users') }}" class="sidebar-item {{ request()->routeIs('admin.users') ? 'active' : '' }} flex items-center rounded-2xl px-3 py-3 text-sm font-medium text-[#dfeee0] transition hover:bg-white/5 hover:text-white">Users</a>
-                    <a href="{{ route('admin.reports') }}" class="sidebar-item {{ request()->routeIs('admin.reports') ? 'active' : '' }} flex items-center rounded-2xl px-3 py-3 text-sm font-medium text-[#dfeee0] transition hover:bg-white/5 hover:text-white">Reports</a>
-                    <a href="{{ route('admin.settings') }}" class="sidebar-item {{ request()->routeIs('admin.settings') ? 'active' : '' }} flex items-center rounded-2xl px-3 py-3 text-sm font-medium text-[#dfeee0] transition hover:bg-white/5 hover:text-white">Settings</a>
-                </nav>
+            <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+                @include('admin.partials.topbanner')
 
-                <div class="mt-8 rounded-[20px] bg-white/5 p-4 ring-1 ring-white/10">
-                    <p class="text-[10px] uppercase tracking-[0.26em] text-[#dfeee0]">Quick note</p>
-                    <p class="mt-3 text-sm leading-6 text-[#edf7ee]">Your latest climate coverage is performing better than the weekly average.</p>
-                    <button type="button" class="mt-4 w-full rounded-full bg-[#98d28e] px-4 py-2.5 text-sm font-semibold text-[#173b27] shadow-sm transition hover:bg-[#b2e0a8]">Publish report</button>
-                </div>
-            </aside>
-
-            <main class="flex-1 bg-[#f3f7fb] p-5 sm:p-6">
-                <header class="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-[18px] border border-[#dfe8f0] bg-[#f7f9fc] px-4 py-3 shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <button type="button" class="flex h-10 w-10 items-center justify-center rounded-full border border-[#dbe5ee] bg-white text-lg text-[#1b2a3d] shadow-sm">☰</button>
-                        <button type="button" class="flex h-10 w-10 items-center justify-center rounded-full border border-[#dbe5ee] bg-white text-lg text-[#1b2a3d] shadow-sm">◫</button>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-3">
-                        <div class="inline-flex items-center gap-2 rounded-full border border-[#dfeaf2] bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#0f2b54] shadow-sm">
-                            <span class="inline-block h-2.5 w-2.5 rounded-full bg-[#22c55e]"></span>
-                            Live clock
-                            <strong class="ml-1 text-[#0f2b54]">12:13:12</strong>
-                        </div>
-                        <div class="inline-flex items-center gap-2 rounded-full border border-[#dfeaf2] bg-white px-3 py-2 text-xs font-medium text-[#3b4a5f] shadow-sm">
-                            <span class="inline-block h-2.5 w-2.5 rounded-full bg-[#22c55e]"></span>
-                            वैशाख २९, २०८१
-                        </div>
-                        <div class="inline-flex items-center gap-2 rounded-full border border-[#dfeaf2] bg-white px-3 py-2 text-xs font-medium text-[#3b4a5f] shadow-sm">
-                            <span class="inline-block h-2.5 w-2.5 rounded-full bg-[#22c55e]"></span>
-                            Last login
-                        </div>
-                        <div class="flex items-center gap-3 rounded-full border border-[#dfeaf2] bg-white px-3 py-2 shadow-sm">
-                            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-[#fbbf24] text-sm font-bold text-[#0f2b54]">H</div>
-                            <div class="text-sm font-semibold text-[#1c2438]">हरि</div>
-                        </div>
-                    </div>
-                </header>
+                <main class="min-h-0 flex-1 overflow-y-auto bg-[#f3f7fb] p-4 sm:p-6 lg:p-8 transition-all duration-300">
+                    @include('admin.partials.navbar')
 
                 <div class="mb-6">
                     <h1 class="text-4xl font-black tracking-tight text-[#1b2433]">Newsroom Dashboard</h1>
@@ -200,6 +159,7 @@
                     </div>
                 </div>
             </main>
+            </div>{{-- end flex-col wrapper --}}
         </div>
     </section>
 @endsection

@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
-use App\Models\News;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -29,10 +28,16 @@ class AdminAuthTest extends TestCase
             'role' => 'admin',
         ]);
 
-        $response = $this->post('/admin/login', [
-            'email' => 'admin@vankokhabar.com',
-            'password' => 'Admin@123',
-        ]);
+        $this->get('/admin/login')->assertOk();
+
+        $token = 'test-admin-token';
+
+        $response = $this->withSession(['_token' => $token])
+            ->post('/admin/login', [
+                '_token' => $token,
+                'email' => 'admin@vankokhabar.com',
+                'password' => 'Admin@123',
+            ]);
 
         $response->assertRedirect('/admin');
     }
@@ -104,8 +109,12 @@ class AdminAuthTest extends TestCase
             'description' => 'Coverage of climate impacts',
         ]);
 
+        $token = 'test-admin-token';
+
         $this->actingAs($admin)
+            ->withSession(['_token' => $token])
             ->post('/admin/articles', [
+                '_token' => $token,
                 'title' => 'New climate initiative',
                 'slug' => 'new-climate-initiative',
                 'excerpt' => 'A new story about local climate work.',
@@ -119,8 +128,12 @@ class AdminAuthTest extends TestCase
 
         $this->assertDatabaseHas('news', ['slug' => 'new-climate-initiative']);
 
+        $token = 'test-admin-token';
+
         $this->actingAs($admin)
+            ->withSession(['_token' => $token])
             ->post('/admin/settings/password', [
+                '_token' => $token,
                 'current_password' => 'password',
                 'password' => 'NewPassword123',
                 'password_confirmation' => 'NewPassword123',
@@ -130,5 +143,37 @@ class AdminAuthTest extends TestCase
         $admin->refresh();
         $this->assertNotNull($admin->password_changed_at);
         $this->assertTrue($admin->password_changed_at->isPast());
+    }
+
+    public function test_admin_login_auto_creates_default_admin_and_redirects(): void
+    {
+        $token = 'test-token';
+
+        $response = $this->withSession(['_token' => $token])
+            ->post('/admin/login', [
+                '_token' => $token,
+                'email' => 'admin@vankokhabar.com',
+                'password' => 'Admin@123',
+            ]);
+
+        $response->assertRedirect('/admin');
+        $this->assertDatabaseHas('users', [
+            'email' => 'admin@vankokhabar.com',
+            'role' => 'admin',
+        ]);
+    }
+
+    public function test_admin_logging_in_via_public_login_redirects_to_admin_dashboard(): void
+    {
+        $token = 'test-token';
+
+        $response = $this->withSession(['_token' => $token])
+            ->post('/login', [
+                '_token' => $token,
+                'email' => 'admin@vankokhabar.com',
+                'password' => 'Admin@123',
+            ]);
+
+        $response->assertRedirect('/admin');
     }
 }

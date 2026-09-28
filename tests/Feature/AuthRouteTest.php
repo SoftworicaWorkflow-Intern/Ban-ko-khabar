@@ -2,13 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class AuthRouteTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_login_post_redirects_regular_users_to_home(): void
     {
-        $user = \App\Models\User::factory()->create([
+        $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => 'Secret123',
             'role' => 'user',
