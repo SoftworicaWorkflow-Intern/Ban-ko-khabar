@@ -17,9 +17,18 @@ class News extends Model
         'category_id',
         'status',
         'image_url',
+        'media_type',
         'author',
         'views',
+        'featured',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'featured' => 'boolean',
+        ];
+    }
 
     public function category(): BelongsTo
     {

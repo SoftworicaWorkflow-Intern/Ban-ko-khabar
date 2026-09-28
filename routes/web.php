@@ -180,6 +180,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/articles', [PageController::class, 'adminArticles'])->name('admin.articles');
     Route::post('/admin/articles', [PageController::class, 'storeArticle'])->name('admin.articles.store');
+    Route::post('/admin/articles/{id}/update', [PageController::class, 'updateArticle'])->name('admin.articles.update');
+    Route::post('/admin/articles/{id}/toggle-status', [PageController::class, 'toggleArticleStatus'])->name('admin.articles.status');
+    Route::post('/admin/articles/{id}/toggle-featured', [PageController::class, 'toggleArticleFeatured'])->name('admin.articles.featured');
     Route::post('/admin/articles/{id}/delete', [PageController::class, 'deleteArticle'])->name('admin.articles.delete');
     Route::get('/admin/categories', [PageController::class, 'adminCategories'])->name('admin.categories');
     Route::post('/admin/categories', [PageController::class, 'storeCategory'])->name('admin.categories.store');

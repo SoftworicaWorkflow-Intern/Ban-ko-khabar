@@ -52,6 +52,21 @@ img {
     font-family: 'Instrument Sans', sans-serif;
 }
 
+@layer components {
+    .form-input {
+        @apply mt-2 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100;
+    }
+
+    /**
+     * Inputs and selects render at different intrinsic heights (42px vs 39px), which
+     * knocks labels out of alignment when fields sit side by side in a row.
+     */
+    input.form-input,
+    select.form-input {
+        height: 2.625rem;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.01ms !important;

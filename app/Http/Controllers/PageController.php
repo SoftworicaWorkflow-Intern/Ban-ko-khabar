@@ -12,6 +12,23 @@ use Illuminate\Support\Facades\Hash;
 
 class PageController extends Controller
 {
+    /**
+     * Media types the gallery can store, filter, and group by.
+     *
+     * @var list<string>
+     */
+    private const MEDIA_TYPES = ['image', 'video', 'audio', 'document'];
+
+    /**
+     * @var array<string, list<string>>
+     */
+    private const MEDIA_EXTENSIONS = [
+        'image' => ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'avif', 'bmp', 'ico'],
+        'video' => ['mp4', 'webm', 'mov', 'm4v', 'avi', 'mkv', 'ogv'],
+        'audio' => ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac'],
+        'document' => ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'zip'],
+    ];
+
     private function newsItems(): array
     {
         return [
@@ -390,14 +407,46 @@ class PageController extends Controller
 
     public function adminArticles()
     {
-        $items = News::query()->with('category')->latest()->paginate(6)->withQueryString();
+        $search = trim((string) request('search', ''));
+        $categoryId = request('category_id');
+        $statusFilter = request('status');
+
+        $query = News::query()->with('category');
+
+        if ($search !== '') {
+            $query->where(function ($builder) use ($search) {
+                $builder->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('slug', 'like', '%'.$search.'%')
+                    ->orWhere('author', 'like', '%'.$search.'%');
+            });
+        }
+
+        if ($categoryId !== null && $categoryId !== '') {
+            $query->where('category_id', $categoryId);
+        }
+
+        if (in_array($statusFilter, ['draft', 'published', 'pending'], true)) {
+            $query->where('status', $statusFilter);
+        }
+
+        $items = $query->latest()->paginate(6)->withQueryString();
 
         return $this->adminSection('Articles', 'Newsroom content and publishing pipeline', [
+            ['label' => 'Total articles', 'value' => (string) News::query()->count(), 'meta' => 'all time'],
             ['label' => 'Published', 'value' => (string) News::query()->where('status', 'published')->count(), 'meta' => '+12% this month'],
             ['label' => 'Drafts', 'value' => (string) News::query()->where('status', 'draft')->count(), 'meta' => '3 need review'],
             ['label' => 'Pending', 'value' => (string) News::query()->where('status', 'pending')->count(), 'meta' => '2 urgent'],
+            ['label' => 'Featured', 'value' => (string) News::query()->where('featured', true)->count(), 'meta' => 'homepage highlights'],
+            ['label' => 'Matching', 'value' => (string) $items->total(), 'meta' => 'current filter results'],
         ], $items, 'articles', [
             'tableColumns' => ['Title', 'Category', 'Date', 'Views', 'Actions'],
+            'categories' => Category::query()->orderBy('name')->get(),
+            'filters' => [
+                'search' => $search,
+                'category_id' => (string) $categoryId,
+                'status' => (string) $statusFilter,
+            ],
+            'activeFilters' => $search !== '' || ($categoryId !== null && $categoryId !== '') || in_array($statusFilter, ['draft', 'published', 'pending'], true),
         ]);
     }
 
@@ -416,14 +465,36 @@ class PageController extends Controller
 
     public function adminGallery()
     {
-        $items = News::query()->whereNotNull('image_url')->latest()->paginate(6)->withQueryString();
+        $requestedType = (string) request('type', '');
+        $typeFilter = in_array($requestedType, self::MEDIA_TYPES, true) ? $requestedType : '';
 
-        return $this->adminSection('Gallery', 'Uploaded photos, media, and visual stories', [
-            ['label' => 'Photos', 'value' => (string) News::query()->whereNotNull('image_url')->count(), 'meta' => '+84 this week'],
-            ['label' => 'Videos', 'value' => '63', 'meta' => '5 in review'],
-            ['label' => 'Approved', 'value' => '94%', 'meta' => 'quality checks passed'],
+        $mediaCounts = News::query()
+            ->whereNotNull('image_url')
+            ->selectRaw('media_type, COUNT(*) AS total')
+            ->groupBy('media_type')
+            ->pluck('total', 'media_type');
+
+        $items = News::query()
+            ->whereNotNull('image_url')
+            ->when($typeFilter !== '', fn ($query) => $query->where('media_type', $typeFilter))
+            ->latest()
+            ->paginate(6)
+            ->withQueryString();
+
+        $otherMedia = (int) ($mediaCounts['audio'] ?? 0) + (int) ($mediaCounts['document'] ?? 0);
+
+        return $this->adminSection('Gallery', 'Upload, preview, filter, and delete media', [
+            ['label' => 'Photos', 'value' => (string) ($mediaCounts['image'] ?? 0), 'meta' => 'image files'],
+            ['label' => 'Videos', 'value' => (string) ($mediaCounts['video'] ?? 0), 'meta' => 'video files'],
+            ['label' => 'Other media', 'value' => (string) $otherMedia, 'meta' => 'audio and documents'],
         ], $items, 'gallery', [
             'tableColumns' => ['Title', 'Category', 'Image', 'Status'],
+            'mediaTypes' => self::MEDIA_TYPES,
+            'mediaCounts' => $mediaCounts,
+            'mediaTotal' => (int) array_sum($mediaCounts->all()),
+            'typeFilter' => $typeFilter,
+            'filters' => ['type' => $typeFilter],
+            'activeFilters' => $typeFilter !== '',
         ]);
     }
 
@@ -512,14 +583,59 @@ class PageController extends Controller
             'status' => ['required', 'in:draft,published,pending'],
             'image_url' => ['nullable', 'url'],
             'author' => ['nullable', 'string', 'max:255'],
+            'featured' => ['nullable', 'boolean'],
         ]);
 
         News::create([
             ...$validated,
+            'featured' => $request->boolean('featured'),
             'views' => 0,
         ]);
 
         return redirect()->route('admin.articles')->with('success', 'Article created successfully.');
+    }
+
+    public function updateArticle(Request $request, int $id)
+    {
+        $article = News::findOrFail($id);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:news,slug,'.$article->id],
+            'excerpt' => ['nullable', 'string'],
+            'content' => ['nullable', 'string'],
+            'category_id' => ['nullable', 'exists:categories,id'],
+            'status' => ['required', 'in:draft,published,pending'],
+            'image_url' => ['nullable', 'url'],
+            'author' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $article->update([
+            ...$validated,
+            'featured' => $request->boolean('featured'),
+        ]);
+
+        return redirect()->back()->with('success', 'Article updated successfully.');
+    }
+
+    public function toggleArticleStatus(int $id)
+    {
+        $article = News::findOrFail($id);
+
+        $article->update([
+            'status' => $article->status === 'published' ? 'draft' : 'published',
+        ]);
+
+        return redirect()->back()->with('success', 'Article marked as '.$article->status.'.');
+    }
+
+    public function toggleArticleFeatured(int $id)
+    {
+        $article = News::findOrFail($id);
+
+        $article->update(['featured' => ! $article->featured]);
+
+        return redirect()->back()->with('success', $article->featured ? 'Article featured on homepage.' : 'Article removed from featured.');
     }
 
     public function storeCategory(Request $request)
@@ -571,19 +687,47 @@ class PageController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', 'unique:news'],
-            'image_url' => ['required', 'url'],
+            'media' => ['nullable', 'file', 'max:20480'],
+            'image_url' => ['nullable', 'string', 'max:2048', 'url'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'status' => ['nullable', 'in:draft,published,pending'],
+        ], [
+            'image_url.url' => 'The media URL must be a valid URL.',
+            'media.file' => 'The upload must be an image, video, audio, or document file.',
+            'media.max' => 'Uploaded media may not be greater than 20 MB.',
         ]);
+
+        $file = $request->file('media');
+        $mediaUrl = $validated['image_url'] ?? null;
+
+        if (! $file && ! $mediaUrl) {
+            return back()->withErrors([
+                'media' => 'Choose a file to upload or paste a media URL.',
+            ])->withInput();
+        }
+
+        if ($file) {
+            $path = $file->store('media', 'public');
+
+            // Store a host-independent path so uploads resolve on any host, port, or tunnel.
+            $mediaUrl = '/storage/'.$path;
+            $mediaType = $this->mediaTypeFromMime($file->getMimeType());
+        } else {
+            $mediaType = $this->mediaTypeFromUrl($mediaUrl);
+        }
+
+        unset($validated['media']);
 
         News::create([
             ...$validated,
+            'image_url' => $mediaUrl,
+            'media_type' => $mediaType,
             'status' => $validated['status'] ?? 'published',
             'views' => 0,
             'author' => Auth::user()?->name ?? 'Admin',
         ]);
 
-        return redirect()->route('admin.gallery')->with('success', 'Photo added to gallery.');
+        return redirect()->route('admin.gallery')->with('success', 'Media uploaded to gallery.');
     }
 
     public function deleteGallery(int $id)
@@ -591,7 +735,39 @@ class PageController extends Controller
         $photo = News::findOrFail($id);
         $photo->delete();
 
-        return redirect()->route('admin.gallery')->with('success', 'Photo removed from gallery.');
+        return redirect()->route('admin.gallery')->with('success', 'Media deleted from gallery.');
+    }
+
+    /**
+     * Resolve a stored media type from the uploaded file's MIME type.
+     */
+    private function mediaTypeFromMime(?string $mimeType): string
+    {
+        $prefix = strtolower(substr((string) $mimeType, 0, 6));
+
+        return match ($prefix) {
+            'image/' => 'image',
+            'video/' => 'video',
+            'audio/' => 'audio',
+            default => 'document',
+        };
+    }
+
+    /**
+     * Resolve a media type from a remote URL. Extension-less CDN links are
+     * overwhelmingly images, so that is the fallback rather than "document".
+     */
+    private function mediaTypeFromUrl(?string $url): string
+    {
+        $extension = strtolower(pathinfo((string) parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+        foreach (self::MEDIA_EXTENSIONS as $type => $extensions) {
+            if (in_array($extension, $extensions, true)) {
+                return $type;
+            }
+        }
+
+        return 'image';
     }
 
     public function storeAdmin(Request $request)
@@ -666,6 +842,13 @@ class PageController extends Controller
             'lastLogin' => $meta['lastLogin'] ?? (Auth::user()?->last_login_at?->format('M d, Y, h:i A') ?? 'No record yet'),
             'lastPasswordChanged' => $meta['lastPasswordChanged'] ?? '2026-09-10 09:12',
             'businessGrowth' => $meta['businessGrowth'] ?? [],
+            'categories' => $meta['categories'] ?? [],
+            'filters' => $meta['filters'] ?? [],
+            'activeFilters' => $meta['activeFilters'] ?? false,
+            'mediaTypes' => $meta['mediaTypes'] ?? [],
+            'mediaCounts' => $meta['mediaCounts'] ?? [],
+            'mediaTotal' => $meta['mediaTotal'] ?? 0,
+            'typeFilter' => $meta['typeFilter'] ?? '',
             'cards' => $items,
         ]);
     }
