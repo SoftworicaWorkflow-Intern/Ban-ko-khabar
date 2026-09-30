@@ -1,9 +1,9 @@
 {{-- Modern Newsroom Admin Dashboard Top Navigation Bar --}}
 <header class="sticky top-0 z-40 mb-6 h-[76px] rounded-[20px] border border-[#E5E7EB] bg-white/95 px-3 sm:px-5 shadow-[0_10px_30px_rgba(15,23,42,0.06)] backdrop-blur-md transition-all duration-300">
-    <div class="flex h-full items-center justify-between gap-2 sm:gap-4">
+    <div class="flex h-full items-center gap-2 sm:gap-4">
         
         {{-- ================= LEFT SECTION ================= --}}
-        <div class="flex items-center gap-2 sm:gap-2.5">
+        <div class="flex shrink-0 items-center gap-2 sm:gap-2.5">
             {{-- 1. Hamburger Menu Button (Sidebar Toggle) --}}
             <button type="button" 
                     id="adminSidebarToggle" 
@@ -76,7 +76,7 @@
 
         {{-- ================= CENTER SECTION (4 PILL CARDS) ================= --}}
         {{-- Desktop Horizontal Flex (Visible on lg and larger screens) --}}
-        <div class="hidden flex-1 items-center justify-center gap-2.5 lg:flex xl:gap-3.5">
+        <div class="hidden flex-1 min-w-0 items-center justify-center gap-2.5 lg:flex xl:gap-3.5">
             
             {{-- 1. Live Clock Card --}}
             <div class="flex items-center gap-2.5 rounded-full border border-[#FCA5A5]/60 bg-white/95 px-3.5 py-2 shadow-sm shadow-red-100/50 backdrop-blur-sm transition-all duration-200 hover:border-[#EF4444] hover:shadow-md hover:shadow-red-100/80">
@@ -222,7 +222,7 @@
         </div>
 
         {{-- Mobile Center Info Bar (Visible on mobile / tablet screens) --}}
-        <div class="flex items-center gap-2 lg:hidden">
+        <div class="ml-auto flex items-center gap-2 lg:hidden">
             {{-- Mobile Live Clock Compact Pill --}}
             <div class="flex items-center gap-1.5 rounded-full border border-red-200 bg-white/90 px-2.5 py-1 text-xs shadow-xs">
                 <span class="inline-flex h-2 w-2 rounded-full bg-[#EF4444] animate-pulse"></span>
@@ -239,7 +239,7 @@
         </div>
 
         {{-- ================= RIGHT SECTION ================= --}}
-        <div class="flex items-center gap-2 sm:gap-3">
+        <div class="ml-auto flex shrink-0 items-center gap-2 sm:gap-3 lg:ml-0">
             {{-- 5. Company / Newsroom Logo (Circular Logo Container) --}}
             <a href="{{ route('admin.dashboard') }}" 
                title="Ban ko khabar Newsroom"
@@ -452,7 +452,7 @@
                     }
                 } else {
                     // Desktop sidebar collapse / expand toggle
-                    sidebar.classList.toggle('w-[260px]');
+                    sidebar.classList.toggle('w-[224px]');
                     sidebar.classList.toggle('w-[82px]');
                     sidebar.classList.toggle('is-collapsed');
                     

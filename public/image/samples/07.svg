@@ -1,0 +1,18 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Article thumbnail">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#F9A8D4"/>
+      <stop offset="1" stop-color="#DB2777"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="240" fill="url(#sky)"/>
+  <circle cx="152" cy="66" r="24" fill="#FCE7F3" opacity="0.9"/>
+  <path d="M0 150 L58 98 L104 136 L150 82 L198 130 L240 100 L240 240 L0 240 Z" fill="#BE185D" opacity="0.55"/>
+  <path d="M0 192 L46 158 L96 188 L148 148 L200 184 L240 192 L240 240 L0 240 Z" fill="#9D174D" opacity="0.9"/>
+  <g fill="#9D174D">
+    <path d="M44 234 L56 194 L68 234 Z"/>
+    <rect x="53" y="232" width="6" height="8"/>
+    <path d="M182 228 L192 196 L202 228 Z"/>
+    <rect x="189" y="226" width="5" height="8"/>
+  </g>
+</svg>

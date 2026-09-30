@@ -91,12 +91,14 @@ class AdminSectionManagementTest extends TestCase
 
         $response->assertOk()
             ->assertSee('Upload media')
+            ->assertSee('Create')
             ->assertSee('Filter by type')
             ->assertSee('Media library')
             ->assertSee('Preview')
             ->assertSee('Delete')
             ->assertSee('multipart/form-data')
             ->assertSee('name="media"', false)
+            ->assertSee('id="galleryComposer"', false)
             ->assertSee('id="mediaPreviewModal"', false)
             ->assertSee('data-preview-url', false);
     }
@@ -231,7 +233,7 @@ class AdminSectionManagementTest extends TestCase
 
     public function test_admin_pages_are_paginated(): void
     {
-        foreach (range(1, 9) as $i) {
+        foreach (range(1, 11) as $i) {
             Category::create([
                 'name' => "Category {$i}",
                 'slug' => "category-{$i}",
@@ -244,9 +246,33 @@ class AdminSectionManagementTest extends TestCase
             ->assertSee('page=2');
     }
 
+    public function test_admin_report_and_settings_page_sizes_are_applied(): void
+    {
+        $admin = $this->admin();
+        foreach (range(1, 6) as $index) {
+            User::factory()->create([
+                'role' => $index % 2 === 0 ? 'editor' : 'reporter',
+            ]);
+        }
+
+        $this->actingAs($admin)
+            ->get('/admin/reports?per_page=5')
+            ->assertOk()
+            ->assertSee('Showing 1 to 5 of 12 results');
+
+        $this->get('/admin/settings?per_page=2')
+            ->assertOk()
+            ->assertSee('Showing 1 to 2 of 7 results');
+    }
+
     public function test_reports_and_settings_are_paginated(): void
     {
         $admin = $this->admin();
+        foreach (range(1, 5) as $index) {
+            User::factory()->create([
+                'role' => $index % 2 === 0 ? 'editor' : 'reporter',
+            ]);
+        }
 
         $this->actingAs($admin)->get('/admin/reports')->assertOk()->assertSee('page=2');
         $this->actingAs($admin)->get('/admin/settings')->assertOk()->assertSee('page=2');
@@ -259,7 +285,33 @@ class AdminSectionManagementTest extends TestCase
             ->assertOk()
             ->assertSee('Registered users')
             ->assertSee('admin@vankokhabar.com')
-            ->assertSee('Joined');
+            ->assertSee('Joined')
+            ->assertSee('Last login');
+    }
+
+    public function test_article_list_uses_detail_and_delete_modals_with_separate_edit_route(): void
+    {
+        $article = $this->makeArticle(['title' => 'Modal article']);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/articles')
+            ->assertOk()
+            ->assertSee('articleViewModal', false)
+            ->assertSee('deleteConfirmModal', false)
+            ->assertSee(route('admin.articles.edit', $article->id), false)
+            ->assertSee('data-article-title="Modal article"', false);
+    }
+
+    public function test_category_list_uses_edit_page_and_delete_confirmation_modal(): void
+    {
+        $category = Category::create(['name' => 'Forest News', 'slug' => 'forest-news']);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/categories')
+            ->assertOk()
+            ->assertSee(route('admin.categories.edit', $category->id), false)
+            ->assertSee('deleteConfirmModal', false)
+            ->assertSee('data-delete-name="Forest News"', false);
     }
 
     public function test_settings_page_shows_last_login_and_admin_creator(): void
@@ -276,8 +328,28 @@ class AdminSectionManagementTest extends TestCase
         $this->actingAs($this->admin())
             ->get('/admin/reports')
             ->assertOk()
-            ->assertSee('New business growth')
-            ->assertSee('Report library');
+            ->assertSee('Newsroom overview')
+            ->assertSee('Report library')
+            ->assertSee('Total story views');
+    }
+
+    public function test_reports_show_published_stories_and_their_database_view_counts(): void
+    {
+        $category = Category::create(['name' => 'River Watch', 'slug' => 'river-watch']);
+        $article = $this->makeArticle([
+            'title' => 'River restoration report',
+            'category_id' => $category->id,
+            'status' => 'published',
+            'views' => 247,
+        ]);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/reports')
+            ->assertOk()
+            ->assertSee('Top viewed stories')
+            ->assertSee($article->title)
+            ->assertSee($category->name)
+            ->assertSee('247');
     }
 
     private function makeArticle(array $overrides = []): News
@@ -322,11 +394,65 @@ class AdminSectionManagementTest extends TestCase
             ->get('/admin/articles')
             ->assertOk()
             ->assertSee('Total articles')
-            ->assertSee('Add new article')
+            ->assertSee('New Article')
             ->assertSee('Search articles')
-            ->assertSee('Filter by category')
-            ->assertSee('Publish / Draft status')
-            ->assertSee('Featured article');
+            ->assertSee('Sort by Category')
+            ->assertSee('Featured article')
+            // Data table contract
+            ->assertSee('Thumbnail')
+            ->assertSee('Read Time')
+            ->assertSee('Views')
+            ->assertSee('Actions')
+            ->assertDontSee('articleFiltersToggle', false)
+            ->assertDontSee('articleColumnsToggle', false)
+            ->assertDontSee('id="articleFilters"', false)
+            ->assertDontSee('id="articleColumns"', false)
+            ->assertSee('Showing 1 to 2 of 2 results')
+            ->assertSee('Per page')
+            // The generic "Recent entries" fallback must not leak into articles.
+            ->assertDontSee('Recent entries')
+            // Replaced by the header button / the data-table toolbar.
+            ->assertDontSee('Latest articles')
+            ->assertDontSee('Add new article')
+            // Superseded stat boxes.
+            ->assertDontSee('Matching');
+    }
+
+    public function test_articles_table_exposes_sort_and_filter_controls(): void
+    {
+        $this->makeArticle();
+
+        $this->actingAs($this->admin())
+            ->get('/admin/articles')
+            ->assertOk()
+            ->assertSee('Sort by Title')
+            ->assertSee('Sort by Category')
+            ->assertSee('Sort by Author')
+            ->assertSee('Sort by Status')
+            ->assertSee('Sort by Read Time')
+            ->assertSee('Sort by Views')
+            ->assertSee('Filter by Category')
+            ->assertSee('Filter by Author')
+            ->assertSee('Filter by Status');
+    }
+
+    public function test_articles_table_can_be_sorted_by_a_column(): void
+    {
+        $this->makeArticle(['title' => 'Zebra article']);
+        $this->makeArticle(['title' => 'Alpha article']);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/articles?sort=title&dir=asc')
+            ->assertOk()
+            ->assertSee('sort=title&amp;dir=desc', false);
+
+        $titles = $this->get('/admin/articles?sort=title&dir=asc')->getContent();
+        $alpha = strpos($titles, 'Alpha article');
+        $zebra = strpos($titles, 'Zebra article');
+
+        $this->assertNotFalse($alpha);
+        $this->assertNotFalse($zebra);
+        $this->assertTrue($alpha < $zebra, 'Ascending title sort did not place Alpha before Zebra.');
     }
 
     public function test_admin_can_edit_an_article(): void
@@ -352,6 +478,45 @@ class AdminSectionManagementTest extends TestCase
             'category_id' => $category->id,
             'featured' => true,
         ]);
+    }
+
+    public function test_articles_and_categories_have_separate_edit_pages(): void
+    {
+        $category = Category::create(['name' => 'Wildlife', 'slug' => 'wildlife']);
+        $article = $this->makeArticle(['category_id' => $category->id]);
+
+        $this->actingAs($this->admin())
+            ->get("/admin/articles/{$article->id}/edit")
+            ->assertOk()
+            ->assertSee('Edit article')
+            ->assertSee($article->title)
+            ->assertSee('View article');
+
+        $this->get("/admin/categories/{$category->id}/edit")
+            ->assertOk()
+            ->assertSee('Edit category')
+            ->assertSee($category->name);
+    }
+
+    public function test_dashboard_and_reports_show_real_database_metrics(): void
+    {
+        $this->makeArticle(['status' => 'published', 'views' => 37]);
+        $this->makeArticle(['status' => 'draft', 'views' => 11]);
+
+        $this->actingAs($this->admin())
+            ->get('/admin')
+            ->assertOk()
+            ->assertSee('Total story views')
+            ->assertSee('Monthly publishing')
+            ->assertSee('Category performance')
+            ->assertSee('48')
+            ->assertSee('Published today');
+
+        $this->get('/admin/reports')
+            ->assertOk()
+            ->assertSee('48')
+            ->assertSee('Report library')
+            ->assertDontSee('84.6K');
     }
 
     public function test_article_update_rejects_duplicate_slug(): void

@@ -18,9 +18,9 @@
         <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
             @foreach($galleryItems as $item)
                 <figure class="group overflow-hidden rounded-[26px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
-                    <div class="overflow-hidden">
+                    <a href="{{ $item['image'] }}" target="_blank" rel="noopener" aria-label="Open gallery image: {{ $item['title'] }}" class="block cursor-zoom-in overflow-hidden focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F]">
                         <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-72 w-full object-cover transition duration-500 group-hover:scale-110">
-                    </div>
+                    </a>
                     <figcaption class="flex items-center justify-between p-4 text-sm text-[#3f4f42] dark:text-[#d9e8dc]">
                         <span>{{ $item['title'] }}</span>
                         <span class="rounded-full bg-[#edf6ee] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2E7D32] dark:bg-[#20332d] dark:text-[#dfeee2]">{{ $item['category'] }}</span>

@@ -26,7 +26,7 @@
         <div class="mx-auto flex max-w-7xl items-center gap-4 overflow-hidden px-4 py-3 sm:px-6 lg:px-8">
             <span class="shrink-0 rounded-full bg-[#e53935] px-3 py-1 text-xs font-bold uppercase tracking-wide">Breaking</span>
             <div class="relative flex-1 overflow-hidden">
-                <div class="animate-[marquee_20s_linear_infinite] whitespace-nowrap text-sm font-medium">
+                <div class="animate-[marquee_20s_linear_infinite] whitespace-nowrap text-sm font-medium" data-breaking-count="{{ count($breakingNews) }}">
                     @foreach($breakingNews as $item)
                         <span class="mr-10">{{ $item }}</span>
                     @endforeach
@@ -45,7 +45,8 @@
         </div>
 
         <div class="grid gap-6 lg:grid-cols-[1.7fr_1fr]">
-            <article class="group overflow-hidden rounded-[28px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 dark:bg-[#17242b]">
+            @if ($featured)
+            <article class="group overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 dark:bg-[#17242b]">
                 <div class="relative overflow-hidden">
                     <img src="{{ $featured['image'] }}" alt="{{ $featured['title'] }}" class="h-[420px] w-full object-cover transition duration-500 group-hover:scale-105">
                     <span class="absolute left-5 top-5 rounded-full bg-[#2E7D32] px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white">{{ $featured['badge'] }}</span>
@@ -55,8 +56,6 @@
                         <span>{{ $featured['date'] }}</span>
                         <span>•</span>
                         <span>{{ $featured['author'] }}</span>
-                        <span>•</span>
-                        <span>{{ $featured['reading_time'] }}</span>
                     </div>
                     <a href="{{ route('news.show', $featured['slug']) }}" class="font-display text-2xl font-bold leading-snug text-[#1d2a1d] transition hover:text-[#2E7D32] dark:text-[#edf5ee]">
                         {{ $featured['title'] }}
@@ -64,14 +63,27 @@
                     <p class="mt-4 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $featured['excerpt'] }}</p>
                     <div class="mt-6 flex items-center justify-between">
                         <span class="rounded-full bg-[#edf6ee] px-3 py-1 text-xs font-semibold text-[#2E7D32] dark:bg-[#20332d] dark:text-[#dfeee2]">{{ $featured['category'] }}</span>
-                        <a href="{{ route('news.show', $featured['slug']) }}" class="inline-flex items-center gap-2 text-sm font-semibold text-[#2E7D32]">Read more <span>→</span></a>
+                        <div class="flex flex-wrap items-center justify-end gap-4 text-xs text-[#6a7c6c] dark:text-[#bfd3c3]">
+                            <span class="inline-flex items-center gap-1.5" title="Reading time">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                                {{ $featured['reading_time'] }}
+                            </span>
+                            <span class="inline-flex items-center gap-1.5" title="Story views">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                {{ number_format((int) $featured['views']) }}
+                            </span>
+                            <a href="{{ route('news.show', $featured['slug']) }}" class="inline-flex items-center gap-2 font-semibold text-[#2E7D32]">Read more <span>→</span></a>
+                        </div>
                     </div>
                 </div>
             </article>
+            @else
+                <div class="flex min-h-72 items-center justify-center rounded-lg border border-dashed border-[#c9d9c9] bg-white p-8 text-center text-sm text-[#5e6f61] dark:border-white/10 dark:bg-[#17242b] dark:text-[#bfd3c3]">No published stories yet.</div>
+            @endif
 
             <div class="space-y-6">
                 @foreach($sideFeatures as $item)
-                    <article class="group overflow-hidden rounded-[24px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 dark:bg-[#17242b]">
+                    <article class="group overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 dark:bg-[#17242b]">
                         <div class="flex gap-4 p-4">
                             <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-32 w-32 rounded-2xl object-cover">
                             <div class="flex-1">
@@ -101,7 +113,7 @@
 
             <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 @foreach($latest as $item)
-                    <article class="group overflow-hidden rounded-[26px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.05)] transition duration-300 hover:-translate-y-2 hover:shadow-[0_26px_55px_rgba(19,41,26,0.12)] dark:bg-[#17242b]">
+                    <article class="group overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_55px_rgba(19,41,26,0.12)] dark:bg-[#17242b]">
                         <div class="relative overflow-hidden">
                             <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-56 w-full object-cover transition duration-500 group-hover:scale-105">
                             <span class="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#2E7D32]">{{ $item['category'] }}</span>
@@ -115,38 +127,24 @@
                                 {{ $item['title'] }}
                             </a>
                             <p class="mt-4 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $item['excerpt'] }}</p>
-                            <div class="mt-5 flex items-center justify-between">
-                                <span class="text-xs text-[#6a7c6c] dark:text-[#bfd3c3]">{{ $item['reading_time'] }}</span>
-                                <a href="{{ route('news.show', $item['slug']) }}" class="inline-flex items-center gap-2 rounded-full bg-[#edf6ee] px-4 py-2 text-xs font-semibold text-[#2E7D32] transition hover:bg-[#dfeee2] dark:bg-[#20332d] dark:text-[#dfeee2]">Read more</a>
+                            <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#edf1ed] pt-4 dark:border-white/10">
+                                <a href="{{ route('news.show', $item['slug']) }}" class="text-xs font-semibold text-[#2E7D32]">Read more <span aria-hidden="true">→</span></a>
+                                <div class="flex flex-wrap items-center justify-end gap-3 text-xs text-[#6a7c6c] dark:text-[#bfd3c3]">
+                                    <span class="inline-flex items-center gap-1.5" title="Reading time">
+                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                                        {{ $item['reading_time'] }}
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5" title="Story views">
+                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        {{ number_format((int) $item['views']) }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </article>
                 @endforeach
             </div>
 
-            @if ($pagination->hasPages())
-                <div class="mt-10 flex justify-center">
-                    <nav class="inline-flex flex-wrap items-center gap-2 rounded-full border border-[#dfeae0] bg-white p-2 shadow-[0_14px_30px_rgba(19,41,26,0.05)] dark:border-white/10 dark:bg-[#17242b]">
-                        @if ($pagination->onFirstPage())
-                            <span class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#8aa091]">←</span>
-                        @else
-                            <a href="{{ $pagination->previousPageUrl() }}" class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#2E7D32] transition hover:bg-[#edf6ee]">←</a>
-                        @endif
-
-                        @foreach ($pagination->getUrlRange(1, $pagination->lastPage()) as $pageNumber => $pageUrl)
-                            <a href="{{ $pageUrl }}" class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition {{ $pageNumber == $pagination->currentPage() ? 'bg-[#2E7D32] text-white' : 'text-[#1B5E20] hover:bg-[#edf6ee] dark:text-[#edf5ee] dark:hover:bg-[#20332d]' }}">
-                                {{ $pageNumber }}
-                            </a>
-                        @endforeach
-
-                        @if ($pagination->hasMorePages())
-                            <a href="{{ $pagination->nextPageUrl() }}" class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#2E7D32] transition hover:bg-[#edf6ee]">→</a>
-                        @else
-                            <span class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-[#8aa091]">→</span>
-                        @endif
-                    </nav>
-                </div>
-            @endif
         </div>
     </section>
 
@@ -158,17 +156,17 @@
 
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             @foreach($categories as $category)
-                <div class="group relative overflow-hidden rounded-[28px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] dark:bg-[#17242b]">
+                <a href="{{ route('category.show', $category['slug']) }}" aria-label="{{ $category['name'] }} category" class="group relative block overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:bg-[#17242b]">
                     <img src="{{ $category['image'] }}" alt="{{ $category['name'] }}" class="h-64 w-full object-cover transition duration-500 group-hover:scale-105">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#112822]/85 via-[#112822]/20 to-transparent"></div>
                     <div class="absolute inset-x-0 bottom-0 p-6">
                         <div class="mb-3 flex items-center justify-between">
                             <span class="text-3xl">{{ $category['icon'] }}</span>
-                            <span class="rounded-full bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white backdrop-blur-sm">{{ $category['count'] }}</span>
+                            <span class="rounded-full bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white backdrop-blur-sm">{{ number_format((int) $category['count']) }} stories</span>
                         </div>
                         <h3 class="font-display text-2xl font-semibold text-white">{{ $category['name'] }}</h3>
                     </div>
-                </div>
+                </a>
             @endforeach
         </div>
     </section>
@@ -188,13 +186,13 @@
 
             <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
                 @foreach($trending as $item)
-                    <article class="overflow-hidden rounded-[24px] border border-white/10 bg-white/5 backdrop-blur-sm">
+                    <a href="{{ route('news.show', $item['slug']) }}" aria-label="Open story: {{ $item['title'] }}" class="group block overflow-hidden rounded-[24px] border border-white/10 bg-white/5 backdrop-blur-sm transition hover:border-white/25 hover:bg-white/10 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F]">
                         <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-48 w-full object-cover">
                         <div class="p-4">
                             <span class="text-[10px] uppercase tracking-[0.2em] text-[#8FD58F]">{{ $item['category'] }}</span>
-                            <a href="{{ route('news.show', $item['slug']) }}" class="mt-3 block font-display text-lg font-bold leading-snug text-white">{{ $item['title'] }}</a>
+                            <h3 class="mt-3 font-display text-lg font-bold leading-snug text-white">{{ $item['title'] }}</h3>
                         </div>
-                    </article>
+                    </a>
                 @endforeach
             </div>
         </div>
@@ -208,12 +206,12 @@
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             @foreach($highlights as $item)
-                <div class="rounded-[24px] border border-[#dfeae0] bg-white p-5 shadow-[0_18px_45px_rgba(19,41,26,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(19,41,26,0.08)] dark:border-white/10 dark:bg-[#17242b]">
+                <a href="{{ route('category.show', $item['slug']) }}" aria-label="Open insight: {{ $item['title'] }}" class="block rounded-[24px] border border-[#dfeae0] bg-white p-5 shadow-[0_18px_45px_rgba(19,41,26,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(19,41,26,0.08)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:border-white/10 dark:bg-[#17242b]">
                     <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#edf6ee] text-2xl dark:bg-[#20332d]">{{ $item['icon'] }}</div>
                     <div class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#2E7D32]">{{ $item['label'] }}</div>
                     <h3 class="mt-3 font-display text-xl font-bold text-[#1d2a1d] dark:text-[#edf5ee]">{{ $item['title'] }}</h3>
                     <p class="mt-3 text-sm leading-6 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $item['description'] }}</p>
-                </div>
+                </a>
             @endforeach
         </div>
     </section>
@@ -229,15 +227,17 @@
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach($gallery as $item)
-                <figure class="group overflow-hidden rounded-[24px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
-                    <div class="overflow-hidden">
-                        <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-72 w-full object-cover transition duration-500 group-hover:scale-110">
-                    </div>
-                    <figcaption class="flex items-center justify-between p-4 text-sm text-[#3f4f42] dark:text-[#d9e8dc]">
-                        <span>{{ $item['title'] }}</span>
-                        <span class="rounded-full bg-[#edf6ee] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2E7D32] dark:bg-[#20332d] dark:text-[#dfeee2]">{{ $item['category'] }}</span>
-                    </figcaption>
-                </figure>
+                <a href="{{ $item['image'] }}" target="_blank" rel="noopener" aria-label="Open gallery image: {{ $item['title'] }}" class="group block overflow-hidden rounded-[24px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.05)] transition hover:-translate-y-1 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:bg-[#17242b]">
+                    <figure>
+                        <div class="overflow-hidden">
+                            <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-72 w-full object-cover transition duration-500 group-hover:scale-110">
+                        </div>
+                        <figcaption class="flex items-center justify-between p-4 text-sm text-[#3f4f42] dark:text-[#d9e8dc]">
+                            <span>{{ $item['title'] }}</span>
+                            <span class="rounded-full bg-[#edf6ee] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2E7D32] dark:bg-[#20332d] dark:text-[#dfeee2]">{{ $item['category'] }}</span>
+                        </figcaption>
+                    </figure>
+                </a>
             @endforeach
         </div>
     </section>
@@ -249,8 +249,10 @@
                 <h2 class="mt-3 font-display text-3xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">वन र वातावरणको भिडियो</h2>
                 <div class="mt-8 overflow-hidden rounded-[28px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] dark:bg-[#17242b]">
                     <div class="relative aspect-video">
-                        <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80" alt="video thumbnail" class="h-full w-full object-cover">
-                        <button class="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#2E7D32] text-2xl text-white shadow-xl shadow-[#2E7D32]/25">▶</button>
+                        <video class="h-full w-full bg-black object-cover" controls playsinline preload="metadata" poster="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80" aria-label="Flower and forest conservation video">
+                            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                            Your browser does not support HTML video.
+                        </video>
                     </div>
                 </div>
             </div>

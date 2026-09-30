@@ -16,7 +16,8 @@
         }
         #adminSidebar.is-collapsed .sidebar-label,
         #adminSidebar.is-collapsed .sidebar-brand-text,
-        #adminSidebar.is-collapsed .sidebar-footer-widget {
+        #adminSidebar.is-collapsed .sidebar-footer-widget,
+        #adminSidebar.is-collapsed .sidebar-settings-submenu {
             display: none;
         }
         #adminSidebar.is-collapsed .sidebar-item {
@@ -57,14 +58,55 @@
                     </div>
                 @endif
 
-                <div class="mb-6">
-                    <span class="inline-flex rounded-full bg-[#eaf7ea] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#173b27]">Admin section</span>
-                    <h1 class="mt-3 text-4xl font-black tracking-tight text-[#1b2433]">{{ $pageTitle }}</h1>
-                    <p class="mt-2 text-sm text-[#51657c]">{{ $subtitle }}</p>
+                <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                        <span class="inline-flex rounded-full bg-[#eaf7ea] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#173b27]">Admin section</span>
+                        <h1 class="mt-3 text-4xl font-black tracking-tight text-[#1b2433]">{{ $pageTitle }}</h1>
+                        <p class="mt-2 text-sm text-[#51657c]">{{ $subtitle }}</p>
+                    </div>
+
+                    @if ($pageType === 'articles')
+                        <button type="button"
+                                onclick="toggleArticleComposer()"
+                                aria-controls="articleComposer"
+                                class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            New Article
+                        </button>
+                    @elseif ($pageType === 'categories')
+                        <button type="button"
+                                onclick="document.getElementById('category-create-row').classList.toggle('hidden')"
+                                class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            New Category
+                        </button>
+                    @elseif ($pageType === 'users')
+                        <button type="button"
+                                class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            New users
+                        </button>
+                    @elseif ($pageType === 'gallery')
+                        <button type="button"
+                                id="galleryCreateButton"
+                                onclick="toggleGalleryComposer()"
+                                aria-controls="galleryComposer"
+                                aria-expanded="{{ $errors->any() ? 'true' : 'false' }}"
+                                class="inline-flex items-center gap-2 rounded-xl bg-[#173b27] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#214d35] focus:outline-none focus:ring-2 focus:ring-emerald-300">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                            Create
+                        </button>
+                    @endif
                 </div>
 
                 @if (!empty($stats))
-                    <div class="grid gap-4 md:grid-cols-3">
+                    <div class="grid gap-4 {{ count($stats) > 2 ? 'sm:grid-cols-2 md:grid-cols-3' : 'grid-cols-2' }}">
                         @foreach ($stats as $stat)
                             <div class="stat-card rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
                                 <div class="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#51657c]">{{ is_object($stat) ? ($stat->label ?? '') : ($stat['label'] ?? '') }}</div>
@@ -75,309 +117,289 @@
                     </div>
                 @endif
 
-                @if ($pageType === 'articles')
-                    <div class="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-                        <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)] lg:col-span-2">
-                            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                                <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Search &amp; filter articles</div>
-                                @if ($activeFilters)
-                                    <span class="rounded-full bg-[#fff7e6] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-amber-700">Filters applied</span>
-                                @endif
+                @if ($pageType === 'article-edit')
+                    <div class="mt-6 rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)] sm:p-7">
+                        <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                            <div>
+                                <h2 class="text-lg font-bold text-[#1b2433]">Edit article</h2>
+                                <p class="mt-1 text-sm text-[#51657c]">Changes are saved to this article record.</p>
                             </div>
-
-                            <form method="GET" action="{{ route('admin.articles') }}">
-                                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1.2fr)_auto] lg:items-end">
-                                    <div>
-                                        <label class="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#51657c]">Search articles</label>
-                                        <input class="form-input" type="search" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Title, slug or author">
-                                    </div>
-                                    <div>
-                                        <label class="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#51657c]">Filter by category</label>
-                                        <select class="form-input" name="category_id">
-                                            <option value="">All categories</option>
-                                            @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}" @selected((string) ($filters['category_id'] ?? '') === (string) $category->id)>{{ $category->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#51657c]">Publish / draft status</label>
-                                        <select class="form-input" name="status">
-                                            <option value="">All statuses</option>
-                                            <option value="published" @selected(($filters['status'] ?? '') === 'published')>Published</option>
-                                            <option value="draft" @selected(($filters['status'] ?? '') === 'draft')>Draft</option>
-                                            <option value="pending" @selected(($filters['status'] ?? '') === 'pending')>Pending</option>
-                                        </select>
-                                    </div>
-                                    <div class="flex items-end gap-2">
-                                        <button type="submit" class="rounded-xl bg-[#173b27] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Apply filters</button>
-                                        @if ($activeFilters)
-                                            <a href="{{ route('admin.articles') }}" class="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">Reset</a>
-                                        @endif
-                                    </div>
-                                </div>
-                            </form>
+                            <a href="{{ route('news.show', $article->slug) }}" target="_blank" rel="noopener" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-[#173b27] transition hover:bg-emerald-100">View article</a>
                         </div>
-
-                        <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
-                            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                                <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Latest articles</div>
-                                <div class="flex items-center gap-2">
-                                    <span class="rounded-full bg-[#eaf7ea] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#173b27]">{{ $items->total() }} total</span>
-                                    <span class="rounded-full bg-[#eef5ff] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#0f2b54]">Live</span>
-                                </div>
-                            </div>
-
-                            <div class="space-y-3">
-                                @forelse ($items as $item)
-                                    @php
-                                        $articleId = is_object($item) ? ($item->id ?? 0) : ($item['id'] ?? 0);
-                                        $articleTitle = is_object($item) ? ($item->title ?? $item->name ?? 'Untitled') : ($item['title'] ?? $item['name'] ?? 'Untitled');
-                                        $articleSlug = is_object($item) ? ($item->slug ?? '') : ($item['slug'] ?? '');
-                                        $articleMeta = is_object($item) ? ($item->category->name ?? $item->category ?? 'Uncategorized') : ($item['category'] ?? $item['category_name'] ?? 'Uncategorized');
-                                        $articleStatus = is_object($item) ? ($item->status ?? 'published') : ($item['status'] ?? 'published');
-                                        $articleFeatured = (bool) (is_object($item) ? ($item->featured ?? false) : ($item['featured'] ?? false));
-                                        $articleCategoryId = is_object($item) ? ($item->category_id ?? '') : ($item['category_id'] ?? '');
-                                        $articleDate = is_object($item) ? ($item->created_at?->format('M d, Y') ?? '') : ($item['published_at'] ?? $item['date'] ?? '');
-                                        $statusColors = [
-                                            'published' => 'bg-[#eaf7ea] text-[#173b27]',
-                                            'draft' => 'bg-slate-100 text-slate-500',
-                                            'pending' => 'bg-amber-50 text-amber-700',
-                                        ];
-                                        $statusColor = $statusColors[$articleStatus] ?? $statusColors['published'];
-                                    @endphp
-                                    <div class="rounded-[18px] border border-[#edf2f6] bg-[#f7fafc] px-4 py-3">
-                                        <div class="flex flex-wrap items-center justify-between gap-3">
-                                            <div class="min-w-0">
-                                                <div class="flex flex-wrap items-center gap-2">
-                                                    <span class="text-base font-semibold text-[#173b27]">{{ $articleTitle }}</span>
-                                                    @if ($articleFeatured)
-                                                        <span class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-700">Featured</span>
-                                                    @endif
-                                                </div>
-                                                <div class="mt-1 text-sm text-[#51657c]">{{ $articleMeta }} · {{ $articleDate }}</div>
-                                            </div>
-                                            <div class="flex flex-wrap items-center gap-2">
-                                                <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $statusColor }}">{{ ucfirst($articleStatus) }}</span>
-                                                <form method="POST" action="{{ route('admin.articles.status', $articleId) }}">
-                                                    @csrf
-                                                    <button type="submit" class="rounded-full bg-[#eef5ff] px-3 py-1 text-xs font-semibold text-[#1E4FA3] hover:bg-[#dce9ff]">{{ $articleStatus === 'published' ? 'Move to draft' : 'Publish' }}</button>
-                                                </form>
-                                                <form method="POST" action="{{ route('admin.articles.featured', $articleId) }}">
-                                                    @csrf
-                                                    <button type="submit" class="rounded-full {{ $articleFeatured ? 'bg-amber-100 text-amber-700' : 'bg-[#fff7e6] text-amber-600' }} px-3 py-1 text-xs font-semibold hover:bg-amber-100">{{ $articleFeatured ? 'Unfeature' : 'Feature' }}</button>
-                                                </form>
-                                                <button type="button"
-                                                        class="rounded-full bg-[#eef5ff] px-3 py-1 text-xs font-semibold text-[#0f2b54] hover:bg-[#dce9ff]"
-                                                        onclick="document.getElementById('article-edit-{{ $articleId }}').classList.toggle('hidden')">Edit</button>
-                                                <form method="POST" action="{{ route('admin.articles.delete', $articleId) }}">
-                                                    @csrf
-                                                    <button type="submit" class="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-100">Delete</button>
-                                                </form>
-                                            </div>
-                                        </div>
-
-                                        <form id="article-edit-{{ $articleId }}" method="POST" action="{{ route('admin.articles.update', $articleId) }}" class="mt-4 hidden space-y-4 border-t border-[#edf2f6] pt-4">
-                                            @csrf
-                                            <div class="grid gap-4 sm:grid-cols-2">
-                                                <div>
-                                                    <label class="text-sm font-medium text-slate-700">Title</label>
-                                                    <input class="form-input" type="text" name="title" value="{{ $articleTitle }}" required>
-                                                </div>
-                                                <div>
-                                                    <label class="text-sm font-medium text-slate-700">Slug</label>
-                                                    <input class="form-input" type="text" name="slug" value="{{ $articleSlug }}" required>
-                                                </div>
-                                                <div>
-                                                    <label class="text-sm font-medium text-slate-700">Category</label>
-                                                    <select class="form-input" name="category_id">
-                                                        <option value="">Uncategorized</option>
-                                                        @foreach ($categories as $category)
-                                                            <option value="{{ $category->id }}" @selected((string) $articleCategoryId === (string) $category->id)>{{ $category->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label class="text-sm font-medium text-slate-700">Author</label>
-                                                    <input class="form-input" type="text" name="author" value="{{ is_object($item) ? ($item->author ?? '') : ($item['author'] ?? '') }}">
-                                                </div>
-                                                <div>
-                                                    <label class="text-sm font-medium text-slate-700">Publish / Draft status</label>
-                                                    <select class="form-input" name="status">
-                                                        <option value="published" @selected($articleStatus === 'published')>Published</option>
-                                                        <option value="draft" @selected($articleStatus === 'draft')>Draft</option>
-                                                        <option value="pending" @selected($articleStatus === 'pending')>Pending</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label class="text-sm font-medium text-slate-700">Image URL</label>
-                                                    <input class="form-input" type="url" name="image_url" value="{{ is_object($item) ? ($item->image_url ?? '') : ($item['image_url'] ?? '') }}">
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label class="text-sm font-medium text-slate-700">Excerpt</label>
-                                                <textarea class="form-input" name="excerpt" rows="2">{{ is_object($item) ? ($item->excerpt ?? '') : ($item['excerpt'] ?? '') }}</textarea>
-                                            </div>
-                                            <div>
-                                                <label class="text-sm font-medium text-slate-700">Content</label>
-                                                <textarea class="form-input" name="content" rows="4">{{ is_object($item) ? ($item->content ?? '') : ($item['content'] ?? '') }}</textarea>
-                                            </div>
-                                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
-                                                <input type="hidden" name="featured" value="0">
-                                                <input type="checkbox" name="featured" value="1" @checked($articleFeatured)>
-                                                Featured article (show on homepage)
-                                            </label>
-                                            <div class="flex gap-2">
-                                                <button type="submit" class="flex-1 rounded-xl bg-[#173b27] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Save changes</button>
-                                                <button type="button" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50" onclick="document.getElementById('article-edit-{{ $articleId }}').classList.add('hidden')">Cancel</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                @empty
-                                    <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">
-                                        @if ($activeFilters)
-                                            No articles match your filters.
-                                        @else
-                                            No articles yet.
-                                        @endif
-                                    </div>
-                                @endforelse
-                            </div>
-                            @if (method_exists($items, 'links'))
-                                <div class="mt-5">{{ $items->links() }}</div>
-                            @endif
-                        </div>
-
-                        <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
-                            <div class="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Add new article</div>
-                            <form method="POST" action="{{ route('admin.articles.store') }}" class="space-y-4">
-                                @csrf
+                        <form method="POST" action="{{ route('admin.articles.update', $article->id) }}" class="space-y-5">
+                            @csrf
+                            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 <div>
-                                    <label class="text-sm font-medium text-slate-700">Title</label>
-                                    <input class="form-input" type="text" name="title" required>
+                                    <label for="article-title" class="text-sm font-medium text-slate-700">Title</label>
+                                    <input id="article-title" class="form-input" type="text" name="title" value="{{ old('title', $article->title) }}" required>
                                 </div>
                                 <div>
-                                    <label class="text-sm font-medium text-slate-700">Slug</label>
-                                    <input class="form-input" type="text" name="slug" required>
+                                    <label for="article-slug" class="text-sm font-medium text-slate-700">Slug</label>
+                                    <input id="article-slug" class="form-input" type="text" name="slug" value="{{ old('slug', $article->slug) }}" required>
                                 </div>
                                 <div>
-                                    <label class="text-sm font-medium text-slate-700">Category</label>
-                                    <select class="form-input" name="category_id">
+                                    <label for="article-category" class="text-sm font-medium text-slate-700">Category</label>
+                                    <select id="article-category" class="form-input" name="category_id">
                                         <option value="">Uncategorized</option>
-                                        @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @foreach ($categories as $categoryOption)
+                                            <option value="{{ $categoryOption->id }}" @selected((string) old('category_id', $article->category_id) === (string) $categoryOption->id)>{{ $categoryOption->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="text-sm font-medium text-slate-700">Author</label>
-                                    <input class="form-input" type="text" name="author" value="{{ $userName ?? 'Admin User' }}">
+                                    <label for="article-author" class="text-sm font-medium text-slate-700">Author</label>
+                                    <input id="article-author" class="form-input" type="text" name="author" value="{{ old('author', $article->author) }}">
                                 </div>
                                 <div>
-                                    <label class="text-sm font-medium text-slate-700">Excerpt</label>
-                                    <textarea class="form-input" name="excerpt" rows="3"></textarea>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Content</label>
-                                    <textarea class="form-input" name="content" rows="4"></textarea>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Image URL</label>
-                                    <input class="form-input" type="url" name="image_url">
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Publish / Draft status</label>
-                                    <select class="form-input" name="status">
-                                        <option value="published">Published</option>
-                                        <option value="draft">Draft</option>
-                                        <option value="pending">Pending</option>
+                                    <label for="article-status" class="text-sm font-medium text-slate-700">Status</label>
+                                    <select id="article-status" class="form-input" name="status">
+                                        @foreach (['published', 'draft', 'pending'] as $statusOption)
+                                            <option value="{{ $statusOption }}" @selected(old('status', $article->status) === $statusOption)>{{ ucfirst($statusOption) }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
-                                <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
-                                    <input type="hidden" name="featured" value="0">
-                                    <input type="checkbox" name="featured" value="1">
-                                    Featured article (show on homepage)
-                                </label>
-                                <button type="submit" class="w-full rounded-xl bg-[#173b27] px-4 py-3 text-sm font-semibold text-white hover:bg-[#214d35]">Save article</button>
-                            </form>
-                        </div>
+                                <div>
+                                    <label for="article-image" class="text-sm font-medium text-slate-700">Image URL</label>
+                                    <input id="article-image" class="form-input" type="url" name="image_url" value="{{ old('image_url', $article->image_url) }}">
+                                </div>
+                            </div>
+                            <div class="grid gap-4 lg:grid-cols-2">
+                                <div>
+                                    <label for="article-excerpt" class="text-sm font-medium text-slate-700">Excerpt</label>
+                                    <textarea id="article-excerpt" class="form-input" name="excerpt" rows="3">{{ old('excerpt', $article->excerpt) }}</textarea>
+                                </div>
+                                <div>
+                                    <label for="article-content" class="text-sm font-medium text-slate-700">Content</label>
+                                    <textarea id="article-content" class="form-input" name="content" rows="6">{{ old('content', $article->content) }}</textarea>
+                                </div>
+                            </div>
+                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+                                <input type="hidden" name="featured" value="0">
+                                <input type="checkbox" name="featured" value="1" @checked(old('featured', $article->featured)) class="h-4 w-4 rounded border-slate-300 text-emerald-700 focus:ring-emerald-600">
+                                Feature on homepage
+                            </label>
+                            <div class="flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-5">
+                                <a href="{{ route('admin.articles') }}" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</a>
+                                <button type="submit" class="rounded-xl bg-[#173b27] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#214d35]">Save article</button>
+                            </div>
+                        </form>
                     </div>
+                @elseif ($pageType === 'category-edit')
+                    <div class="mt-6 max-w-3xl rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)] sm:p-7">
+                        <h2 class="text-lg font-bold text-[#1b2433]">Edit category</h2>
+                        <p class="mt-1 text-sm text-[#51657c]">Update the category shown on the news portal.</p>
+                        <form method="POST" action="{{ route('admin.categories.update', $category->id) }}" class="mt-6 space-y-4">
+                            @csrf
+                            <div>
+                                <label for="category-name" class="text-sm font-medium text-slate-700">Name</label>
+                                <input id="category-name" class="form-input" type="text" name="name" value="{{ old('name', $category->name) }}" required>
+                            </div>
+                            <div>
+                                <label for="category-slug" class="text-sm font-medium text-slate-700">Slug</label>
+                                <input id="category-slug" class="form-input" type="text" name="slug" value="{{ old('slug', $category->slug) }}" required>
+                            </div>
+                            <div>
+                                <label for="category-description" class="text-sm font-medium text-slate-700">Description</label>
+                                <textarea id="category-description" class="form-input" name="description" rows="5">{{ old('description', $category->description) }}</textarea>
+                            </div>
+                            <div class="flex justify-end gap-3 border-t border-slate-100 pt-5">
+                                <a href="{{ route('admin.categories') }}" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</a>
+                                <button type="submit" class="rounded-xl bg-[#173b27] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#214d35]">Save category</button>
+                            </div>
+                        </form>
+                    </div>
+                @elseif ($pageType === 'articles')
+                    @include('admin.partials.articles-panel')
                 @elseif ($pageType === 'categories')
-                    <div class="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-                        <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
-                            <div class="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Category list</div>
-                            <div class="space-y-3">
-                                @forelse ($items as $item)
-                                    @php
-                                        $categoryId = is_object($item) ? ($item->id ?? 0) : ($item['id'] ?? 0);
-                                        $categoryName = is_object($item) ? ($item->name ?? 'Untitled') : ($item['name'] ?? 'Untitled');
-                                        $categorySlug = is_object($item) ? ($item->slug ?? '') : ($item['slug'] ?? '');
-                                        $categoryDescription = is_object($item) ? ($item->description ?? '') : ($item['description'] ?? '');
-                                    @endphp
-                                    <div class="rounded-[18px] border border-[#edf2f6] bg-[#f7fafc] px-4 py-3">
-                                        <div class="flex items-center justify-between gap-3">
-                                            <div>
-                                                <div class="text-base font-semibold text-[#173b27]">{{ $categoryName }}</div>
-                                                <div class="mt-1 text-sm text-[#51657c]">{{ $categorySlug }} · {{ $categoryDescription ?: 'No description' }}</div>
-                                            </div>
-                                            <div class="flex shrink-0 items-center gap-2">
-                                                <button type="button"
-                                                        class="rounded-full bg-[#eef5ff] px-3 py-1 text-xs font-semibold text-[#1E4FA3] hover:bg-[#dce9ff]"
-                                                        onclick="document.getElementById('category-edit-{{ $categoryId }}').classList.toggle('hidden')">Edit</button>
-                                                <form method="POST" action="{{ route('admin.categories.delete', $categoryId) }}">
+
+                    <div class="mt-6 overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-[0_10px_22px_rgba(19,41,26,0.05)]">
+                        {{-- Toolbar --}}
+                        <div class="flex flex-wrap items-center justify-end gap-3 border-b border-slate-100 px-5 py-4">
+                            <div class="flex items-center gap-2">
+                                <div class="relative">
+                                    <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>
+                                    </svg>
+                                    <input type="search" placeholder="Search" class="h-10 w-44 rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-100 sm:w-56">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Data Table --}}
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-[960px] border-collapse text-left">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-[#f8fafc] text-[11px] font-semibold uppercase tracking-[0.12em] text-[#51657c]">
+                                        <th scope="col" class="w-12 px-5 py-3.5">
+                                            <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
+                                        </th>
+                                        <th scope="col" class="w-16 px-3 py-3.5">Color</th>
+                                        <th scope="col" class="px-3 py-3.5">
+                                            <div class="flex items-center gap-1.5 cursor-pointer hover:text-[#173b27]">Category Name <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg></div>
+                                        </th>
+                                        <th scope="col" class="px-3 py-3.5">Slug</th>
+                                        <th scope="col" class="px-3 py-3.5">Articles Count</th>
+                                        <th scope="col" class="px-3 py-3.5 text-center">Active</th>
+                                        <th scope="col" class="px-3 py-3.5">
+                                            <div class="flex items-center gap-1.5 cursor-pointer hover:text-[#173b27]">Sort Order <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg></div>
+                                        </th>
+                                        <th scope="col" class="px-3 py-3.5">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm">
+                                    <tr id="category-create-row" class="hidden">
+                                        <td colspan="8" class="p-0 border-b border-slate-100">
+                                            <div class="bg-red-50/50 px-5 py-4">
+                                                <form method="POST" action="{{ route('admin.categories.store') }}" class="flex flex-wrap items-end gap-4">
                                                     @csrf
-                                                    <button type="submit" class="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-100">Delete</button>
+                                                    <div class="flex-1 min-w-[200px]">
+                                                        <label class="text-xs font-semibold text-slate-700">Name</label>
+                                                        <input class="form-input mt-1 block w-full rounded-xl border-slate-200" type="text" name="name" required placeholder="New Category Name">
+                                                    </div>
+                                                    <div class="flex-1 min-w-[200px]">
+                                                        <label class="text-xs font-semibold text-slate-700">Slug</label>
+                                                        <input class="form-input mt-1 block w-full rounded-xl border-slate-200" type="text" name="slug" required placeholder="new-category-slug">
+                                                    </div>
+                                                    <div class="flex gap-2">
+                                                        <button type="submit" class="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">Create</button>
+                                                        <button type="button" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50" onclick="document.getElementById('category-create-row').classList.add('hidden')">Cancel</button>
+                                                    </div>
                                                 </form>
                                             </div>
-                                        </div>
-
-                                        <form id="category-edit-{{ $categoryId }}" method="POST" action="{{ route('admin.categories.update', $categoryId) }}" class="mt-4 hidden space-y-3 border-t border-[#edf2f6] pt-4">
-                                            @csrf
-                                            <div>
-                                                <label class="text-sm font-medium text-slate-700">Name</label>
-                                                <input class="form-input" type="text" name="name" value="{{ $categoryName }}" required>
+                                        </td>
+                                    </tr>
+                                    @forelse ($items as $cat)
+                                    @php
+                                        $colors = [
+                                            ['class' => 'bg-red-500', 'name' => 'Red'],
+                                            ['class' => 'bg-green-500', 'name' => 'Green'],
+                                            ['class' => 'bg-white border border-slate-200', 'name' => 'White'],
+                                            ['class' => 'bg-blue-500', 'name' => 'Blue'],
+                                            ['class' => 'bg-orange-500', 'name' => 'Orange']
+                                        ];
+                                        $catColor = $colors[$loop->index % count($colors)];
+                                        $categoryId = is_object($cat) ? $cat->id : $cat['id'];
+                                        $categoryName = is_object($cat) ? $cat->name : $cat['name'];
+                                        $categorySlug = is_object($cat) ? $cat->slug : $cat['slug'];
+                                        $newsCount = is_object($cat) ? ($cat->news_count ?? 0) : ($cat['news_count'] ?? 0);
+                                    @endphp
+                                    <tr class="align-middle transition hover:bg-[#f8fafc]">
+                                        <td class="px-5 py-3">
+                                            <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
+                                        </td>
+                                        <td class="px-3 py-3">
+                                            <div class="flex items-center gap-2">
+                                                <div class="h-4 w-4 rounded-full {{ $catColor['class'] }} shadow-sm"></div>
+                                                <span class="text-xs font-medium text-slate-600">{{ $catColor['name'] }}</span>
                                             </div>
-                                            <div>
-                                                <label class="text-sm font-medium text-slate-700">Slug</label>
-                                                <input class="form-input" type="text" name="slug" value="{{ $categorySlug }}" required>
+                                        </td>
+                                        <td class="px-3 py-3 font-semibold text-[#1b2433]">{{ $categoryName }}</td>
+                                        <td class="px-3 py-3 text-slate-500">{{ $categorySlug }}</td>
+                                        <td class="px-3 py-3">
+                                            <span class="inline-flex whitespace-nowrap rounded-full bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700">{{ $newsCount }}</span>
+                                        </td>
+                                        <td class="px-3 py-3">
+                                            <div class="flex justify-center">
+                                                <div class="flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-green-600">
+                                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <label class="text-sm font-medium text-slate-700">Description</label>
-                                                <textarea class="form-input" name="description" rows="3">{{ $categoryDescription }}</textarea>
+                                        </td>
+                                        <td class="px-3 py-3 text-slate-600">{{ $loop->iteration + ($items->currentPage() - 1) * $items->perPage() }}</td>
+                                        <td class="px-3 py-3">
+                                            <div class="flex items-center gap-2">
+                                                <a href="{{ route('admin.categories.edit', $categoryId) }}" class="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-[#1E4FA3] transition hover:bg-[#eef5ff]">
+                                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Edit
+                                                </a>
+                                                <button type="button" onclick="openDeleteModal(this.dataset.deleteUrl, this.dataset.deleteName)" data-delete-url="{{ route('admin.categories.delete', $categoryId) }}" data-delete-name="{{ $categoryName }}" class="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50">
+                                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg> Delete
+                                                </button>
                                             </div>
-                                            <div class="flex gap-2">
-                                                <button type="submit" class="flex-1 rounded-xl bg-[#173b27] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Save changes</button>
-                                                <button type="button" class="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50" onclick="document.getElementById('category-edit-{{ $categoryId }}').classList.add('hidden')">Cancel</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                @empty
-                                    <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">No categories yet.</div>
-                                @endforelse
-                            </div>
-                            @if (method_exists($items, 'links'))
-                                <div class="mt-5">{{ $items->links() }}</div>
-                            @endif
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="8" class="px-5 py-8 text-center text-sm text-slate-500">No categories yet.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
 
-                        <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
-                            <div class="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Add category</div>
-                            <form method="POST" action="{{ route('admin.categories.store') }}" class="space-y-4">
-                                @csrf
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Name</label>
-                                    <input class="form-input" type="text" name="name" required>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Slug</label>
-                                    <input class="form-input" type="text" name="slug" required>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Description</label>
-                                    <textarea class="form-input" name="description" rows="4"></textarea>
-                                </div>
-                                <button type="submit" class="w-full rounded-xl bg-[#173b27] px-4 py-3 text-sm font-semibold text-white hover:bg-[#214d35]">Save category</button>
-                            </form>
+                        {{-- Pagination --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-t border-slate-100 px-5 py-4">
+                            <div class="text-sm text-slate-500 text-left">
+                                @if ($items->total() > 0)
+                                    Showing {{ number_format($items->firstItem()) }} to {{ number_format($items->lastItem()) }} of {{ number_format($items->total()) }} results
+                                @else
+                                    Showing 0 results
+                                @endif
+                            </div>
+
+                            <div class="flex items-center justify-center">
+                                <form method="GET" action="{{ route('admin.categories') }}" class="flex items-center gap-2">
+
+                                    <label class="whitespace-nowrap text-sm text-slate-500">Per page</label>
+                                    <select name="per_page" onchange="this.form.submit()" class="h-9 rounded-lg border border-slate-200 bg-white px-2.5 text-sm font-semibold text-slate-600 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100">
+                                        @foreach ([10, 25, 50, 100] as $pageSize)
+                                            <option value="{{ $pageSize }}" @selected(request('per_page', 10) == $pageSize)>{{ $pageSize }}</option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            </div>
+
+                            <div class="flex items-center justify-end">
+                                <nav class="flex items-center gap-1" aria-label="Categories pagination">
+                                    @if ($items->currentPage() > 1)
+                                        <a href="{{ $items->previousPageUrl() }}"
+                                           rel="prev"
+                                           class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-emerald-600 hover:text-emerald-700">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                        </a>
+                                    @else
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-300">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                        </span>
+                                    @endif
+
+                                    @php
+                                        $window = \Illuminate\Pagination\UrlWindow::make($items);
+                                        $elements = array_filter([
+                                            $window['first'],
+                                            is_array($window['slider']) ? '...' : null,
+                                            $window['slider'],
+                                            is_array($window['last']) ? '...' : null,
+                                            $window['last'],
+                                        ]);
+                                    @endphp
+                                    @foreach ($elements as $element)
+                                        @if (is_string($element))
+                                            <span class="px-1 text-sm text-slate-400">…</span>
+                                        @endif
+                                        @if (is_array($element))
+                                            @foreach ($element as $page => $url)
+                                                @if ($page == $items->currentPage())
+                                                    <span class="flex h-8 min-w-8 items-center justify-center rounded-lg bg-[#173b27] px-2 text-sm font-semibold text-white">{{ $page }}</span>
+                                                @else
+                                                    <a href="{{ $url }}" class="flex h-8 min-w-8 items-center justify-center rounded-lg border border-slate-200 px-2 text-sm font-semibold text-slate-600 transition hover:border-emerald-600 hover:text-emerald-700">{{ $page }}</a>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    @endforeach
+
+                                    @if ($items->hasMorePages())
+                                        <a href="{{ $items->nextPageUrl() }}"
+                                           rel="next"
+                                           class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-emerald-600 hover:text-emerald-700">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+                                        </a>
+                                    @else
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-300">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+                                        </span>
+                                    @endif
+                                </nav>
+                            </div>
                         </div>
                     </div>
                 @elseif ($pageType === 'gallery')
@@ -410,8 +432,8 @@
                         </form>
                     </div>
 
-                    <div class="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-                        <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
+                    <div class="mt-6 space-y-6">
+                        <div id="galleryComposer" class="{{ $errors->any() ? '' : 'hidden' }} max-w-3xl rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
                             <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                                 <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Media library</div>
                                 <span class="rounded-full bg-[#eaf7ea] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#173b27]">{{ $items->total() }}{{ $activeFilters ? ' of ' . $mediaTotal : '' }} shown</span>
@@ -479,9 +501,7 @@
                                     </div>
                                 @endforelse
                             </div>
-                            @if (method_exists($items, 'links'))
-                                <div class="mt-5">{{ $items->links() }}</div>
-                            @endif
+                            @include('admin.partials.pagination', ['paginator' => $items, 'ariaLabel' => 'Gallery pagination'])
                         </div>
 
                         <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
@@ -614,47 +634,234 @@
                         })();
                     </script>
                 @elseif ($pageType === 'users')
-                    <div class="mt-6 rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
-                        <div class="mb-4 flex items-center justify-between">
+                    <div class="mt-6 overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-[0_10px_22px_rgba(19,41,26,0.05)]">
+                        {{-- Toolbar --}}
+                        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
                             <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Registered users</div>
-                            <span class="rounded-full bg-[#eaf7ea] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#173b27]">{{ $items->total() }} total</span>
-                        </div>
-                        <div class="space-y-3">
-                            @forelse ($items as $item)
-                                @php
-                                    $regName = is_object($item) ? ($item->name ?? 'Unnamed') : ($item['name'] ?? 'Unnamed');
-                                    $regEmail = is_object($item) ? ($item->email ?? '') : ($item['email'] ?? '');
-                                    $regRole = is_object($item) ? ($item->role ?? 'user') : ($item['role'] ?? 'user');
-                                    $regDate = is_object($item) && isset($item->created_at) ? $item->created_at->format('M d, Y') : ($item['created_at'] ?? '—');
-                                    $regLogin = is_object($item) && isset($item->last_login_at) ? $item->last_login_at->format('M d, Y, h:i A') : 'No record yet';
-                                @endphp
-                                <div class="flex flex-wrap items-center justify-between gap-3 rounded-[18px] border border-[#edf2f6] bg-[#f7fafc] px-4 py-3">
-                                    <div class="flex min-w-0 items-center gap-3">
-                                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#173b27] text-xs font-bold text-white">{{ strtoupper(substr($regName, 0, 1)) }}</div>
-                                        <div class="min-w-0">
-                                            <div class="text-base font-semibold text-[#173b27]">{{ $regName }}</div>
-                                            <div class="mt-0.5 truncate text-sm text-[#51657c]">{{ $regEmail }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-wrap items-center gap-3 text-xs text-[#51657c]">
-                                        <span class="rounded-full bg-[#eef5ff] px-3 py-1 font-semibold capitalize text-[#0f2b54]">{{ $regRole }}</span>
-                                        <span>Joined {{ $regDate }}</span>
-                                        <span class="text-slate-400">Last login: {{ $regLogin }}</span>
-                                    </div>
+                            <div class="flex items-center gap-2">
+                                <div class="relative">
+                                    <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>
+                                    </svg>
+                                    <input type="search" placeholder="Search" class="h-10 w-44 rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-100 sm:w-56">
                                 </div>
-                            @empty
-                                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">No registered users yet.</div>
-                            @endforelse
+                                <button type="button" class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-red-600 hover:text-red-700">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8v5.5l-4 2V13z"/></svg>
+                                </button>
+                                <button type="button" class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-red-600 hover:text-red-700">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>
+                                </button>
+                            </div>
                         </div>
-                        @if (method_exists($items, 'links'))
-                            <div class="mt-5">{{ $items->links() }}</div>
-                        @endif
+
+                        {{-- Data Table --}}
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-[1000px] border-collapse text-left">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-[#f8fafc] text-[11px] font-semibold uppercase tracking-[0.12em] text-[#51657c]">
+                                        <th scope="col" class="w-12 px-5 py-3.5">
+                                            <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
+                                        </th>
+                                        <th scope="col" class="w-16 px-3 py-3.5">Photo</th>
+                                        <th scope="col" class="px-3 py-3.5">
+                                            <div class="flex items-center gap-1.5 cursor-pointer hover:text-[#173b27]">Name <svg class="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg></div>
+                                        </th>
+                                        <th scope="col" class="px-3 py-3.5">Email address</th>
+                                        <th scope="col" class="px-3 py-3.5">Role</th>
+                                        <th scope="col" class="px-3 py-3.5">Joined</th>
+                                        <th scope="col" class="px-3 py-3.5">Last login</th>
+                                        <th scope="col" class="px-3 py-3.5 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm">
+                                    @forelse ($items as $user)
+                                        @php
+                                            $userName = is_object($user) ? $user->name : ($user['name'] ?? '');
+                                            $userEmail = is_object($user) ? $user->email : ($user['email'] ?? '');
+                                            $userRole = is_object($user) ? ($user->role ?? 'Reporter') : ($user['role'] ?? 'Reporter');
+                                            $userPhoto = 'https://ui-avatars.com/api/?name=' . urlencode($userName) . '&background=random';
+                                        @endphp
+                                        <tr class="align-middle transition hover:bg-[#f8fafc]">
+                                            <td class="px-5 py-3">
+                                                <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
+                                            </td>
+                                            <td class="px-3 py-3">
+                                                <img src="{{ $userPhoto }}" alt="{{ $userName }}" class="h-9 w-9 rounded-full object-cover shadow-sm">
+                                            </td>
+                                            <td class="px-3 py-3 font-semibold text-[#1b2433]">{{ $userName }}</td>
+                                            <td class="px-3 py-3 text-slate-500">{{ $userEmail }}</td>
+                                            <td class="px-3 py-3">
+                                                <span class="font-medium text-slate-700">{{ ucfirst($userRole) }}</span>
+                                            </td>
+                                            <td class="px-3 py-3 text-slate-600">{{ is_object($user) ? ($user->created_at?->format('M d, Y') ?? '—') : '—' }}</td>
+                                            <td class="px-3 py-3 text-slate-600">{{ is_object($user) ? ($user->last_login_at?->format('M d, Y, h:i A') ?? 'Never') : 'Never' }}</td>
+                                            <td class="px-3 py-3 text-right">
+                                                <div class="flex items-center justify-end gap-3">
+                                                    <button type="button" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800">
+                                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                                        View
+                                                    </button>
+                                                    <button type="button" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800">
+                                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                                                        Edit
+                                                    </button>
+                                                    <button type="button" class="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 hover:text-red-800">
+                                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"/></svg>
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="px-5 py-8 text-center text-sm text-slate-500">No users yet.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {{-- Pagination --}}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center border-t border-slate-100 px-5 py-4">
+                            <div class="text-sm text-slate-500 text-left">
+                                @if ($items->total() > 0)
+                                    Showing {{ number_format($items->firstItem()) }} to {{ number_format($items->lastItem()) }} of {{ number_format($items->total()) }} results
+                                @else
+                                    Showing 0 results
+                                @endif
+                            </div>
+
+                            <div class="flex items-center justify-center">
+                                <form method="GET" action="{{ route('admin.users') }}" class="flex items-center gap-2">
+                                    <label class="whitespace-nowrap text-sm text-slate-500">Per page</label>
+                                    <select name="per_page" onchange="this.form.submit()" class="h-9 rounded-lg border border-slate-200 bg-white px-2.5 text-sm font-semibold text-slate-600 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100">
+                                        @foreach ([10, 25, 50, 100] as $pageSize)
+                                            <option value="{{ $pageSize }}" @selected(request('per_page', 10) == $pageSize)>{{ $pageSize }}</option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            </div>
+
+                            <div class="flex items-center justify-end">
+                                <nav class="flex items-center gap-1" aria-label="Users pagination">
+                                    @if ($items->currentPage() > 1)
+                                        <a href="{{ $items->previousPageUrl() }}"
+                                           rel="prev"
+                                           class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-emerald-600 hover:text-emerald-700">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                        </a>
+                                    @else
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-300">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                        </span>
+                                    @endif
+
+                                    @php
+                                        $window = \Illuminate\Pagination\UrlWindow::make($items);
+                                        $elements = array_filter([
+                                            $window['first'],
+                                            is_array($window['slider']) ? '...' : null,
+                                            $window['slider'],
+                                            is_array($window['last']) ? '...' : null,
+                                            $window['last'],
+                                        ]);
+                                    @endphp
+                                    @foreach ($elements as $element)
+                                        @if (is_string($element))
+                                            <span class="px-1 text-sm text-slate-400">…</span>
+                                        @endif
+                                        @if (is_array($element))
+                                            @foreach ($element as $page => $url)
+                                                @if ($page == $items->currentPage())
+                                                    <span class="flex h-8 min-w-8 items-center justify-center rounded-lg bg-[#173b27] px-2 text-sm font-semibold text-white">{{ $page }}</span>
+                                                @else
+                                                    <a href="{{ $url }}" class="flex h-8 min-w-8 items-center justify-center rounded-lg border border-slate-200 px-2 text-sm font-semibold text-slate-600 transition hover:border-emerald-600 hover:text-emerald-700">{{ $page }}</a>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    @endforeach
+
+                                    @if ($items->hasMorePages())
+                                        <a href="{{ $items->nextPageUrl() }}"
+                                           rel="next"
+                                           class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:border-emerald-600 hover:text-emerald-700">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+                                        </a>
+                                    @else
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-300">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+                                        </span>
+                                    @endif
+                                </nav>
+                            </div>
+                        </div>
                     </div>
                 @elseif ($pageType === 'reports')
+                    <div class="mt-6 grid gap-6 xl:grid-cols-[1.45fr_0.75fr]">
+                        <section class="overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-[0_10px_22px_rgba(19,41,26,0.05)]" aria-labelledby="top-stories-title">
+                            <div class="border-b border-slate-100 px-5 py-4">
+                                <h2 id="top-stories-title" class="text-sm font-semibold text-[#173b27]">Top viewed stories</h2>
+                                <p class="mt-1 text-xs text-[#51657c]">Published stories ranked by their recorded view counts</p>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-[680px] text-left text-sm">
+                                    <thead class="bg-[#f8fafc] text-[11px] font-semibold uppercase tracking-[0.12em] text-[#51657c]">
+                                        <tr>
+                                            <th class="px-5 py-3">Story</th>
+                                            <th class="px-3 py-3">Category</th>
+                                            <th class="px-3 py-3">Author</th>
+                                            <th class="px-3 py-3">Published</th>
+                                            <th class="px-5 py-3 text-right">Views</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        @forelse ($topStories as $story)
+                                            <tr class="hover:bg-slate-50">
+                                                <td class="px-5 py-3">
+                                                    <a href="{{ route('news.show', $story->slug) }}" target="_blank" rel="noopener" class="font-semibold text-slate-800 hover:text-[#2f7d4d]">{{ $story->title }}</a>
+                                                </td>
+                                                <td class="px-3 py-3 text-slate-600">{{ $story->category?->name ?? 'Uncategorized' }}</td>
+                                                <td class="px-3 py-3 text-slate-600">{{ $story->author ?: '—' }}</td>
+                                                <td class="whitespace-nowrap px-3 py-3 text-slate-600">{{ $story->created_at?->format('M d, Y') ?? '—' }}</td>
+                                                <td class="px-5 py-3 text-right font-semibold tabular-nums text-[#173b27]">{{ number_format((int) $story->views) }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr><td colspan="5" class="px-5 py-8 text-center text-sm text-slate-500">No published stories to report yet.</td></tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section class="rounded-[20px] border border-slate-200 bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.05)]" aria-labelledby="category-performance-title">
+                            <div>
+                                <h2 id="category-performance-title" class="text-sm font-semibold text-[#173b27]">Category performance</h2>
+                                <p class="mt-1 text-xs text-[#51657c]">Published articles and their stored views</p>
+                            </div>
+                            <div class="mt-5 space-y-5">
+                                @forelse ($topCategories as $category)
+                                    @php $categoryViews = (int) $category->published_story_views; @endphp
+                                    <div>
+                                        <div class="mb-2 flex items-center justify-between gap-3 text-xs">
+                                            <span class="truncate font-semibold text-slate-700">{{ $category->name }}</span>
+                                            <span class="shrink-0 tabular-nums text-slate-500">{{ number_format($categoryViews) }} views</span>
+                                        </div>
+                                        <div class="h-2.5 overflow-hidden rounded-full bg-slate-100">
+                                            <div class="h-full rounded-full bg-[#2f7d4d]" style="width: {{ min(100, (int) round($categoryViews / $maxCategoryViews * 100)) }}%"></div>
+                                        </div>
+                                        <div class="mt-1 text-[10px] text-slate-400">{{ number_format($category->published_articles) }} published stories</div>
+                                    </div>
+                                @empty
+                                    <div class="rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center text-sm text-slate-500">No category data to report yet.</div>
+                                @endforelse
+                            </div>
+                        </section>
+                    </div>
+
                     <div class="mt-6 rounded-[20px] bg-gradient-to-r from-[#173b27] via-[#1f5d3a] to-[#2f7d4d] p-5 text-white shadow-[0_18px_40px_rgba(23,59,39,0.28)]">
                         <div class="flex items-center justify-between">
-                            <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#edf7ee]">New business growth</div>
-                            <span class="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">This month</span>
+                            <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#edf7ee]">Newsroom overview</div>
+                                <span class="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">Database totals</span>
                         </div>
                         <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                             @foreach ($businessGrowth as $growth)
@@ -687,111 +894,198 @@
                                 <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">No reports yet.</div>
                             @endforelse
                         </div>
-                        @if (method_exists($items, 'links'))
-                            <div class="mt-5">{{ $items->links() }}</div>
-                        @endif
+                        @include('admin.partials.pagination', ['paginator' => $items, 'ariaLabel' => 'Reports pagination'])
                     </div>
                 @elseif ($pageType === 'settings')
-                    <div class="mt-6 grid gap-6 lg:grid-cols-3">
-                        <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
-                            <div class="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Security</div>
-                            <form method="POST" action="{{ route('admin.settings.password') }}" class="space-y-4">
-                                @csrf
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Current password</label>
-                                    <input class="form-input" type="password" name="current_password" required>
+                    <div class="mt-6 space-y-4">
+                        {{-- Password Change Dropdown --}}
+                        <div class="rounded-[20px] bg-white shadow-[0_10px_22px_rgba(19,41,26,0.04)] overflow-hidden">
+                            <button type="button" onclick="toggleSettingsPanel('passwordPanel')" class="flex w-full items-center justify-between px-5 py-4 text-left transition hover:bg-slate-50">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#eaf7ea] text-[#173b27]">
+                                        <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-[#1b2433]">Change Password</div>
+                                        <div class="text-xs text-[#51657c]">Update your account password</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">New password</label>
-                                    <input class="form-input" type="password" name="password" required>
+                                <svg id="passwordPanelChevron" class="h-5 w-5 text-slate-400 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            </button>
+                            <div id="passwordPanel" class="hidden border-t border-slate-100">
+                                <div class="px-5 py-5">
+                                    <form method="POST" action="{{ route('admin.settings.password') }}" class="max-w-lg space-y-4">
+                                        @csrf
+                                        <div>
+                                            <label class="text-sm font-medium text-slate-700">Current password</label>
+                                            <input class="form-input" type="password" name="current_password" required>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-slate-700">New password</label>
+                                            <input class="form-input" type="password" name="password" required>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-slate-700">Confirm new password</label>
+                                            <input class="form-input" type="password" name="password_confirmation" required>
+                                        </div>
+                                        <button type="submit" class="rounded-xl bg-[#173b27] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Update password</button>
+                                    </form>
                                 </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Confirm new password</label>
-                                    <input class="form-input" type="password" name="password_confirmation" required>
-                                </div>
-                                <button type="submit" class="w-full rounded-xl bg-[#173b27] px-4 py-3 text-sm font-semibold text-white hover:bg-[#214d35]">Update password</button>
-                            </form>
+                            </div>
                         </div>
 
-                        <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
-                            <div class="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Create admin</div>
-                            <form method="POST" action="{{ route('admin.settings.admins') }}" class="space-y-4">
-                                @csrf
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Name</label>
-                                    <input class="form-input" type="text" name="name" required>
+                        {{-- Create Admin Dropdown --}}
+                        <div class="rounded-[20px] bg-white shadow-[0_10px_22px_rgba(19,41,26,0.04)] overflow-hidden">
+                            <button type="button" onclick="toggleSettingsPanel('createAdminPanel')" class="flex w-full items-center justify-between px-5 py-4 text-left transition hover:bg-slate-50">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#eef5ff] text-[#1E4FA3]">
+                                        <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-[#1b2433]">Create Admin Account</div>
+                                        <div class="text-xs text-[#51657c]">Add new admin, editor, or reporter</div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Email</label>
-                                    <input class="form-input" type="email" name="email" required>
+                                <svg id="createAdminPanelChevron" class="h-5 w-5 text-slate-400 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            </button>
+                            <div id="createAdminPanel" class="hidden border-t border-slate-100">
+                                <div class="px-5 py-5">
+                                    <form method="POST" action="{{ route('admin.settings.admins') }}" class="max-w-lg space-y-4">
+                                        @csrf
+                                        <div>
+                                            <label class="text-sm font-medium text-slate-700">Name</label>
+                                            <input class="form-input" type="text" name="name" required>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-slate-700">Email</label>
+                                            <input class="form-input" type="email" name="email" required>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-slate-700">Password</label>
+                                            <input class="form-input" type="password" name="password" minlength="8" required>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-slate-700">Confirm password</label>
+                                            <input class="form-input" type="password" name="password_confirmation" minlength="8" required>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-slate-700">Role</label>
+                                            <select class="form-input" name="role">
+                                                <option value="admin">Admin</option>
+                                                <option value="editor">Editor</option>
+                                                <option value="reporter">Reporter</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="rounded-xl bg-[#173b27] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Create account</button>
+                                    </form>
                                 </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Password</label>
-                                    <input class="form-input" type="password" name="password" minlength="8" required>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Confirm password</label>
-                                    <input class="form-input" type="password" name="password_confirmation" minlength="8" required>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-slate-700">Role</label>
-                                    <select class="form-input" name="role">
-                                        <option value="admin">Admin</option>
-                                        <option value="editor">Editor</option>
-                                        <option value="reporter">Reporter</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="w-full rounded-xl bg-[#173b27] px-4 py-3 text-sm font-semibold text-white hover:bg-[#214d35]">Create account</button>
-                            </form>
+                            </div>
                         </div>
 
-                        <div class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
-                            <div class="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Account summary</div>
-                            <div class="space-y-4 text-sm text-slate-700">
-                                <div class="rounded-2xl bg-slate-50 p-4">
-                                    <div class="text-slate-500">User</div>
-                                    <div class="mt-1 text-base font-semibold text-slate-900">{{ $userName ?? 'Admin User' }}</div>
+                        {{-- Account Summary Dropdown --}}
+                        <div class="rounded-[20px] bg-white shadow-[0_10px_22px_rgba(19,41,26,0.04)] overflow-hidden">
+                            <button type="button" onclick="toggleSettingsPanel('accountPanel')" class="flex w-full items-center justify-between px-5 py-4 text-left transition hover:bg-slate-50">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#fef3c7] text-[#92400e]">
+                                        <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-semibold text-[#1b2433]">Account Summary</div>
+                                        <div class="text-xs text-[#51657c]">Your profile and session information</div>
+                                    </div>
                                 </div>
-                                <div class="rounded-2xl bg-slate-50 p-4">
-                                    <div class="text-slate-500">Last login</div>
-                                    <div class="mt-1 text-base font-semibold text-slate-900">{{ $lastLogin ?? 'No record yet' }}</div>
-                                </div>
-                                <div class="rounded-2xl bg-slate-50 p-4">
-                                    <div class="text-slate-500">Last password change</div>
-                                    <div class="mt-1 text-base font-semibold text-slate-900">{{ $lastPasswordChanged ?? '2026-09-10 09:12' }}</div>
-                                </div>
-                                <div class="rounded-2xl bg-slate-50 p-4">
-                                    <div class="text-slate-500">Role</div>
-                                    <div class="mt-1 text-base font-semibold text-slate-900">Administrator</div>
+                                <svg id="accountPanelChevron" class="h-5 w-5 text-slate-400 transition-transform duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            </button>
+                            <div id="accountPanel" class="hidden border-t border-slate-100">
+                                <div class="px-5 py-5">
+                                    <div class="grid gap-4 sm:grid-cols-2 max-w-2xl">
+                                        <div class="rounded-2xl bg-slate-50 p-4">
+                                            <div class="text-slate-500 text-xs font-medium">User</div>
+                                            <div class="mt-1 text-base font-semibold text-slate-900">{{ $userName ?? 'Admin User' }}</div>
+                                        </div>
+                                        <div class="rounded-2xl bg-slate-50 p-4">
+                                            <div class="text-slate-500 text-xs font-medium">Last login</div>
+                                            <div class="mt-1 text-base font-semibold text-slate-900">{{ $lastLogin ?? 'No record yet' }}</div>
+                                        </div>
+                                        <div class="rounded-2xl bg-slate-50 p-4">
+                                            <div class="text-slate-500 text-xs font-medium">Last password change</div>
+                                            <div class="mt-1 text-base font-semibold text-slate-900">{{ $lastPasswordChanged ?? '2026-09-10 09:12' }}</div>
+                                        </div>
+                                        <div class="rounded-2xl bg-slate-50 p-4">
+                                            <div class="text-slate-500 text-xs font-medium">Role</div>
+                                            <div class="mt-1 text-base font-semibold text-slate-900">Administrator</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-6 rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
-                        <div class="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Site preferences</div>
-                        <div class="space-y-4">
-                            @forelse ($items as $item)
-                                @php
-                                    $settingTitle = is_object($item) ? ($item->title ?? 'Setting') : ($item['title'] ?? 'Setting');
-                                    $settingMeta = is_object($item) ? ($item->meta ?? '') : ($item['meta'] ?? '');
-                                    $settingStatus = is_object($item) ? ($item->status ?? 'Active') : ($item['status'] ?? 'Active');
-                                @endphp
-                                <div class="flex items-center justify-between rounded-[18px] border border-[#edf2f6] bg-[#f7fafc] px-4 py-3">
-                                    <div>
-                                        <div class="text-base font-semibold text-[#173b27]">{{ $settingTitle }}</div>
-                                        <div class="mt-1 text-sm text-[#51657c]">{{ $settingMeta }}</div>
-                                    </div>
-                                    <span class="rounded-full bg-[#eaf7ea] px-3 py-1 text-xs font-semibold text-[#173b27]">{{ $settingStatus }}</span>
-                                </div>
-                            @empty
-                                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">No preferences yet.</div>
-                            @endforelse
+                    <script>
+                        function toggleSettingsPanel(panelId) {
+                            const panel = document.getElementById(panelId);
+                            const chevron = document.getElementById(panelId + 'Chevron');
+                            if (!panel) return;
+                            const isHidden = panel.classList.contains('hidden');
+                            panel.classList.toggle('hidden', !isHidden);
+                            if (isHidden) {
+                                panel.style.maxHeight = '0';
+                                panel.style.overflow = 'hidden';
+                                panel.style.transition = 'max-height 0.35s ease';
+                                requestAnimationFrame(() => { panel.style.maxHeight = panel.scrollHeight + 'px'; });
+                                setTimeout(() => { panel.style.maxHeight = 'none'; panel.style.overflow = ''; }, 360);
+                            } else {
+                                panel.style.maxHeight = panel.scrollHeight + 'px';
+                                panel.style.overflow = 'hidden';
+                                panel.style.transition = 'max-height 0.3s ease';
+                                requestAnimationFrame(() => { panel.style.maxHeight = '0'; });
+                                setTimeout(() => { panel.classList.add('hidden'); panel.style.maxHeight = ''; panel.style.overflow = ''; panel.style.transition = ''; }, 310);
+                                return;
+                            }
+                            if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : '';
+                        }
+
+                        if (window.location.hash === '#passwordPanel' || window.location.hash === '#createAdminPanel') {
+                            const targetPanel = window.location.hash.slice(1);
+                            toggleSettingsPanel(targetPanel);
+                            requestAnimationFrame(() => document.getElementById(targetPanel)?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+                        }
+                    </script>
+
+                    <section class="mt-6 overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-[0_10px_22px_rgba(19,41,26,0.05)]" aria-labelledby="admin-accounts-title">
+                        <div class="border-b border-slate-100 px-5 py-4">
+                            <h2 id="admin-accounts-title" class="text-sm font-semibold text-[#173b27]">Team accounts</h2>
+                            <p class="mt-1 text-xs text-[#51657c]">Accounts with administrative or editorial access</p>
                         </div>
-                        @if (method_exists($items, 'links'))
-                            <div class="mt-5">{{ $items->links() }}</div>
-                        @endif
-                    </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-[700px] text-left text-sm">
+                                <thead class="bg-[#f8fafc] text-[11px] font-semibold uppercase tracking-[0.12em] text-[#51657c]">
+                                    <tr>
+                                        <th class="px-5 py-3">Account</th>
+                                        <th class="px-3 py-3">Role</th>
+                                        <th class="px-3 py-3">Created</th>
+                                        <th class="px-3 py-3">Last login</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    @forelse ($items as $account)
+                                        <tr>
+                                            <td class="px-5 py-3">
+                                                <div class="font-semibold text-slate-800">{{ $account->name }}</div>
+                                                <div class="text-xs text-slate-500">{{ $account->email }}</div>
+                                            </td>
+                                            <td class="px-3 py-3"><span class="rounded-full bg-[#eaf7ea] px-2.5 py-1 text-xs font-semibold capitalize text-[#173b27]">{{ $account->role }}</span></td>
+                                            <td class="px-3 py-3 text-slate-600">{{ $account->created_at?->format('M d, Y') ?? '—' }}</td>
+                                            <td class="px-3 py-3 text-slate-600">{{ $account->last_login_at?->format('M d, Y, h:i A') ?? 'Never' }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr><td colspan="4" class="px-5 py-8 text-center text-sm text-slate-500">No team accounts found.</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        @include('admin.partials.pagination', ['paginator' => $items, 'ariaLabel' => 'Settings accounts pagination'])
+                    </section>
                 @else
                     <div class="mt-6 rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
                         <div class="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Recent entries</div>
@@ -819,4 +1113,95 @@
             </div>{{-- end flex-col wrapper --}}
         </div>
     </section>
+
+    <div id="articleViewModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onclick="closeArticleViewModal()" role="dialog" aria-modal="true" aria-labelledby="articleViewTitle">
+        <article class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl" onclick="event.stopPropagation()">
+            <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+                <div>
+                    <p id="articleViewMeta" class="text-xs font-semibold uppercase tracking-[0.14em] text-[#2f7d4d]"></p>
+                    <h2 id="articleViewTitle" class="mt-2 text-xl font-bold text-slate-900"></h2>
+                </div>
+                <button type="button" onclick="closeArticleViewModal()" aria-label="Close article details" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50">&times;</button>
+            </div>
+            <p id="articleViewExcerpt" class="mt-5 text-sm font-medium leading-6 text-slate-700"></p>
+            <p id="articleViewContent" class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600"></p>
+            <div id="articleViewStats" class="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-4 text-xs text-slate-500"></div>
+            <a id="articleViewLink" href="#" target="_blank" rel="noopener" class="mt-5 inline-flex rounded-xl bg-[#173b27] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Open public article</a>
+        </article>
+    </div>
+
+    {{-- ============ DELETE CONFIRMATION MODAL ============ --}}
+    <div id="deleteConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4" onclick="closeDeleteModal()">
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" onclick="event.stopPropagation()">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-[#1b2433]">Delete Confirmation</h3>
+                    <p class="text-sm text-slate-500">This action cannot be undone.</p>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600 mb-6">Are you sure you want to delete <strong id="deleteItemName" class="text-[#1b2433]"></strong>?</p>
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" onclick="closeDeleteModal()" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</button>
+                <form id="deleteConfirmForm" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleGalleryComposer() {
+            const panel = document.getElementById('galleryComposer');
+            const button = document.getElementById('galleryCreateButton');
+            if (!panel || !button) return;
+
+            const isOpening = panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !isOpening);
+            button.setAttribute('aria-expanded', String(isOpening));
+
+            if (isOpening) {
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                panel.querySelector('input[name="title"]')?.focus();
+            }
+        }
+
+        function openArticleViewModal(trigger) {
+            const read = (key) => trigger.dataset['article' + key] || '';
+            document.getElementById('articleViewTitle').textContent = read('Title');
+            document.getElementById('articleViewMeta').textContent = read('Category') + ' · ' + read('Status');
+            document.getElementById('articleViewExcerpt').textContent = read('Excerpt') || 'No excerpt provided.';
+            document.getElementById('articleViewContent').textContent = read('Content') || 'No article content provided.';
+            document.getElementById('articleViewStats').textContent = [
+                'By ' + (read('Author') || 'Unknown author'),
+                read('Date'),
+                read('Views') + ' views',
+                read('ReadTime'),
+            ].filter(Boolean).join(' · ');
+            document.getElementById('articleViewLink').href = trigger.dataset.articleUrl || '#';
+            document.getElementById('articleViewModal').style.display = 'flex';
+        }
+
+        function closeArticleViewModal() {
+            document.getElementById('articleViewModal').style.display = 'none';
+        }
+
+        function openDeleteModal(actionUrl, itemName) {
+            document.getElementById('deleteConfirmForm').action = actionUrl;
+            document.getElementById('deleteItemName').textContent = itemName;
+            document.getElementById('deleteConfirmModal').style.display = 'flex';
+        }
+        function closeDeleteModal() {
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDeleteModal();
+                closeArticleViewModal();
+            }
+        });
+    </script>
 @endsection

@@ -4,18 +4,17 @@
 
 {{-- Sidebar Container --}}
 <aside id="adminSidebar" 
-       class="fixed inset-y-0 left-0 z-50 flex w-[260px] -translate-x-full flex-col justify-between bg-[#173B27] p-4 text-white shadow-2xl transition-all duration-300 ease-in-out lg:relative lg:inset-auto lg:z-auto lg:translate-x-0 lg:shadow-none shrink-0 overflow-y-auto">
+       class="fixed inset-y-0 left-0 z-50 flex w-[224px] -translate-x-full flex-col justify-between bg-[#173B27] p-3 text-white shadow-2xl transition-all duration-300 ease-in-out lg:relative lg:inset-auto lg:z-auto lg:translate-x-0 lg:shadow-none shrink-0 overflow-y-auto">
     
     <div>
         {{-- Brand / Header --}}
-        <div class="flex items-center justify-between border-b border-white/10 pb-4">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15 shadow-sm">
-                    <img src="{{ asset('image/fev icon.png') }}" alt="वनको खबर icon" class="h-8 w-8 rounded-xl object-cover">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5">
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15 shadow-sm">
+                    <img src="{{ asset('image/fev icon.png') }}" alt="वनको खबर icon" class="h-7 w-7 rounded-lg object-cover">
                 </div>
                 <div class="sidebar-brand-text min-w-0 transition-opacity duration-200">
-                    <div class="truncate text-lg font-bold leading-tight text-white">वनको खबर</div>
-                    <div class="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#98D28E]">Newsroom CMS</div>
+                    <div class="truncate text-base font-bold leading-tight text-white">वनको खबर</div>
                 </div>
             </a>
 
@@ -31,10 +30,10 @@
         </div>
 
         {{-- Navigation Links --}}
-        <nav class="mt-6 space-y-1.5">
+        <nav class="mt-5 space-y-1">
             {{-- Dashboard --}}
             <a href="{{ route('admin.dashboard') }}" 
-               class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-2xl px-3.5 py-3 text-sm font-medium transition-all duration-150">
+               class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
                 <span class="flex items-center gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#98D28E] transition-colors group-hover:bg-[#98D28E] group-hover:text-[#173B27]">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -46,12 +45,11 @@
                     </span>
                     <span class="sidebar-label">Dashboard</span>
                 </span>
-                <span class="rounded-full bg-[#98D28E] px-2 py-0.5 text-[9px] font-bold text-[#173B27]">Live</span>
             </a>
 
             {{-- Articles --}}
             <a href="{{ route('admin.articles') }}" 
-               class="sidebar-item {{ request()->routeIs('admin.articles') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-2xl px-3.5 py-3 text-sm font-medium transition-all duration-150">
+               class="sidebar-item {{ request()->routeIs('admin.articles') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
                 <span class="flex items-center gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#98D28E] transition-colors group-hover:bg-[#98D28E] group-hover:text-[#173B27]">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -67,7 +65,7 @@
 
             {{-- Categories --}}
             <a href="{{ route('admin.categories') }}" 
-               class="sidebar-item {{ request()->routeIs('admin.categories') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-2xl px-3.5 py-3 text-sm font-medium transition-all duration-150">
+               class="sidebar-item {{ request()->routeIs('admin.categories') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
                 <span class="flex items-center gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#98D28E] transition-colors group-hover:bg-[#98D28E] group-hover:text-[#173B27]">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -81,7 +79,7 @@
 
             {{-- Gallery --}}
             <a href="{{ route('admin.gallery') }}" 
-               class="sidebar-item {{ request()->routeIs('admin.gallery') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-2xl px-3.5 py-3 text-sm font-medium transition-all duration-150">
+               class="sidebar-item {{ request()->routeIs('admin.gallery') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
                 <span class="flex items-center gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#98D28E] transition-colors group-hover:bg-[#98D28E] group-hover:text-[#173B27]">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -96,7 +94,7 @@
 
             {{-- Users --}}
             <a href="{{ route('admin.users') }}" 
-               class="sidebar-item {{ request()->routeIs('admin.users') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-2xl px-3.5 py-3 text-sm font-medium transition-all duration-150">
+               class="sidebar-item {{ request()->routeIs('admin.users') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
                 <span class="flex items-center gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#98D28E] transition-colors group-hover:bg-[#98D28E] group-hover:text-[#173B27]">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -112,7 +110,7 @@
 
             {{-- Reports --}}
             <a href="{{ route('admin.reports') }}" 
-               class="sidebar-item {{ request()->routeIs('admin.reports') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-2xl px-3.5 py-3 text-sm font-medium transition-all duration-150">
+               class="sidebar-item {{ request()->routeIs('admin.reports') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
                 <span class="flex items-center gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#98D28E] transition-colors group-hover:bg-[#98D28E] group-hover:text-[#173B27]">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -124,9 +122,13 @@
                 </span>
             </a>
 
-            {{-- Settings --}}
-            <a href="{{ route('admin.settings') }}" 
-               class="sidebar-item {{ request()->routeIs('admin.settings') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-2xl px-3.5 py-3 text-sm font-medium transition-all duration-150">
+                {{-- Settings --}}
+                <button type="button"
+                    id="adminSettingsToggle"
+                    onclick="toggleAdminSettingsMenu()"
+                    aria-expanded="{{ request()->routeIs('admin.settings') ? 'true' : 'false' }}"
+                    aria-controls="adminSettingsSubmenu"
+                    class="sidebar-item {{ request()->routeIs('admin.settings') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
                 <span class="flex items-center gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#98D28E] transition-colors group-hover:bg-[#98D28E] group-hover:text-[#173B27]">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -136,12 +138,61 @@
                     </span>
                     <span class="sidebar-label">Settings</span>
                 </span>
-            </a>
+                <svg id="adminSettingsChevron" class="h-4 w-4 shrink-0 transition-transform duration-300 {{ request()->routeIs('admin.settings') ? 'rotate-180' : '' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div id="adminSettingsSubmenu" class="sidebar-settings-submenu {{ request()->routeIs('admin.settings') ? '' : 'hidden' }} ml-10 mt-1 space-y-1 overflow-hidden transition-all duration-300">
+                <a href="{{ route('admin.settings') }}" class="block rounded-lg px-3 py-2 text-xs font-medium text-[#DFEEE0] transition hover:bg-white/10 hover:text-white">Settings overview</a>
+                <a href="{{ route('admin.settings') }}#passwordPanel" class="block rounded-lg px-3 py-2 text-xs font-medium text-[#DFEEE0] transition hover:bg-white/10 hover:text-white">Change password</a>
+                <a href="{{ route('admin.settings') }}#createAdminPanel" class="block rounded-lg px-3 py-2 text-xs font-medium text-[#DFEEE0] transition hover:bg-white/10 hover:text-white">Create admin</a>
+            </div>
         </nav>
     </div>
 </aside>
 
 <script>
+    function toggleAdminSettingsMenu() {
+        const submenu = document.getElementById('adminSettingsSubmenu');
+        const toggle = document.getElementById('adminSettingsToggle');
+        const chevron = document.getElementById('adminSettingsChevron');
+        if (!submenu || !toggle) return;
+
+        const isOpening = submenu.classList.contains('hidden');
+        toggle.setAttribute('aria-expanded', String(isOpening));
+        submenu.style.overflow = 'hidden';
+        submenu.style.transition = 'max-height 0.25s ease, opacity 0.2s ease';
+
+        if (isOpening) {
+            submenu.classList.remove('hidden');
+            submenu.style.maxHeight = '0';
+            submenu.style.opacity = '0';
+            requestAnimationFrame(() => {
+                submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                submenu.style.opacity = '1';
+            });
+            setTimeout(() => {
+                submenu.style.maxHeight = 'none';
+                submenu.style.overflow = '';
+                submenu.style.transition = '';
+            }, 260);
+        } else {
+            submenu.style.maxHeight = submenu.scrollHeight + 'px';
+            submenu.style.opacity = '1';
+            requestAnimationFrame(() => {
+                submenu.style.maxHeight = '0';
+                submenu.style.opacity = '0';
+            });
+            setTimeout(() => {
+                submenu.classList.add('hidden');
+                submenu.style.maxHeight = '';
+                submenu.style.opacity = '';
+                submenu.style.overflow = '';
+                submenu.style.transition = '';
+            }, 260);
+        }
+
+        if (chevron) chevron.classList.toggle('rotate-180', isOpening);
+    }
+
     function closeAdminSidebar() {
         const sidebar = document.getElementById('adminSidebar');
         const backdrop = document.getElementById('sidebarBackdrop');

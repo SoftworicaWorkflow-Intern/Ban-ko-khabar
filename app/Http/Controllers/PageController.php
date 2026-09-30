@@ -7,6 +7,7 @@ use App\Models\News;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -169,18 +170,126 @@ class PageController extends Controller
                 'featured' => false,
                 'badge' => 'शिक्षा',
             ],
+            [
+                'id' => 9,
+                'slug' => 'climate-lakes-risk',
+                'title' => 'जलवायु परिवर्तनले हिमाली तालको जोखिम बढायो',
+                'excerpt' => 'तापक्रम वृद्धि र अनियमित हिमपातले हिमाली तालको जलस्तरमा पार्ने असरबारे स्थानीय विज्ञहरूले अध्ययन गरिरहेका छन्।',
+                'body' => 'तापक्रम वृद्धि र अनियमित हिमपातले हिमाली तालहरूको जलस्तरमा परिवर्तन ल्याइरहेको छ। जोखिम पहिचान र स्थानीय बस्तीको सुरक्षाका लागि अनुगमन तथा पूर्वसूचना प्रणालीलाई प्राथमिकता दिइएको छ।',
+                'category' => 'जलवायु परिवर्तन',
+                'category_slug' => 'climate-change',
+                'category_icon' => '🌦️',
+                'author' => 'सरिता भण्डारी',
+                'published_at' => 'गत साता',
+                'date' => '२०८१ मंसिर १०',
+                'reading_time' => '५ मिनेट',
+                'views' => 1860,
+                'image' => 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=900&q=80',
+                'featured' => false,
+                'badge' => 'जलवायु',
+            ],
+            [
+                'id' => 10,
+                'slug' => 'monsoon-shift-agriculture',
+                'title' => 'मनसुन चक्रमा परिवर्तनले खेतीपातीमा असर',
+                'excerpt' => 'वर्षा सुरु हुने समय र यसको वितरणमा देखिएको फेरबदलले किसानको बाली लगाउने तालिका प्रभावित पारेको छ।',
+                'body' => 'मनसुनको समय र वर्षाको वितरणमा आएको परिवर्तनले किसानको बाली लगाउने तालिका प्रभावित पारेको छ। मौसमसम्बन्धी सूचना र स्थानीय अनुकूलन योजनाले खेतीपातीको जोखिम घटाउन सहयोग गर्ने विज्ञहरूको भनाइ छ।',
+                'category' => 'जलवायु परिवर्तन',
+                'category_slug' => 'climate-change',
+                'category_icon' => '🌦️',
+                'author' => 'प्रकाश अधिकारी',
+                'published_at' => 'गत साता',
+                'date' => '२०८१ मंसिर ९',
+                'reading_time' => '४ मिनेट',
+                'views' => 1492,
+                'image' => 'https://images.unsplash.com/photo-1501691223387-dd0500403074?auto=format&fit=crop&w=900&q=80',
+                'featured' => false,
+                'badge' => 'जलवायु',
+            ],
+            [
+                'id' => 11,
+                'slug' => 'riverbank-waste-control',
+                'title' => 'नदी किनारका बस्तीमा फोहोरमैला नियन्त्रण अभियान',
+                'excerpt' => 'स्थानीय समूहहरूले नदी किनारमा फोहोर संकलन र व्यवस्थापन सुधार्न अभियान थालेका छन्।',
+                'body' => 'नदी किनारका बस्तीमा फोहोरमैला व्यवस्थापन सुधार्न स्थानीय समूह र पालिकाले संयुक्त अभियान सुरु गरेका छन्। नियमित संकलन र जनचेतनामार्फत जलस्रोत प्रदूषण कम गर्ने लक्ष्य राखिएको छ।',
+                'category' => 'वातावरण',
+                'category_slug' => 'environment',
+                'category_icon' => '🌍',
+                'author' => 'सविता पौडेल',
+                'published_at' => 'गत साता',
+                'date' => '२०८१ मंसिर ८',
+                'reading_time' => '४ मिनेट',
+                'views' => 1240,
+                'image' => 'https://images.unsplash.com/photo-1437482078695-73f5ca6c96e2?auto=format&fit=crop&w=900&q=80',
+                'featured' => false,
+                'badge' => 'वातावरण',
+            ],
+            [
+                'id' => 12,
+                'slug' => 'urban-air-monitoring-centres',
+                'title' => 'सहरी क्षेत्रमा वायु प्रदूषण मापन केन्द्र विस्तार',
+                'excerpt' => 'वायु गुणस्तरबारे समयमै जानकारी दिन थप मापन केन्द्र स्थापना गरिँदैछ।',
+                'body' => 'सहरी क्षेत्रमा वायुको गुणस्तर मापन गर्न थप केन्द्रहरू स्थापना हुँदैछन्। संकलित तथ्यांक सार्वजनिक गरेर प्रदूषण नियन्त्रणका योजनालाई प्रभावकारी बनाउने लक्ष्य छ।',
+                'category' => 'वातावरण',
+                'category_slug' => 'environment',
+                'category_icon' => '🌍',
+                'author' => 'निरज अधिकारी',
+                'published_at' => 'गत साता',
+                'date' => '२०८१ मंसिर ७',
+                'reading_time' => '३ मिनेट',
+                'views' => 980,
+                'image' => 'https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&w=900&q=80',
+                'featured' => false,
+                'badge' => 'वातावरण',
+            ],
+            [
+                'id' => 13,
+                'slug' => 'wildlife-camera-trap-network',
+                'title' => 'वन्यजन्तुको बासस्थान जोगाउन क्यामेरा ट्र्याप विस्तार',
+                'excerpt' => 'वन क्षेत्रमा क्यामेरा ट्र्याप थपेर वन्यजन्तुको आवागमन र बासस्थानको अवस्था अध्ययन गरिँदैछ।',
+                'body' => 'वन्यजन्तुको आवागमन र बासस्थानबारे भरपर्दो जानकारी संकलन गर्न संरक्षणकर्मीहरूले क्यामेरा ट्र्याप विस्तार गरेका छन्। प्राप्त विवरणले जोखिमयुक्त क्षेत्र पहिचान र संरक्षण योजना बनाउन सहयोग गर्नेछ।',
+                'category' => 'वन्यजन्तु',
+                'category_slug' => 'wildlife',
+                'category_icon' => '🦏',
+                'author' => 'रमेश थापा',
+                'published_at' => 'गत साता',
+                'date' => '२०८१ मंसिर ८',
+                'reading_time' => '५ मिनेट',
+                'views' => 1730,
+                'image' => 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=900&q=80',
+                'featured' => false,
+                'badge' => 'वन्यजन्तु',
+            ],
+            [
+                'id' => 14,
+                'slug' => 'chitwan-rhino-census',
+                'title' => 'चितवन क्षेत्रमा गैँडाको गणना सुरु',
+                'excerpt' => 'नयाँ गणनाले गैँडाको संख्या, बासस्थान र संरक्षण आवश्यकताबारे अद्यावधिक विवरण दिनेछ।',
+                'body' => 'संरक्षणकर्मी र निकुञ्जका प्राविधिक टोलीले चितवन क्षेत्रमा गैँडाको गणना सुरु गरेका छन्। गणनाबाट प्राप्त तथ्यांकले बासस्थान व्यवस्थापन र संरक्षण कार्यक्रमको प्राथमिकता तय गर्न सहयोग गर्नेछ।',
+                'category' => 'वन्यजन्तु',
+                'category_slug' => 'wildlife',
+                'category_icon' => '🦏',
+                'author' => 'मिना गुरुङ',
+                'published_at' => 'गत साता',
+                'date' => '२०८१ मंसिर ६',
+                'reading_time' => '४ मिनेट',
+                'views' => 1560,
+                'image' => 'https://images.unsplash.com/photo-1501706362039-c6e13d9c3a7c?auto=format&fit=crop&w=900&q=80',
+                'featured' => false,
+                'badge' => 'वन्यजन्तु',
+            ],
         ];
     }
 
     private function categoryCards(): array
     {
         return [
-            ['name' => 'वन संरक्षण', 'icon' => '🌲', 'count' => '२४ समाचार', 'image' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'वन्यजन्तु', 'icon' => '🦏', 'count' => '१७ समाचार', 'image' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'वातावरण', 'icon' => '🌍', 'count' => '१८ समाचार', 'image' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'जलवायु परिवर्तन', 'icon' => '🌦️', 'count' => '१२ समाचार', 'image' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'सामुदायिक वन', 'icon' => '🌱', 'count' => '१४ समाचार', 'image' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'राष्ट्रिय निकुञ्ज', 'icon' => '🏞️', 'count' => '९ समाचार', 'image' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'वन संरक्षण', 'slug' => 'forest-conservation', 'icon' => '🌲', 'count' => '२४ समाचार', 'image' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'वन्यजन्तु', 'slug' => 'wildlife', 'icon' => '🦏', 'count' => '१७ समाचार', 'image' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'वातावरण', 'slug' => 'environment', 'icon' => '🌍', 'count' => '१८ समाचार', 'image' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'जलवायु परिवर्तन', 'slug' => 'climate-change', 'icon' => '🌦️', 'count' => '१२ समाचार', 'image' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'सामुदायिक वन', 'slug' => 'community-forest', 'icon' => '🌱', 'count' => '१४ समाचार', 'image' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'राष्ट्रिय निकुञ्ज', 'slug' => 'national-park', 'icon' => '🏞️', 'count' => '९ समाचार', 'image' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80'],
         ];
     }
 
@@ -210,66 +319,166 @@ class PageController extends Controller
     private function homeHighlights(): array
     {
         return [
-            ['title' => 'वन निगरानी', 'label' => 'Field Report', 'icon' => '🌲', 'description' => 'वन क्षेत्रको दृश्य स्थिति र नवाचार'],
-            ['title' => 'प्रकृति पर्यटन', 'label' => 'Travel Guide', 'icon' => '🦌', 'description' => 'पर्यटन र संरक्षण बीचको संतुलन'],
-            ['title' => 'जल संरक्षण', 'label' => 'Water Watch', 'icon' => '💧', 'description' => 'नदी र जलाशयको स्थिरता'],
-            ['title' => 'वन्यजन्तु', 'label' => 'Wildlife', 'icon' => '🦏', 'description' => 'जीवविविधता र आवास संरक्षण'],
-            ['title' => 'आग्लो फायर', 'label' => 'Risk Monitor', 'icon' => '🔥', 'description' => 'द्वितीय श्रेणी वनमा जोखिम'],
-            ['title' => 'ग्रामिण वन', 'label' => 'Community', 'icon' => '🌱', 'description' => 'स्थानीय नेतृत्वमा संरक्षण'],
-            ['title' => 'मौसम परिवर्तन', 'label' => 'Climate', 'icon' => '🌦️', 'description' => 'पर्यावरणीय परिवर्तन र असर'],
-            ['title' => 'शिक्षा अभियान', 'label' => 'Youth', 'icon' => '🎓', 'description' => 'विद्यार्थीलाई संरक्षण शिक्षा'],
-            ['title' => 'निती अनुगमन', 'label' => 'Policy', 'icon' => '📜', 'description' => 'सरकारी नीति र प्रभाव'],
-            ['title' => 'संकट व्यवस्थापन', 'label' => 'Response', 'icon' => '🚑', 'description' => 'जंगली घटनामा तत्काल सहयोग'],
-            ['title' => 'पर्यावरण सर्वेक्षण', 'label' => 'Survey', 'icon' => '📊', 'description' => 'डाटा आधारित संरक्षण रिपोर्ट'],
-            ['title' => 'स्थानीय आवाज', 'label' => 'Voices', 'icon' => '🗣️', 'description' => 'समुदायका कथाहरू र अनुभव'],
+            ['title' => 'वन निगरानी', 'slug' => 'forest-conservation', 'label' => 'Field Report', 'icon' => '🌲', 'description' => 'वन क्षेत्रको दृश्य स्थिति र नवाचार'],
+            ['title' => 'प्रकृति पर्यटन', 'slug' => 'national-park', 'label' => 'Travel Guide', 'icon' => '🦌', 'description' => 'पर्यटन र संरक्षण बीचको संतुलन'],
+            ['title' => 'जल संरक्षण', 'slug' => 'environment', 'label' => 'Water Watch', 'icon' => '💧', 'description' => 'नदी र जलाशयको स्थिरता'],
+            ['title' => 'वन्यजन्तु', 'slug' => 'wildlife', 'label' => 'Wildlife', 'icon' => '🦏', 'description' => 'जीवविविधता र आवास संरक्षण'],
+            ['title' => 'आग्लो फायर', 'slug' => 'forest-conservation', 'label' => 'Risk Monitor', 'icon' => '🔥', 'description' => 'द्वितीय श्रेणी वनमा जोखिम'],
+            ['title' => 'ग्रामिण वन', 'slug' => 'community-forest', 'label' => 'Community', 'icon' => '🌱', 'description' => 'स्थानीय नेतृत्वमा संरक्षण'],
+            ['title' => 'मौसम परिवर्तन', 'slug' => 'climate-change', 'label' => 'Climate', 'icon' => '🌦️', 'description' => 'पर्यावरणीय परिवर्तन र असर'],
+            ['title' => 'शिक्षा अभियान', 'slug' => 'community-forest', 'label' => 'Youth', 'icon' => '🎓', 'description' => 'विद्यार्थीलाई संरक्षण शिक्षा'],
+            ['title' => 'निती अनुगमन', 'slug' => 'forest-conservation', 'label' => 'Policy', 'icon' => '📜', 'description' => 'सरकारी नीति र प्रभाव'],
+            ['title' => 'संकट व्यवस्थापन', 'slug' => 'wildlife', 'label' => 'Response', 'icon' => '🚑', 'description' => 'जंगली घटनामा तत्काल सहयोग'],
+            ['title' => 'पर्यावरण सर्वेक्षण', 'slug' => 'environment', 'label' => 'Survey', 'icon' => '📊', 'description' => 'डाटा आधारित संरक्षण रिपोर्ट'],
+            ['title' => 'स्थानीय आवाज', 'slug' => 'community-forest', 'label' => 'Voices', 'icon' => '🗣️', 'description' => 'समुदायका कथाहरू र अनुभव'],
         ];
     }
 
-    public function home(Request $request)
+    public function home()
     {
-        $news = $this->newsItems();
-        $featured = $news[0];
-        $sideFeatures = array_slice($news, 1, 3);
-
-        $perPage = 4;
-        $page = max(1, (int) $request->query('page', 1));
-        $latestItems = array_slice($news, 2);
-        $paginatedLatest = new LengthAwarePaginator(
-            array_slice($latestItems, ($page - 1) * $perPage, $perPage),
-            count($latestItems),
-            $perPage,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query(),
-            ]
-        );
-
-        $trending = array_slice($news, 0, 5);
+        $publishedStories = News::query()
+            ->with('category')
+            ->where('status', 'published')
+            ->whereNotNull('category_id')
+            ->latest()
+            ->get();
+        $featuredStory = $publishedStories->firstWhere('featured', true)
+            ?? $publishedStories->sortByDesc('views')->first();
+        $latestStories = $publishedStories
+            ->reject(fn (News $story): bool => $featuredStory !== null && $story->is($featuredStory))
+            ->values();
+        $featured = $featuredStory ? $this->newsCardData($featuredStory) : null;
+        $sideFeatures = $latestStories->take(3)->map(fn (News $story): array => $this->newsCardData($story))->all();
+        $latestItems = $latestStories->take(6)->map(fn (News $story): array => $this->newsCardData($story))->all();
+        $trending = $publishedStories
+            ->sortByDesc('views')
+            ->take(5)
+            ->map(fn (News $story): array => $this->newsCardData($story))
+            ->all();
+        $breakingNews = $publishedStories
+            ->take(5)
+            ->pluck('title')
+            ->all();
 
         return view('home', [
             'featured' => $featured,
             'sideFeatures' => $sideFeatures,
-            'latest' => $paginatedLatest->items(),
-            'pagination' => $paginatedLatest,
+            'latest' => $latestItems,
             'trending' => $trending,
-            'categories' => $this->categoryCards(),
+            'categories' => $this->homeCategoryCards($publishedStories),
             'highlights' => $this->homeHighlights(),
-            'breakingNews' => ['अलगै नेपालको जंगलमा जलवायु अनुकूलन योजना लागू हुँदै', 'सामुदायिक वनमा २,५०० बिरुवा रोपण सम्पन्न', 'हिमालपारका नदीहरूमा शुद्ध पानी संरक्षणमा नयाँ नीति'],
+            'breakingNews' => $breakingNews,
             'gallery' => array_slice($this->galleryItems(), 0, 6),
         ]);
     }
 
+    /**
+     * Convert a published database story to the card structure used by public views.
+     *
+     * @return array<string, mixed>
+     */
+    private function newsCardData(News $story): array
+    {
+        $categorySlug = $story->category?->slug ?? '';
+
+        return [
+            'id' => $story->id,
+            'slug' => $story->slug,
+            'title' => $story->title,
+            'excerpt' => $story->excerpt ?? '',
+            'body' => $story->content ?? '',
+            'category' => $story->category?->name ?? 'Uncategorized',
+            'category_slug' => $categorySlug,
+            'category_icon' => $this->categoryIcon($categorySlug),
+            'author' => $story->author ?? 'Editorial team',
+            'published_at' => $story->created_at?->format('M d, Y') ?? '',
+            'date' => $story->created_at?->format('M d, Y') ?? '',
+            'reading_time' => $story->readTime(),
+            'views' => (int) $story->views,
+            'image' => $story->image_url ?: asset('image/fev icon.png'),
+            'featured' => (bool) $story->featured,
+            'badge' => $story->category?->name ?? 'News',
+        ];
+    }
+
+    /**
+     * @return list<array{name: string, slug: string, icon: string, count: int, image: string}>
+     */
+    private function homeCategoryCards(Collection $publishedStories): array
+    {
+        $storiesByCategory = $publishedStories->groupBy('category_id');
+        $icons = [
+            'forest' => '🌲',
+            'wildlife' => '🦏',
+            'climate' => '🌦️',
+            'environment' => '🌍',
+            'community' => '🌱',
+            'national-park' => '🏞️',
+        ];
+
+        return Category::query()
+            ->whereHas('news', fn ($query) => $query->where('status', 'published'))
+            ->withCount(['news as published_news_count' => fn ($query) => $query->where('status', 'published')])
+            ->orderBy('name')
+            ->get()
+            ->map(function (Category $category) use ($storiesByCategory, $icons): array {
+                $categoryStories = $storiesByCategory->get($category->id, collect());
+                $representativeStory = $categoryStories->sortByDesc('views')->first();
+
+                return [
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'icon' => $icons[$category->slug] ?? '🌿',
+                    'count' => (int) $category->published_news_count,
+                    'image' => $representativeStory?->image_url ?: asset('image/fev icon.png'),
+                ];
+            })
+            ->all();
+    }
+
+    private function categoryIcon(string $slug): string
+    {
+        return match ($slug) {
+            'forest', 'forest-conservation' => '🌲',
+            'wildlife' => '🦏',
+            'climate', 'climate-change' => '🌦️',
+            'environment', 'conservation' => '🌍',
+            'community', 'community-forest' => '🌱',
+            'national-park', 'tourism' => '🏞️',
+            default => '🌿',
+        };
+    }
+
     public function showNews(string $slug)
     {
-        $news = $this->newsItems();
-        $article = collect($news)->firstWhere('slug', $slug) ?? $news[0];
-        $related = collect($news)
-            ->where('category', $article['category'])
-            ->reject(fn ($item) => $item['id'] === $article['id'])
-            ->take(3)
-            ->values()
-            ->all();
+        $story = News::query()
+            ->with('category')
+            ->where('status', 'published')
+            ->where('slug', $slug)
+            ->first();
+
+        if ($story) {
+            $article = $this->newsCardData($story);
+            $related = News::query()
+                ->with('category')
+                ->where('status', 'published')
+                ->where('category_id', $story->category_id)
+                ->whereKeyNot($story->id)
+                ->latest()
+                ->take(3)
+                ->get()
+                ->map(fn (News $relatedStory): array => $this->newsCardData($relatedStory))
+                ->all();
+        } else {
+            $news = $this->newsItems();
+            $article = collect($news)->firstWhere('slug', $slug) ?? $news[0];
+            $related = collect($news)
+                ->where('category', $article['category'])
+                ->reject(fn ($item) => $item['id'] === $article['id'])
+                ->take(3)
+                ->values()
+                ->all();
+        }
 
         return view('news.show', [
             'article' => $article,
@@ -342,6 +551,26 @@ class PageController extends Controller
 
     public function category(string $slug)
     {
+        $databaseCategory = Category::query()->where('slug', $slug)->first();
+
+        if ($databaseCategory) {
+            $databaseStories = $databaseCategory->news()
+                ->with('category')
+                ->where('status', 'published')
+                ->latest()
+                ->get();
+            $heroImage = $databaseStories->sortByDesc('views')->first()?->image_url;
+
+            return view('category', [
+                'category' => [
+                    'title' => $databaseCategory->name,
+                    'description' => $databaseCategory->description ?: 'Latest published stories in '.$databaseCategory->name.'.',
+                    'hero' => $heroImage ?: asset('image/fev icon.png'),
+                ],
+                'articles' => $databaseStories->map(fn (News $story): array => $this->newsCardData($story))->all(),
+            ]);
+        }
+
         $categories = [
             'forest-conservation' => [
                 'title' => 'वन संरक्षण',
@@ -362,6 +591,16 @@ class PageController extends Controller
                 'title' => 'जलवायु परिवर्तन',
                 'description' => 'जलवायु परिवर्तन, ग्लेशियर घट्ने phenomena, र जनजीवनमा असर पार्ने विषयहरू।',
                 'hero' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'community-forest' => [
+                'title' => 'सामुदायिक वन',
+                'description' => 'स्थानीय समुदायले नेतृत्व गरेका वन संरक्षण, वृक्षरोपण, र दिगो व्यवस्थापनका समाचारहरू।',
+                'hero' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'national-park' => [
+                'title' => 'राष्ट्रिय निकुञ्ज',
+                'description' => 'राष्ट्रिय निकुञ्ज, जैविक विविधता, वन्यजन्तु संरक्षण, र प्रकृति पर्यटनसम्बन्धी रिपोर्टहरू।',
+                'hero' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80',
             ],
         ];
 
@@ -384,89 +623,185 @@ class PageController extends Controller
 
     public function adminDashboard()
     {
-        $newsCount = News::count();
-        $userCount = User::count();
+        $now = now();
+        $from = $now->copy()->subMonths(11)->startOfMonth();
+        $monthlyRows = News::query()
+            ->whereBetween('created_at', [$from, $now])
+            ->selectRaw("strftime('%Y-%m', created_at) AS month_key, COUNT(*) AS article_count, COALESCE(SUM(views), 0) AS total_views")
+            ->groupBy('month_key')
+            ->get()
+            ->keyBy('month_key');
+        $monthlyNews = collect(range(0, 11))->map(function (int $offset) use ($from, $monthlyRows): array {
+            $month = $from->copy()->addMonths($offset);
+            $row = $monthlyRows->get($month->format('Y-m'));
+
+            return [
+                'label' => $month->format('M'),
+                'articles' => (int) ($row?->article_count ?? 0),
+                'views' => (int) ($row?->total_views ?? 0),
+            ];
+        })->all();
+        $publishedToday = News::query()->where('status', 'published')->whereDate('created_at', $now->toDateString());
+        $totalViews = (int) News::query()->sum('views');
+        $categoryStats = Category::query()
+            ->withCount(['news as published_count' => fn ($query) => $query->where('status', 'published')])
+            ->withSum(['news as total_views' => fn ($query) => $query->where('status', 'published')], 'views')
+            ->orderByDesc('published_count')
+            ->take(5)
+            ->get();
 
         return view('admin.dashboard', [
-            'newsCount' => $newsCount,
-            'userCount' => $userCount,
-            'commentCount' => 436,
-            'viewCount' => 82460,
-            'subscriberCount' => 3074,
-            'monthlyNews' => [45, 52, 38, 60, 68, 72, 66, 84, 91, 77, 89, 96],
-            'categoryStats' => [
-                ['label' => 'वन संरक्षण', 'value' => 32],
-                ['label' => 'वन्यजन्तु', 'value' => 24],
-                ['label' => 'वातावरण', 'value' => 18],
-                ['label' => 'जलवायु परिवर्तन', 'value' => 15],
-            ],
+            'newsCount' => News::query()->count(),
+            'publishedCount' => News::query()->where('status', 'published')->count(),
+            'userCount' => User::query()->count(),
+            'categoryCount' => Category::query()->count(),
+            'viewCount' => $totalViews,
+            'publishedToday' => $publishedToday->count(),
+            'todayViews' => (int) News::query()->where('status', 'published')->whereDate('created_at', $now->toDateString())->sum('views'),
+            'monthlyNews' => $monthlyNews,
+            'categoryStats' => $categoryStats,
+            'maxMonthlyNews' => max(1, max(array_column($monthlyNews, 'articles'))),
+            'maxCategoryViews' => max(1, (int) $categoryStats->max('total_views')),
             'userName' => Auth::user()->name ?? 'Admin User',
-            'lastLogin' => 'Today, 10:42 AM',
+            'lastLogin' => Auth::user()?->last_login_at?->format('M d, Y, h:i A') ?? 'No record yet',
         ]);
     }
+
+    /**
+     * Columns the articles table can be sorted by. `category` and `read_time`
+     * are not plain news columns, so they are resolved separately below.
+     *
+     * @var list<string>
+     */
+    private const ARTICLE_SORT_COLUMNS = ['title', 'category', 'author', 'status', 'read_time', 'views'];
 
     public function adminArticles()
     {
         $search = trim((string) request('search', ''));
         $categoryId = request('category_id');
-        $statusFilter = request('status');
+        $statusFilter = (string) request('status', '');
+        $authorFilter = trim((string) request('author', ''));
+        $perPage = (int) request('per_page', 10);
 
-        $query = News::query()->with('category');
+        if (! in_array($perPage, [10, 25, 50, 100], true)) {
+            $perPage = 10;
+        }
+
+        $sortKey = (string) request('sort', '');
+        $sortKey = in_array($sortKey, self::ARTICLE_SORT_COLUMNS, true) ? $sortKey : '';
+        $sortDirection = request('dir') === 'asc' ? 'asc' : 'desc';
+
+        $query = News::query()->with('category')->select('news.*');
 
         if ($search !== '') {
             $query->where(function ($builder) use ($search) {
-                $builder->where('title', 'like', '%'.$search.'%')
-                    ->orWhere('slug', 'like', '%'.$search.'%')
-                    ->orWhere('author', 'like', '%'.$search.'%');
+                $builder->where('news.title', 'like', '%'.$search.'%')
+                    ->orWhere('news.slug', 'like', '%'.$search.'%')
+                    ->orWhere('news.author', 'like', '%'.$search.'%');
             });
         }
 
         if ($categoryId !== null && $categoryId !== '') {
-            $query->where('category_id', $categoryId);
+            $query->where('news.category_id', $categoryId);
         }
 
         if (in_array($statusFilter, ['draft', 'published', 'pending'], true)) {
-            $query->where('status', $statusFilter);
+            $query->where('news.status', $statusFilter);
         }
 
-        $items = $query->latest()->paginate(6)->withQueryString();
+        if ($authorFilter !== '') {
+            $query->where('news.author', $authorFilter);
+        }
+
+        if ($sortKey === 'category') {
+            $query->leftJoin('categories', 'categories.id', '=', 'news.category_id')
+                ->orderBy('categories.name', $sortDirection)
+                ->orderBy('news.id', 'desc');
+        } elseif ($sortKey === 'read_time') {
+            // Read time is derived from text length at render time, so the same
+            // length expression is used to keep the SQL order consistent.
+            $query->orderByRaw(
+                '(LENGTH(news.title) + LENGTH(COALESCE(news.excerpt, \'\')) + LENGTH(COALESCE(news.content, \'\'))) '.$sortDirection
+            )->orderBy('news.id', 'desc');
+        } elseif ($sortKey !== '') {
+            $query->orderBy('news.'.$sortKey, $sortDirection)->orderBy('news.id', 'desc');
+        } else {
+            $query->latest();
+        }
+
+        $items = $query->paginate($perPage)->withQueryString();
+
+        $sortLinks = [];
+        foreach (self::ARTICLE_SORT_COLUMNS as $column) {
+            $nextDirection = ($column === $sortKey && $sortDirection === 'asc') ? 'desc' : 'asc';
+            $sortLinks[$column] = request()->fullUrlWithQuery([
+                'sort' => $column,
+                'dir' => $nextDirection,
+                'page' => null,
+            ]);
+        }
+
+        $authors = News::query()
+            ->whereNotNull('author')
+            ->where('author', '!=', '')
+            ->distinct()
+            ->orderBy('author')
+            ->pluck('author');
 
         return $this->adminSection('Articles', 'Newsroom content and publishing pipeline', [
             ['label' => 'Total articles', 'value' => (string) News::query()->count(), 'meta' => 'all time'],
-            ['label' => 'Published', 'value' => (string) News::query()->where('status', 'published')->count(), 'meta' => '+12% this month'],
-            ['label' => 'Drafts', 'value' => (string) News::query()->where('status', 'draft')->count(), 'meta' => '3 need review'],
-            ['label' => 'Pending', 'value' => (string) News::query()->where('status', 'pending')->count(), 'meta' => '2 urgent'],
-            ['label' => 'Featured', 'value' => (string) News::query()->where('featured', true)->count(), 'meta' => 'homepage highlights'],
-            ['label' => 'Matching', 'value' => (string) $items->total(), 'meta' => 'current filter results'],
+            ['label' => 'Drafts', 'value' => (string) News::query()->where('status', 'draft')->count(), 'meta' => 'awaiting review'],
         ], $items, 'articles', [
-            'tableColumns' => ['Title', 'Category', 'Date', 'Views', 'Actions'],
+            'tableColumns' => ['Thumbnail', 'Title', 'Category', 'Author', 'Status', 'Read Time', 'Views', 'Actions'],
             'categories' => Category::query()->orderBy('name')->get(),
+            'authors' => $authors,
             'filters' => [
                 'search' => $search,
                 'category_id' => (string) $categoryId,
-                'status' => (string) $statusFilter,
+                'status' => $statusFilter,
+                'author' => $authorFilter,
             ],
-            'activeFilters' => $search !== '' || ($categoryId !== null && $categoryId !== '') || in_array($statusFilter, ['draft', 'published', 'pending'], true),
+            'activeFilters' => $search !== ''
+                || ($categoryId !== null && $categoryId !== '')
+                || in_array($statusFilter, ['draft', 'published', 'pending'], true)
+                || $authorFilter !== '',
+            'sortKey' => $sortKey,
+            'sortDirection' => $sortDirection,
+            'sortLinks' => $sortLinks,
+            'perPage' => $perPage,
         ]);
     }
 
-    public function adminCategories()
+    public function editArticle(int $id)
     {
-        $items = Category::query()->withCount('news')->latest()->paginate(6)->withQueryString();
+        return $this->adminSection('Edit article', 'Update the story details and publishing status', [], collect(), 'article-edit', [
+            'article' => News::query()->with('category')->findOrFail($id),
+            'categories' => Category::query()->orderBy('name')->get(),
+        ]);
+    }
 
-        return $this->adminSection('Categories', 'Editorial sections and topic coverage', [
-            ['label' => 'Total categories', 'value' => (string) Category::query()->count(), 'meta' => '2 new this quarter'],
-            ['label' => 'Top category', 'value' => 'Forest', 'meta' => '32% of traffic'],
-            ['label' => 'Avg. engagement', 'value' => '78%', 'meta' => '+6 pts'],
-        ], $items, 'categories', [
+    public function adminCategories(Request $request)
+    {
+        $perPage = (int) $request->input('per_page', 10);
+        $items = Category::query()->withCount('news')->latest()->paginate($perPage)->withQueryString();
+
+        return $this->adminSection('Categories', 'Editorial sections and topic coverage', [], $items, 'categories', [
             'tableColumns' => ['Name', 'News count', 'Status', 'Actions'],
         ]);
     }
 
-    public function adminGallery()
+    public function editCategory(int $id)
+    {
+        return $this->adminSection('Edit category', 'Update the category name and description', [], collect(), 'category-edit', [
+            'category' => Category::query()->findOrFail($id),
+        ]);
+    }
+
+    public function adminGallery(Request $request)
     {
         $requestedType = (string) request('type', '');
         $typeFilter = in_array($requestedType, self::MEDIA_TYPES, true) ? $requestedType : '';
+        $perPage = $this->resolveAdminPerPage($request, 6);
 
         $mediaCounts = News::query()
             ->whereNotNull('image_url')
@@ -478,7 +813,7 @@ class PageController extends Controller
             ->whereNotNull('image_url')
             ->when($typeFilter !== '', fn ($query) => $query->where('media_type', $typeFilter))
             ->latest()
-            ->paginate(6)
+            ->paginate($perPage)
             ->withQueryString();
 
         $otherMedia = (int) ($mediaCounts['audio'] ?? 0) + (int) ($mediaCounts['document'] ?? 0);
@@ -498,9 +833,15 @@ class PageController extends Controller
         ]);
     }
 
-    public function adminUsers()
+    public function adminUsers(Request $request)
     {
-        $users = User::query()->latest()->paginate(8)->withQueryString();
+        $perPage = (int) $request->input('per_page', 10);
+
+        if (! in_array($perPage, [10, 25, 50, 100], true)) {
+            $perPage = 10;
+        }
+
+        $users = User::query()->latest()->paginate($perPage)->withQueryString();
 
         return $this->adminSection('Users', 'Registered accounts, roles, and access records', [
             ['label' => 'Total users', 'value' => (string) User::query()->count(), 'meta' => '+9% this month'],
@@ -511,63 +852,85 @@ class PageController extends Controller
         ]);
     }
 
-    public function adminReports()
+    public function adminReports(Request $request)
     {
+        $now = now();
+        $from = $now->copy()->subMonths(11)->startOfMonth();
+        $monthlyRows = News::query()
+            ->whereBetween('created_at', [$from, $now])
+            ->selectRaw("strftime('%Y-%m', created_at) AS month_key, COUNT(*) AS article_count, COALESCE(SUM(views), 0) AS total_views")
+            ->groupBy('month_key')
+            ->get()
+            ->keyBy('month_key');
+        $monthlyReports = collect(range(0, 11))->map(function (int $offset) use ($from, $monthlyRows): array {
+            $month = $from->copy()->addMonths($offset);
+            $row = $monthlyRows->get($month->format('Y-m'));
+            $articleCount = (int) ($row?->article_count ?? 0);
+
+            return [
+                'title' => $month->format('F Y').' newsroom summary',
+                'status' => 'Generated',
+                'meta' => number_format($articleCount).' articles · '.number_format((int) ($row?->total_views ?? 0)).' story views',
+                'articles' => $articleCount,
+                'views' => (int) ($row?->total_views ?? 0),
+            ];
+        })->all();
+        $topStories = News::query()
+            ->with('category')
+            ->where('status', 'published')
+            ->orderByDesc('views')
+            ->orderByDesc('created_at')
+            ->take(8)
+            ->get();
+        $topCategories = Category::query()
+            ->withCount(['news as published_articles' => fn ($query) => $query->where('status', 'published')])
+            ->withSum(['news as published_story_views' => fn ($query) => $query->where('status', 'published')], 'views')
+            ->orderByDesc('published_story_views')
+            ->take(5)
+            ->get();
+        $totalViews = (int) News::query()->sum('views');
+        $publishedCount = News::query()->where('status', 'published')->count();
         $reportSections = [
-            ['label' => 'Traffic', 'value' => '84.6K', 'meta' => '+18% vs last month'],
-            ['label' => 'Bounce rate', 'value' => '28%', 'meta' => 'down from 35%'],
-            ['label' => 'Avg. time', 'value' => '4m 12s', 'meta' => '+28 sec'],
-            ['label' => 'Sessions', 'value' => '62.1K', 'meta' => '+9% this week'],
-            ['label' => 'Page views', 'value' => '214K', 'meta' => '+12% this week'],
-            ['label' => 'Subscribers', 'value' => '3,074', 'meta' => '+214 this month'],
-            ['label' => 'New stories', 'value' => '96', 'meta' => 'this month'],
-            ['label' => 'Ad revenue', 'value' => 'रू 48.2K', 'meta' => '+16% vs last month'],
+            ['label' => 'Total story views', 'value' => number_format($totalViews), 'meta' => 'all-time article view count'],
+            ['label' => 'Published articles', 'value' => number_format($publishedCount), 'meta' => 'currently published'],
+            ['label' => 'Registered users', 'value' => number_format(User::query()->count()), 'meta' => 'all account roles'],
+            ['label' => 'Categories', 'value' => number_format(Category::query()->count()), 'meta' => 'editorial sections'],
         ];
-
         $businessGrowth = [
-            ['label' => 'New sponsors', 'value' => '6', 'meta' => '2 signed this week'],
-            ['label' => 'Renewed deals', 'value' => '11', 'meta' => '89% renewal rate'],
-            ['label' => 'Monthly growth', 'value' => '+22%', 'meta' => 'revenue vs last month'],
-            ['label' => 'Pipeline value', 'value' => 'रू 1.2M', 'meta' => 'open opportunities'],
+            ['label' => 'All articles', 'value' => number_format(News::query()->count()), 'meta' => 'stored in newsroom'],
+            ['label' => 'Draft articles', 'value' => number_format(News::query()->where('status', 'draft')->count()), 'meta' => 'not yet published'],
+            ['label' => 'Views on new stories', 'value' => number_format((int) News::query()->where('status', 'published')->whereBetween('created_at', [$now->copy()->startOfMonth(), $now])->sum('views')), 'meta' => 'for stories published this month'],
+            ['label' => 'New accounts this month', 'value' => number_format(User::query()->whereBetween('created_at', [$now->copy()->startOfMonth(), $now])->count()), 'meta' => 'created this month'],
         ];
-
-        $items = $this->paginateArray([
-            ['title' => 'Weekly traffic report', 'status' => 'Ready', 'meta' => 'Auto-generated Monday'],
-            ['title' => 'Engagement summary', 'status' => 'Updated', 'meta' => 'After yesterday drop'],
-            ['title' => 'Revenue / sponsor overview', 'status' => 'Draft', 'meta' => 'Awaiting final numbers'],
-            ['title' => 'Audience retention report', 'status' => 'Ready', 'meta' => 'Generated Tuesday'],
-            ['title' => 'Search performance', 'status' => 'Ready', 'meta' => 'Top 20 keywords tracked'],
-            ['title' => 'Newsletter performance', 'status' => 'Updated', 'meta' => 'Open rate 41%'],
-            ['title' => 'Category-wise readership', 'status' => 'Draft', 'meta' => 'Awaiting final numbers'],
-            ['title' => 'Sponsor impressions', 'status' => 'Ready', 'meta' => 'Generated Wednesday'],
-        ], 4);
+        $items = $this->paginateArray($monthlyReports, $this->resolveAdminPerPage($request, 4));
 
         return $this->adminSection('Reports', 'Analytics, engagement, and summaries', $reportSections, $items, 'reports', [
             'tableColumns' => ['Report', 'Status', 'Updated'],
             'businessGrowth' => $businessGrowth,
+            'maxMonthlyNews' => max(1, max(array_column($monthlyReports, 'articles'))),
+            'monthlyReports' => $monthlyReports,
+            'topStories' => $topStories,
+            'topCategories' => $topCategories,
+            'maxCategoryViews' => max(1, (int) $topCategories->max('published_story_views')),
         ]);
     }
 
     public function adminSettings()
     {
         $user = Auth::user();
-
-        $items = $this->paginateArray([
-            ['title' => 'Site configuration', 'status' => 'Active', 'meta' => 'Updated yesterday'],
-            ['title' => 'Publishing rules', 'status' => 'Enabled', 'meta' => 'Quality gates active'],
-            ['title' => 'Notifications', 'status' => 'Monitoring', 'meta' => 'Slack + email active'],
-            ['title' => 'Theme & branding', 'status' => 'Active', 'meta' => 'Updated last week'],
-            ['title' => 'Comment moderation', 'status' => 'Enabled', 'meta' => 'Auto-hold flagged'],
-            ['title' => 'Backup schedule', 'status' => 'Daily', 'meta' => '03:00 AM NPT'],
-        ], 3);
+        $perPage = $this->resolveAdminPerPage(request(), 5);
+        $items = User::query()
+            ->whereIn('role', ['admin', 'editor', 'reporter'])
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
 
         return $this->adminSection('Settings', 'Site preferences, publishing rules, and controls', [
-            ['label' => 'Themes', 'value' => '2', 'meta' => 'Default + dark mode'],
-            ['label' => 'Automation', 'value' => '5', 'meta' => 'Rules enabled'],
-            ['label' => 'Alerts', 'value' => '12', 'meta' => '2 critical'],
+            ['label' => 'Admin accounts', 'value' => (string) User::query()->where('role', 'admin')->count(), 'meta' => 'current admin role records'],
+            ['label' => 'Editorial accounts', 'value' => (string) User::query()->whereIn('role', ['editor', 'reporter'])->count(), 'meta' => 'editors and reporters'],
         ], $items, 'settings', [
-            'tableColumns' => ['Setting', 'Value', 'Last update'],
-            'lastPasswordChanged' => $user?->password_changed_at ? $user->password_changed_at->format('Y-m-d H:i') : '2026-09-10 09:12',
+            'tableColumns' => ['Account', 'Role', 'Created', 'Last login'],
+            'lastPasswordChanged' => $user?->password_changed_at?->format('Y-m-d H:i') ?? 'Never',
             'lastLogin' => $user?->last_login_at ? $user->last_login_at->format('M d, Y, h:i A') : 'No record yet',
         ]);
     }
@@ -829,6 +1192,13 @@ class PageController extends Controller
         );
     }
 
+    private function resolveAdminPerPage(Request $request, int $default): int
+    {
+        $perPage = (int) $request->query('per_page', $default);
+
+        return in_array($perPage, [2, 4, 5, 6, 10, 25, 50, 100], true) ? $perPage : $default;
+    }
+
     private function adminSection(string $title, string $subtitle, array $stats, $items, string $pageType = 'dashboard', array $meta = [])
     {
         return view('admin.page', [
@@ -840,15 +1210,27 @@ class PageController extends Controller
             'tableColumns' => $meta['tableColumns'] ?? [],
             'userName' => Auth::user()->name ?? 'Admin User',
             'lastLogin' => $meta['lastLogin'] ?? (Auth::user()?->last_login_at?->format('M d, Y, h:i A') ?? 'No record yet'),
-            'lastPasswordChanged' => $meta['lastPasswordChanged'] ?? '2026-09-10 09:12',
+            'lastPasswordChanged' => $meta['lastPasswordChanged'] ?? 'Never',
             'businessGrowth' => $meta['businessGrowth'] ?? [],
             'categories' => $meta['categories'] ?? [],
+            'authors' => $meta['authors'] ?? collect(),
             'filters' => $meta['filters'] ?? [],
             'activeFilters' => $meta['activeFilters'] ?? false,
+            'sortKey' => $meta['sortKey'] ?? '',
+            'sortDirection' => $meta['sortDirection'] ?? 'desc',
+            'sortLinks' => $meta['sortLinks'] ?? [],
+            'perPage' => $meta['perPage'] ?? 10,
             'mediaTypes' => $meta['mediaTypes'] ?? [],
             'mediaCounts' => $meta['mediaCounts'] ?? [],
             'mediaTotal' => $meta['mediaTotal'] ?? 0,
             'typeFilter' => $meta['typeFilter'] ?? '',
+            'article' => $meta['article'] ?? null,
+            'category' => $meta['category'] ?? null,
+            'maxMonthlyNews' => $meta['maxMonthlyNews'] ?? 1,
+            'monthlyReports' => $meta['monthlyReports'] ?? [],
+            'topStories' => $meta['topStories'] ?? collect(),
+            'topCategories' => $meta['topCategories'] ?? collect(),
+            'maxCategoryViews' => $meta['maxCategoryViews'] ?? 1,
             'cards' => $items,
         ]);
     }

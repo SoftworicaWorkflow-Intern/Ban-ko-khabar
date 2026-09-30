@@ -126,7 +126,7 @@
                     sidebar.classList.toggle('-translate-x-full', isOpen);
                     if (backdrop) backdrop.classList.toggle('hidden', isOpen);
                 } else {
-                    sidebar.classList.toggle('w-[260px]');
+                    sidebar.classList.toggle('w-[224px]');
                     sidebar.classList.toggle('w-[82px]');
                     sidebar.classList.toggle('is-collapsed');
                     window.dispatchEvent(new CustomEvent('sidebar-toggle', {
