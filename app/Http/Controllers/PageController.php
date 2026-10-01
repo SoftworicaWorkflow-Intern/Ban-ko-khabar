@@ -411,10 +411,33 @@ class PageController extends Controller
             'date' => $story->created_at?->format('M d, Y') ?? '',
             'reading_time' => $story->readTime(),
             'views' => (int) $story->views,
-            'image' => $story->image_url ?: asset('image/samples/01.svg'),
+            'image' => $this->resolveStoryImage($story->image_url, $categorySlug),
             'featured' => (bool) $story->featured,
             'badge' => $story->category?->name ?? 'News',
         ];
+    }
+
+    private function resolveStoryImage(?string $imageUrl, string $categorySlug): string
+    {
+        if ($imageUrl && ! str_contains($imageUrl, 'fev icon.png') && ! str_contains($imageUrl, '/image/samples/')) {
+            return str_starts_with($imageUrl, 'http://') || str_starts_with($imageUrl, 'https://')
+                ? $imageUrl
+                : asset(ltrim($imageUrl, '/'));
+        }
+
+        return $this->defaultStoryImage($categorySlug);
+    }
+
+    private function defaultStoryImage(string $categorySlug): string
+    {
+        return match ($categorySlug) {
+            'wildlife' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80',
+            'climate', 'climate-change' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=80',
+            'environment', 'conservation' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
+            'community', 'community-forest' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1200&q=80',
+            'national-park', 'tourism' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80',
+            default => 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+        };
     }
 
     /**
