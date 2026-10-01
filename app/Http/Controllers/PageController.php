@@ -284,12 +284,12 @@ class PageController extends Controller
     private function categoryCards(): array
     {
         return [
-            ['name' => 'वन संरक्षण', 'slug' => 'forest-conservation', 'icon' => '🌲', 'count' => '२४ समाचार', 'image' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'वन्यजन्तु', 'slug' => 'wildlife', 'icon' => '🦏', 'count' => '१७ समाचार', 'image' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'वातावरण', 'slug' => 'environment', 'icon' => '🌍', 'count' => '१८ समाचार', 'image' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'जलवायु परिवर्तन', 'slug' => 'climate-change', 'icon' => '🌦️', 'count' => '१२ समाचार', 'image' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'सामुदायिक वन', 'slug' => 'community-forest', 'icon' => '🌱', 'count' => '१४ समाचार', 'image' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80'],
-            ['name' => 'राष्ट्रिय निकुञ्ज', 'slug' => 'national-park', 'icon' => '🏞️', 'count' => '९ समाचार', 'image' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'वन संरक्षण', 'slug' => 'forest-conservation', 'icon' => '🌲', 'count' => 24, 'image' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'वन्यजन्तु', 'slug' => 'wildlife', 'icon' => '🦏', 'count' => 17, 'image' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'वातावरण', 'slug' => 'environment', 'icon' => '🌍', 'count' => 18, 'image' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'जलवायु परिवर्तन', 'slug' => 'climate-change', 'icon' => '🌦️', 'count' => 12, 'image' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'सामुदायिक वन', 'slug' => 'community-forest', 'icon' => '🌱', 'count' => 14, 'image' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80'],
+            ['name' => 'राष्ट्रिय निकुञ्ज', 'slug' => 'national-park', 'icon' => '🏞️', 'count' => 9, 'image' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80'],
         ];
     }
 
@@ -339,23 +339,39 @@ class PageController extends Controller
         $publishedStories = News::query()
             ->with('category')
             ->where('status', 'published')
-            ->whereNotNull('category_id')
             ->latest()
             ->get();
-        $featuredStory = $publishedStories->firstWhere('featured', true)
-            ?? $publishedStories->sortByDesc('views')->first();
-        $latestStories = $publishedStories
-            ->reject(fn (News $story): bool => $featuredStory !== null && $story->is($featuredStory))
+
+        $fallbackNews = collect($this->newsItems());
+
+        if ($publishedStories->isNotEmpty()) {
+            $dbCards = $publishedStories->map(fn (News $story): array => $this->newsCardData($story));
+            $existingSlugs = $dbCards->pluck('slug')->all();
+            $mergedStories = $dbCards->concat(
+                $fallbackNews->reject(fn (array $item): bool => in_array($item['slug'], $existingSlugs, true))
+            )->values();
+
+            $featuredStory = $dbCards->firstWhere('featured', true)
+                ?? $dbCards->sortByDesc('views')->first()
+                ?? $fallbackNews->firstWhere('featured', true);
+        } else {
+            $mergedStories = $fallbackNews;
+            $featuredStory = $fallbackNews->firstWhere('featured', true) ?? $fallbackNews->first();
+        }
+
+        $latestStories = $mergedStories
+            ->reject(fn (array $story): bool => $featuredStory !== null && $story['slug'] === $featuredStory['slug'])
             ->values();
-        $featured = $featuredStory ? $this->newsCardData($featuredStory) : null;
-        $sideFeatures = $latestStories->take(3)->map(fn (News $story): array => $this->newsCardData($story))->all();
-        $latestItems = $latestStories->take(6)->map(fn (News $story): array => $this->newsCardData($story))->all();
-        $trending = $publishedStories
+
+        $featured = $featuredStory;
+        $sideFeatures = $latestStories->take(3)->all();
+        $latestItems = $latestStories->take(6)->all();
+        $trending = $mergedStories
             ->sortByDesc('views')
             ->take(5)
-            ->map(fn (News $story): array => $this->newsCardData($story))
+            ->values()
             ->all();
-        $breakingNews = $publishedStories
+        $breakingNews = $mergedStories
             ->take(5)
             ->pluck('title')
             ->all();
@@ -406,34 +422,55 @@ class PageController extends Controller
      */
     private function homeCategoryCards(Collection $publishedStories): array
     {
+        $categories = Category::query()
+            ->withCount(['news as published_news_count' => fn ($query) => $query->where('status', 'published')])
+            ->orderBy('name')
+            ->get();
+
+        if ($categories->isEmpty()) {
+            return $this->categoryCards();
+        }
+
         $storiesByCategory = $publishedStories->groupBy('category_id');
         $icons = [
             'forest' => '🌲',
+            'forest-conservation' => '🌲',
             'wildlife' => '🦏',
             'climate' => '🌦️',
+            'climate-change' => '🌦️',
             'environment' => '🌍',
             'community' => '🌱',
+            'community-forest' => '🌱',
             'national-park' => '🏞️',
+            'tourism' => '🏞️',
+            'conservation' => '🌍',
         ];
 
-        return Category::query()
-            ->whereHas('news', fn ($query) => $query->where('status', 'published'))
-            ->withCount(['news as published_news_count' => fn ($query) => $query->where('status', 'published')])
-            ->orderBy('name')
-            ->get()
-            ->map(function (Category $category) use ($storiesByCategory, $icons): array {
-                $categoryStories = $storiesByCategory->get($category->id, collect());
-                $representativeStory = $categoryStories->sortByDesc('views')->first();
+        $defaultImages = [
+            'forest' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
+            'forest-conservation' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
+            'wildlife' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=900&q=80',
+            'environment' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
+            'climate' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80',
+            'climate-change' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80',
+            'community' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80',
+            'community-forest' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80',
+            'national-park' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80',
+            'tourism' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80',
+        ];
 
-                return [
-                    'name' => $category->name,
-                    'slug' => $category->slug,
-                    'icon' => $icons[$category->slug] ?? '🌿',
-                    'count' => (int) $category->published_news_count,
-                    'image' => $representativeStory?->image_url ?: asset('image/fev icon.png'),
-                ];
-            })
-            ->all();
+        return $categories->map(function (Category $category) use ($storiesByCategory, $icons, $defaultImages): array {
+            $categoryStories = $storiesByCategory->get($category->id, collect());
+            $representativeStory = $categoryStories->sortByDesc('views')->first();
+
+            return [
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'icon' => $icons[$category->slug] ?? '🌿',
+                'count' => (int) $category->published_news_count,
+                'image' => $representativeStory?->image_url ?: ($defaultImages[$category->slug] ?? 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80'),
+            ];
+        })->all();
     }
 
     private function categoryIcon(string $slug): string
