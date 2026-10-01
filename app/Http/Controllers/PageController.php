@@ -611,30 +611,15 @@ class PageController extends Controller
 
     public function category(string $slug)
     {
-        $databaseCategory = Category::query()->where('slug', $slug)->first();
-
-        if ($databaseCategory) {
-            $databaseStories = $databaseCategory->news()
-                ->with('category')
-                ->where('status', 'published')
-                ->latest()
-                ->get();
-            $heroImage = $databaseStories->sortByDesc('views')->first()?->image_url;
-
-            return view('category', [
-                'category' => [
-                    'title' => $databaseCategory->name,
-                    'description' => $databaseCategory->description ?: 'Latest published stories in '.$databaseCategory->name.'.',
-                    'hero' => $heroImage ?: asset('image/fev icon.png'),
-                ],
-                'articles' => $databaseStories->map(fn (News $story): array => $this->newsCardData($story))->all(),
-            ]);
-        }
-
         $categories = [
             'forest-conservation' => [
                 'title' => 'वन संरक्षण',
                 'description' => 'वन संरक्षण, सामुदायिक वन, र वातावरणीय लचिलोपनका विषयमा तथ्यपरक समाचार र रिपोर्टहरू।',
+                'hero' => 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'forest' => [
+                'title' => 'वन',
+                'description' => 'वन नीति, वृक्षरोपण, र राष्ट्रिय वन व्यवस्थापनका समाचार र अनुसन्धानहरू।',
                 'hero' => 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
             ],
             'wildlife' => [
@@ -645,11 +630,21 @@ class PageController extends Controller
             'environment' => [
                 'title' => 'वातावरण',
                 'description' => 'भौतिक वातावरण, जलस्रोत, र संधै सुरुचिरा विषयवस्तुमा आधारित रिपोर्टिङ।',
-                'hero' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
+                'hero' => 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'conservation' => [
+                'title' => 'संरक्षण',
+                'description' => 'प्राकृतिक वासस्थान, जैविक विविधता, र वातावरणीय संरक्षणका समाचारहरू।',
+                'hero' => 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80',
             ],
             'climate-change' => [
                 'title' => 'जलवायु परिवर्तन',
                 'description' => 'जलवायु परिवर्तन, ग्लेशियर घट्ने phenomena, र जनजीवनमा असर पार्ने विषयहरू।',
+                'hero' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=80',
+            ],
+            'climate' => [
+                'title' => 'जलवायु',
+                'description' => 'जलवायु परिवर्तन र वातावरणीय प्रभावसम्बन्धी अध्ययन तथा रिपोर्टहरू।',
                 'hero' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=80',
             ],
             'community-forest' => [
@@ -657,18 +652,58 @@ class PageController extends Controller
                 'description' => 'स्थानीय समुदायले नेतृत्व गरेका वन संरक्षण, वृक्षरोपण, र दिगो व्यवस्थापनका समाचारहरू।',
                 'hero' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1200&q=80',
             ],
+            'community' => [
+                'title' => 'समुदाय',
+                'description' => 'स्थानीय समुदायको सहभागिता, संरक्षण प्रयास र सामुदायिक वनका उपलब्धि।',
+                'hero' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1200&q=80',
+            ],
             'national-park' => [
                 'title' => 'राष्ट्रिय निकुञ्ज',
                 'description' => 'राष्ट्रिय निकुञ्ज, जैविक विविधता, वन्यजन्तु संरक्षण, र प्रकृति पर्यटनसम्बन्धी रिपोर्टहरू।',
                 'hero' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80',
             ],
+            'tourism' => [
+                'title' => 'पर्यटन',
+                'description' => 'प्रकृति पर्यटन, पदमार्ग, र पर्यापर्यटन व्यवस्थापनका ताजा समाचारहरू।',
+                'hero' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80',
+            ],
         ];
 
-        $category = $categories[$slug] ?? $categories['forest-conservation'];
+        $fallbackCategory = $categories[$slug] ?? $categories['forest-conservation'];
+        $databaseCategory = Category::query()->where('slug', $slug)->first();
+
+        if ($databaseCategory) {
+            $databaseStories = $databaseCategory->news()
+                ->with('category')
+                ->where('status', 'published')
+                ->latest()
+                ->get();
+            $heroImage = $this->resolveStoryImage($databaseStories->sortByDesc('views')->first()?->image_url, $databaseCategory->slug);
+            $dbArticles = $databaseStories->map(fn (News $story): array => $this->newsCardData($story))->all();
+
+            $categoryData = [
+                'title' => $databaseCategory->name,
+                'description' => $databaseCategory->description ?: ($fallbackCategory['description'] ?? 'Latest published stories in '.$databaseCategory->name.'.'),
+                'hero' => $heroImage,
+            ];
+
+            $filteredFallback = array_values(array_filter($this->newsItems(), fn ($item) => ($item['category_slug'] ?? '') === $slug || $slug === 'forest-conservation' && $item['category_slug'] === 'forest-conservation'));
+            if (empty($filteredFallback)) {
+                $filteredFallback = array_values(array_filter($this->newsItems(), fn ($item) => ($item['category'] ?? '') === $databaseCategory->name));
+            }
+
+            $articles = ! empty($dbArticles) ? $dbArticles : (! empty($filteredFallback) ? $filteredFallback : $this->newsItems());
+
+            return view('category', [
+                'category' => $categoryData,
+                'articles' => $articles,
+            ]);
+        }
+
         $filtered = array_values(array_filter($this->newsItems(), fn ($item) => ($item['category_slug'] ?? '') === $slug || $slug === 'forest-conservation' && $item['category_slug'] === 'forest-conservation'));
 
         if (empty($filtered) && $slug !== 'forest-conservation') {
-            $filtered = array_values(array_filter($this->newsItems(), fn ($item) => $item['category'] === $category['title']));
+            $filtered = array_values(array_filter($this->newsItems(), fn ($item) => $item['category'] === $fallbackCategory['title']));
         }
 
         if (empty($filtered)) {
@@ -676,7 +711,7 @@ class PageController extends Controller
         }
 
         return view('category', [
-            'category' => $category,
+            'category' => $fallbackCategory,
             'articles' => $filtered,
         ]);
     }
