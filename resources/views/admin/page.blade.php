@@ -927,12 +927,12 @@
                                 <h2 class="text-lg font-bold text-[#1b2433]">New team account</h2>
                                 <p class="mt-1 text-sm text-[#51657c]">Create an admin, editor, or reporter account.</p>
                             </div>
-                            <form method="POST" action="{{ route('admin.settings.admins.store') }}" class="space-y-4">
+                            <form method="POST" action="{{ route('admin.settings.admins.store') }}" autocomplete="off" class="space-y-4">
                                 @csrf
                                 <div><label for="admin-name" class="text-sm font-medium text-slate-700">Name</label><input id="admin-name" class="form-input" type="text" name="name" value="{{ old('name') }}" required></div>
-                                <div><label for="admin-email" class="text-sm font-medium text-slate-700">Email</label><input id="admin-email" class="form-input" type="email" name="email" value="{{ old('email') }}" required></div>
-                                <div><label for="admin-password" class="text-sm font-medium text-slate-700">Password</label><input id="admin-password" class="form-input" type="password" name="password" minlength="8" required></div>
-                                <div><label for="admin-password-confirmation" class="text-sm font-medium text-slate-700">Confirm password</label><input id="admin-password-confirmation" class="form-input" type="password" name="password_confirmation" minlength="8" required></div>
+                                <div><label for="admin-email" class="text-sm font-medium text-slate-700">Email</label><input id="admin-email" class="form-input" type="email" name="email" value="{{ old('email') }}" autocomplete="new-username" required></div>
+                                <div><label for="admin-password" class="text-sm font-medium text-slate-700">Password</label><input id="admin-password" class="form-input" type="password" name="password" autocomplete="new-password" minlength="8" required></div>
+                                <div><label for="admin-password-confirmation" class="text-sm font-medium text-slate-700">Confirm password</label><input id="admin-password-confirmation" class="form-input" type="password" name="password_confirmation" autocomplete="new-password" minlength="8" required></div>
                                 <div><label for="admin-role" class="text-sm font-medium text-slate-700">Role</label><select id="admin-role" class="form-input" name="role"><option value="admin">Admin</option><option value="editor">Editor</option><option value="reporter">Reporter</option></select></div>
                                 <button type="submit" class="rounded-xl bg-[#173b27] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Create account</button>
                             </form>

@@ -18,10 +18,6 @@ Route::get('/support', [PageController::class, 'support'])->name('support');
 Route::get('/category/{slug}', [PageController::class, 'category'])->name('category.show');
 
 Route::get('/login', function () {
-    if (Auth::check()) {
-        return Auth::user()?->isAdmin() ? redirect()->route('admin.dashboard') : redirect()->route('home');
-    }
-
     return view('auth.login');
 })->name('login');
 
@@ -80,10 +76,6 @@ Route::post('/login', function () {
 });
 
 Route::get('/register', function () {
-    if (Auth::check()) {
-        return redirect()->route('home');
-    }
-
     return view('auth.register');
 })->name('register');
 
@@ -104,7 +96,7 @@ Route::post('/register', function () {
     Auth::login($user);
     request()->session()->regenerate();
 
-    return redirect()->route('home');
+    return redirect()->route('home')->with('success', 'Your account was created successfully.');
 });
 
 Route::get('/admin/login', function () {

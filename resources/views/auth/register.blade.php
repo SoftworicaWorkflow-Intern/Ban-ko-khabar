@@ -10,6 +10,16 @@
                 <h1 class="mt-5 font-display text-3xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">Create account</h1>
             </div>
 
+            @if ($errors->any())
+                <div class="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <ul class="list-disc space-y-1 pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('register') }}" class="space-y-5">
                 @csrf
                 <div>
@@ -21,7 +31,7 @@
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                         </span>
-                        <input name="name" type="text" class="h-12 w-full rounded-full border border-[#dfeae0] bg-[#f8faf8] pl-11 pr-4 text-sm dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="Your full name">
+                        <input name="name" type="text" value="{{ old('name') }}" required class="h-12 w-full rounded-full border border-[#dfeae0] bg-[#f8faf8] pl-11 pr-4 text-sm dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="Your full name">
                     </div>
                 </div>
                 <div>
@@ -33,7 +43,7 @@
                                 <path d="m4.5 7 7.5 6 7.5-6"></path>
                             </svg>
                         </span>
-                        <input name="email" type="email" class="h-12 w-full rounded-full border border-[#dfeae0] bg-[#f8faf8] pl-11 pr-4 text-sm dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="name@example.com">
+                        <input name="email" type="email" value="{{ old('email') }}" required class="h-12 w-full rounded-full border border-[#dfeae0] bg-[#f8faf8] pl-11 pr-4 text-sm dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="name@example.com">
                     </div>
                 </div>
                 <div>
@@ -45,7 +55,7 @@
                                 <path d="M8 11V8a4 4 0 1 1 8 0v3"></path>
                             </svg>
                         </span>
-                        <input name="password" type="password" autocomplete="new-password" class="h-12 w-full rounded-full border border-[#dfeae0] bg-[#f8faf8] pl-11 pr-11 text-sm dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="••••••••">
+                        <input name="password" type="password" autocomplete="new-password" required minlength="8" class="h-12 w-full rounded-full border border-[#dfeae0] bg-[#f8faf8] pl-11 pr-11 text-sm dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="••••••••">
                         <button type="button" class="password-toggle absolute inset-y-0 right-3 flex items-center text-[#1B5E20] transition hover:text-[#143e18] dark:text-[#edf5ee]" aria-label="Show password">
                             <svg class="eye-open h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
@@ -57,6 +67,18 @@
                                 <path d="M9.88 5.08A10.94 10.94 0 0 1 12 5c6.5 0 10 7 10 7a16.2 16.2 0 0 1-3.38 4.72M6.61 6.61A15.8 15.8 0 0 0 2 12s3.5 7 10 7a11.3 11.3 0 0 0 5.39-1.61"></path>
                             </svg>
                         </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-semibold text-[#1B5E20] dark:text-[#edf5ee]">Confirm password</label>
+                    <div class="relative">
+                        <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-[#1B5E20] dark:text-[#edf5ee]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <rect x="5" y="11" width="14" height="9" rx="2"></rect>
+                                <path d="M8 11V8a4 4 0 1 1 8 0v3"></path>
+                            </svg>
+                        </span>
+                        <input name="password_confirmation" type="password" autocomplete="new-password" required minlength="8" class="h-12 w-full rounded-full border border-[#dfeae0] bg-[#f8faf8] pl-11 pr-4 text-sm dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="Confirm your password">
                     </div>
                 </div>
                 <button type="submit" class="h-12 w-full rounded-full bg-[#2E7D32] text-sm font-bold text-white hover:bg-[#1B5E20]">Register</button>

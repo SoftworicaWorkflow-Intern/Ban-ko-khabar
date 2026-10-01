@@ -12,6 +12,33 @@ class AuthRouteTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_login_page_is_available_to_guests_and_authenticated_users(): void
+    {
+        $this->get('/login')
+            ->assertOk()
+            ->assertSee('name="email"', false)
+            ->assertSee('name="password"', false);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/login')
+            ->assertOk()
+            ->assertSee('Welcome back');
+    }
+
+    public function test_register_page_is_available_to_guests_and_authenticated_users(): void
+    {
+        $this->get('/register')
+            ->assertOk()
+            ->assertSee('Create account')
+            ->assertSee('name="password_confirmation"', false);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/register')
+            ->assertOk()
+            ->assertSee('Create account')
+            ->assertSee('name="password_confirmation"', false);
+    }
+
     public function test_login_post_redirects_regular_users_to_home(): void
     {
         $user = User::factory()->create([
@@ -39,6 +66,24 @@ class AuthRouteTest extends TestCase
 
         $response->assertRedirect('/');
         $this->assertDatabaseHas('users', ['email' => 'testuser@example.com']);
+    }
+
+    public function test_registered_user_appears_in_admin_users_page(): void
+    {
+        $this->post('/register', [
+            'name' => 'New Reader',
+            'email' => 'reader@example.com',
+            'password' => 'Secret123',
+            'password_confirmation' => 'Secret123',
+        ])->assertRedirect('/');
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->get('/admin/users')
+            ->assertOk()
+            ->assertSee('New Reader')
+            ->assertSee('reader@example.com');
     }
 
     public function test_static_footer_pages_are_available(): void
