@@ -411,7 +411,7 @@ class PageController extends Controller
             'date' => $story->created_at?->format('M d, Y') ?? '',
             'reading_time' => $story->readTime(),
             'views' => (int) $story->views,
-            'image' => $story->image_url ?: asset('image/fev icon.png'),
+            'image' => $story->image_url ?: asset('image/samples/01.svg'),
             'featured' => (bool) $story->featured,
             'badge' => $story->category?->name ?? 'News',
         ];
@@ -447,16 +447,16 @@ class PageController extends Controller
         ];
 
         $defaultImages = [
-            'forest' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
-            'forest-conservation' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
-            'wildlife' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=900&q=80',
-            'environment' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
-            'climate' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80',
-            'climate-change' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80',
-            'community' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80',
-            'community-forest' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80',
-            'national-park' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80',
-            'tourism' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80',
+            'forest' => asset('image/samples/01.svg'),
+            'forest-conservation' => asset('image/samples/01.svg'),
+            'wildlife' => asset('image/samples/02.svg'),
+            'environment' => asset('image/samples/03.svg'),
+            'climate' => asset('image/samples/04.svg'),
+            'climate-change' => asset('image/samples/04.svg'),
+            'community' => asset('image/samples/05.svg'),
+            'community-forest' => asset('image/samples/05.svg'),
+            'national-park' => asset('image/samples/06.svg'),
+            'tourism' => asset('image/samples/06.svg'),
         ];
 
         return $categories->map(function (Category $category) use ($storiesByCategory, $icons, $defaultImages): array {
@@ -468,7 +468,7 @@ class PageController extends Controller
                 'slug' => $category->slug,
                 'icon' => $icons[$category->slug] ?? '🌿',
                 'count' => (int) $category->published_news_count,
-                'image' => $representativeStory?->image_url ?: ($defaultImages[$category->slug] ?? 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80'),
+                'image' => $representativeStory?->image_url ?: ($defaultImages[$category->slug] ?? asset('image/samples/01.svg')),
             ];
         })->all();
     }
@@ -861,6 +861,7 @@ class PageController extends Controller
             ['label' => 'Other media', 'value' => (string) $otherMedia, 'meta' => 'audio and documents'],
         ], $items, 'gallery', [
             'tableColumns' => ['Title', 'Category', 'Image', 'Status'],
+            'categories' => Category::query()->orderBy('name')->get(),
             'mediaTypes' => self::MEDIA_TYPES,
             'mediaCounts' => $mediaCounts,
             'mediaTotal' => (int) array_sum($mediaCounts->all()),
@@ -952,23 +953,29 @@ class PageController extends Controller
         ]);
     }
 
-    public function adminSettings()
+    public function adminPassword()
     {
         $user = Auth::user();
-        $perPage = $this->resolveAdminPerPage(request(), 5);
+
+        return $this->adminSection('Change password', 'Protect your administrator account with a new password', [], collect(), 'password', [
+            'lastPasswordChanged' => $user?->password_changed_at?->format('Y-m-d H:i') ?? 'Never',
+        ]);
+    }
+
+    public function adminAdmins(Request $request)
+    {
+        $perPage = $this->resolveAdminPerPage($request, 5);
         $items = User::query()
             ->whereIn('role', ['admin', 'editor', 'reporter'])
             ->latest()
             ->paginate($perPage)
             ->withQueryString();
 
-        return $this->adminSection('Settings', 'Site preferences, publishing rules, and controls', [
+        return $this->adminSection('Create admin', 'Add administrators and editorial team accounts', [
             ['label' => 'Admin accounts', 'value' => (string) User::query()->where('role', 'admin')->count(), 'meta' => 'current admin role records'],
             ['label' => 'Editorial accounts', 'value' => (string) User::query()->whereIn('role', ['editor', 'reporter'])->count(), 'meta' => 'editors and reporters'],
-        ], $items, 'settings', [
+        ], $items, 'admins', [
             'tableColumns' => ['Account', 'Role', 'Created', 'Last login'],
-            'lastPasswordChanged' => $user?->password_changed_at?->format('Y-m-d H:i') ?? 'Never',
-            'lastLogin' => $user?->last_login_at ? $user->last_login_at->format('M d, Y, h:i A') : 'No record yet',
         ]);
     }
 
@@ -1186,7 +1193,7 @@ class PageController extends Controller
             'role' => $validated['role'],
         ]);
 
-        return redirect()->route('admin.settings')->with('success', 'Account created.');
+        return redirect()->route('admin.settings.admins')->with('success', 'Account created.');
     }
 
     public function updatePassword(Request $request)
@@ -1206,7 +1213,7 @@ class PageController extends Controller
         $user->password_changed_at = now();
         $user->save();
 
-        return redirect()->route('admin.settings')->with('success', 'Password updated.');
+        return redirect()->route('admin.settings.password')->with('success', 'Password updated.');
     }
 
     /**

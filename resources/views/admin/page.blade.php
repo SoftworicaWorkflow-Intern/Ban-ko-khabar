@@ -403,6 +403,8 @@
                         </div>
                     </div>
                 @elseif ($pageType === 'gallery')
+                    @include('admin.partials.gallery-table')
+                    @if (false)
                     <div class="mt-6 rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)]">
                         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                             <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#51657c]">Filter media</div>
@@ -633,6 +635,7 @@
                             });
                         })();
                     </script>
+                    @endif
                 @elseif ($pageType === 'users')
                     <div class="mt-6 overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-[0_10px_22px_rgba(19,41,26,0.05)]">
                         {{-- Toolbar --}}
@@ -895,6 +898,50 @@
                             @endforelse
                         </div>
                         @include('admin.partials.pagination', ['paginator' => $items, 'ariaLabel' => 'Reports pagination'])
+                    </div>
+                @elseif ($pageType === 'password')
+                    <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">
+                        <section class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)] sm:p-7">
+                            <div class="mb-6 border-b border-slate-100 pb-4">
+                                <h2 class="text-lg font-bold text-[#1b2433]">Update password</h2>
+                                <p class="mt-1 text-sm text-[#51657c]">Use at least eight characters and keep this password private.</p>
+                            </div>
+                            <form method="POST" action="{{ route('admin.settings.password.update') }}" class="max-w-xl space-y-4">
+                                @csrf
+                                <div><label for="current-password" class="text-sm font-medium text-slate-700">Current password</label><input id="current-password" class="form-input" type="password" name="current_password" required></div>
+                                <div><label for="new-password" class="text-sm font-medium text-slate-700">New password</label><input id="new-password" class="form-input" type="password" name="password" minlength="8" required></div>
+                                <div><label for="confirm-password" class="text-sm font-medium text-slate-700">Confirm new password</label><input id="confirm-password" class="form-input" type="password" name="password_confirmation" minlength="8" required></div>
+                                <button type="submit" class="rounded-xl bg-[#173b27] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Update password</button>
+                            </form>
+                        </section>
+                        <aside class="rounded-[20px] bg-[#173b27] p-5 text-white shadow-[0_10px_22px_rgba(19,41,26,0.12)] sm:p-7">
+                            <div class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b9e2b5]">Account security</div>
+                            <div class="mt-4 text-2xl font-black">Password protection</div>
+                            <p class="mt-3 text-sm leading-6 text-[#d9edda]">Your password was last changed on {{ $lastPasswordChanged }}.</p>
+                        </aside>
+                    </div>
+                @elseif ($pageType === 'admins')
+                    <div class="mt-6 grid gap-6 xl:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.6fr)]">
+                        <section class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)] sm:p-7">
+                            <div class="mb-6 border-b border-slate-100 pb-4">
+                                <h2 class="text-lg font-bold text-[#1b2433]">New team account</h2>
+                                <p class="mt-1 text-sm text-[#51657c]">Create an admin, editor, or reporter account.</p>
+                            </div>
+                            <form method="POST" action="{{ route('admin.settings.admins.store') }}" class="space-y-4">
+                                @csrf
+                                <div><label for="admin-name" class="text-sm font-medium text-slate-700">Name</label><input id="admin-name" class="form-input" type="text" name="name" value="{{ old('name') }}" required></div>
+                                <div><label for="admin-email" class="text-sm font-medium text-slate-700">Email</label><input id="admin-email" class="form-input" type="email" name="email" value="{{ old('email') }}" required></div>
+                                <div><label for="admin-password" class="text-sm font-medium text-slate-700">Password</label><input id="admin-password" class="form-input" type="password" name="password" minlength="8" required></div>
+                                <div><label for="admin-password-confirmation" class="text-sm font-medium text-slate-700">Confirm password</label><input id="admin-password-confirmation" class="form-input" type="password" name="password_confirmation" minlength="8" required></div>
+                                <div><label for="admin-role" class="text-sm font-medium text-slate-700">Role</label><select id="admin-role" class="form-input" name="role"><option value="admin">Admin</option><option value="editor">Editor</option><option value="reporter">Reporter</option></select></div>
+                                <button type="submit" class="rounded-xl bg-[#173b27] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Create account</button>
+                            </form>
+                        </section>
+                        <section class="overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-[0_10px_22px_rgba(19,41,26,0.05)]">
+                            <div class="border-b border-slate-100 px-5 py-4"><h2 class="text-sm font-semibold text-[#173b27]">Team accounts</h2><p class="mt-1 text-xs text-[#51657c]">Accounts with administrative or editorial access</p></div>
+                            <div class="overflow-x-auto"><table class="w-full min-w-[620px] text-left text-sm"><thead class="bg-[#f8fafc] text-[11px] font-semibold uppercase tracking-[0.12em] text-[#51657c]"><tr><th class="px-5 py-3">Account</th><th class="px-3 py-3">Role</th><th class="px-3 py-3">Created</th><th class="px-3 py-3">Last login</th></tr></thead><tbody class="divide-y divide-slate-100">@forelse ($items as $account)<tr><td class="px-5 py-3"><div class="font-semibold text-slate-800">{{ $account->name }}</div><div class="text-xs text-slate-500">{{ $account->email }}</div></td><td class="px-3 py-3"><span class="rounded-full bg-[#eaf7ea] px-2.5 py-1 text-xs font-semibold capitalize text-[#173b27]">{{ $account->role }}</span></td><td class="px-3 py-3 text-slate-600">{{ $account->created_at?->format('M d, Y') ?? '—' }}</td><td class="px-3 py-3 text-slate-600">{{ $account->last_login_at?->format('M d, Y, h:i A') ?? 'Never' }}</td></tr>@empty<tr><td colspan="4" class="px-5 py-8 text-center text-sm text-slate-500">No team accounts found.</td></tr>@endforelse</tbody></table></div>
+                            @include('admin.partials.pagination', ['paginator' => $items, 'ariaLabel' => 'Team accounts pagination'])
+                        </section>
                     </div>
                 @elseif ($pageType === 'settings')
                     <div class="mt-6 space-y-4">

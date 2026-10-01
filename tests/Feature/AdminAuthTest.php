@@ -71,7 +71,11 @@ class AdminAuthTest extends TestCase
             ->assertOk();
 
         $this->actingAs(User::first())
-            ->get('/admin/settings')
+            ->get('/admin/settings/password')
+            ->assertOk();
+
+        $this->actingAs(User::first())
+            ->get('/admin/settings/admins')
             ->assertOk();
     }
 
@@ -138,7 +142,7 @@ class AdminAuthTest extends TestCase
                 'password' => 'NewPassword123',
                 'password_confirmation' => 'NewPassword123',
             ])
-            ->assertRedirect('/admin/settings');
+            ->assertRedirect('/admin/settings/password');
 
         $admin->refresh();
         $this->assertNotNull($admin->password_changed_at);

@@ -48,7 +48,7 @@
             @if ($featured)
             <article class="group overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 dark:bg-[#17242b]">
                 <div class="relative overflow-hidden">
-                    <img src="{{ $featured['image'] }}" alt="{{ $featured['title'] }}" class="h-[420px] w-full object-cover transition duration-500 group-hover:scale-105">
+                    <img src="{{ $featured['image'] }}" alt="{{ $featured['title'] }}" class="h-[420px] w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='{{ asset('image/samples/01.svg') }}';">
                     <span class="absolute left-5 top-5 rounded-full bg-[#2E7D32] px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white">{{ $featured['badge'] }}</span>
                 </div>
                 <div class="p-6 sm:p-8">
@@ -85,7 +85,7 @@
                 @foreach($sideFeatures as $item)
                     <article class="group overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 dark:bg-[#17242b]">
                         <div class="flex gap-4 p-4">
-                            <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-32 w-32 rounded-2xl object-cover">
+                            <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-32 w-32 rounded-2xl object-cover" onerror="this.onerror=null;this.src='{{ asset('image/samples/02.svg') }}';">
                             <div class="flex-1">
                                 <div class="mb-2 flex items-center justify-between text-[11px] text-[#5e6f61] dark:text-[#bfd3c3]">
                                     <span>{{ $item['category'] }}</span>
@@ -115,7 +115,7 @@
                 @foreach($latest as $item)
                     <article class="group overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.05)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_55px_rgba(19,41,26,0.12)] dark:bg-[#17242b]">
                         <div class="relative overflow-hidden">
-                            <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-56 w-full object-cover transition duration-500 group-hover:scale-105">
+                            <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-56 w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='{{ asset('image/samples/03.svg') }}';">
                             <span class="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#2E7D32]">{{ $item['category'] }}</span>
                         </div>
                         <div class="p-5">
@@ -157,7 +157,7 @@
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             @foreach($categories as $category)
                 <a href="{{ route('category.show', $category['slug']) }}" aria-label="{{ $category['name'] }} category" class="group relative block overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:bg-[#17242b]">
-                    <img src="{{ $category['image'] }}" alt="{{ $category['name'] }}" class="h-64 w-full object-cover transition duration-500 group-hover:scale-105">
+                    <img src="{{ $category['image'] }}" alt="{{ $category['name'] }}" class="h-64 w-full object-cover transition duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='{{ asset('image/samples/04.svg') }}';">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#112822]/85 via-[#112822]/20 to-transparent"></div>
                     <div class="absolute inset-x-0 bottom-0 p-6">
                         <div class="mb-3 flex items-center justify-between">
@@ -187,7 +187,7 @@
             <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
                 @foreach($trending as $item)
                     <a href="{{ route('news.show', $item['slug']) }}" aria-label="Open story: {{ $item['title'] }}" class="group block overflow-hidden rounded-[24px] border border-white/10 bg-white/5 backdrop-blur-sm transition hover:border-white/25 hover:bg-white/10 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F]">
-                        <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-48 w-full object-cover">
+                        <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-48 w-full object-cover" onerror="this.onerror=null;this.src='{{ asset('image/samples/05.svg') }}';">
                         <div class="p-4">
                             <span class="text-[10px] uppercase tracking-[0.2em] text-[#8FD58F]">{{ $item['category'] }}</span>
                             <h3 class="mt-3 font-display text-lg font-bold leading-snug text-white">{{ $item['title'] }}</h3>

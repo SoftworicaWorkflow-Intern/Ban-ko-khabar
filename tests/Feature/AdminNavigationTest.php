@@ -69,7 +69,8 @@ class AdminNavigationTest extends TestCase
             '/admin/gallery',
             '/admin/users',
             '/admin/reports',
-            '/admin/settings',
+            '/admin/settings/password',
+            '/admin/settings/admins',
         ];
 
         foreach ($subpages as $url) {

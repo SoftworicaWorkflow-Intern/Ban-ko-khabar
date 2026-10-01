@@ -92,8 +92,8 @@ class AdminSectionManagementTest extends TestCase
         $response->assertOk()
             ->assertSee('Upload media')
             ->assertSee('Create')
-            ->assertSee('Filter by type')
-            ->assertSee('Media library')
+            ->assertSee('All types')
+            ->assertSee('All media')
             ->assertSee('Preview')
             ->assertSee('Delete')
             ->assertSee('multipart/form-data')
@@ -206,7 +206,7 @@ class AdminSectionManagementTest extends TestCase
                 'password_confirmation' => 'Secret12345',
                 'role' => 'editor',
             ])
-            ->assertRedirect('/admin/settings');
+            ->assertRedirect('/admin/settings/admins');
 
         $this->assertDatabaseHas('users', [
             'email' => 'editor@vankokhabar.com',
@@ -219,7 +219,7 @@ class AdminSectionManagementTest extends TestCase
         $this->admin();
 
         $this->actingAs(User::first())
-            ->from('/admin/settings')
+            ->from('/admin/settings/admins')
             ->post('/admin/settings/admins', [
                 'name' => 'Duplicate',
                 'email' => 'admin@vankokhabar.com',
@@ -227,7 +227,7 @@ class AdminSectionManagementTest extends TestCase
                 'password_confirmation' => 'Secret12345',
                 'role' => 'admin',
             ])
-            ->assertRedirect('/admin/settings')
+            ->assertRedirect('/admin/settings/admins')
             ->assertSessionHasErrors('email');
     }
 
@@ -246,7 +246,7 @@ class AdminSectionManagementTest extends TestCase
             ->assertSee('page=2');
     }
 
-    public function test_admin_report_and_settings_page_sizes_are_applied(): void
+    public function test_admin_report_and_admin_page_sizes_are_applied(): void
     {
         $admin = $this->admin();
         foreach (range(1, 6) as $index) {
@@ -260,12 +260,12 @@ class AdminSectionManagementTest extends TestCase
             ->assertOk()
             ->assertSee('Showing 1 to 5 of 12 results');
 
-        $this->get('/admin/settings?per_page=2')
+        $this->get('/admin/settings/admins?per_page=2')
             ->assertOk()
             ->assertSee('Showing 1 to 2 of 7 results');
     }
 
-    public function test_reports_and_settings_are_paginated(): void
+    public function test_reports_and_admins_are_paginated(): void
     {
         $admin = $this->admin();
         foreach (range(1, 5) as $index) {
@@ -275,7 +275,7 @@ class AdminSectionManagementTest extends TestCase
         }
 
         $this->actingAs($admin)->get('/admin/reports')->assertOk()->assertSee('page=2');
-        $this->actingAs($admin)->get('/admin/settings')->assertOk()->assertSee('page=2');
+        $this->actingAs($admin)->get('/admin/settings/admins')->assertOk()->assertSee('page=2');
     }
 
     public function test_users_page_shows_registration_records(): void
@@ -314,10 +314,10 @@ class AdminSectionManagementTest extends TestCase
             ->assertSee('data-delete-name="Forest News"', false);
     }
 
-    public function test_settings_page_shows_last_login_and_admin_creator(): void
+    public function test_admin_page_shows_last_login_and_admin_creator(): void
     {
         $this->actingAs($this->admin())
-            ->get('/admin/settings')
+            ->get('/admin/settings/admins')
             ->assertOk()
             ->assertSee('Create admin')
             ->assertSee('Last login');

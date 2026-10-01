@@ -126,9 +126,9 @@
                 <button type="button"
                     id="adminSettingsToggle"
                     onclick="toggleAdminSettingsMenu()"
-                    aria-expanded="{{ request()->routeIs('admin.settings') ? 'true' : 'false' }}"
+                    aria-expanded="{{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }}"
                     aria-controls="adminSettingsSubmenu"
-                    class="sidebar-item {{ request()->routeIs('admin.settings') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
+                    class="sidebar-item {{ request()->routeIs('admin.settings.*') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
                 <span class="flex items-center gap-3">
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#98D28E] transition-colors group-hover:bg-[#98D28E] group-hover:text-[#173B27]">
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -138,12 +138,11 @@
                     </span>
                     <span class="sidebar-label">Settings</span>
                 </span>
-                <svg id="adminSettingsChevron" class="h-4 w-4 shrink-0 transition-transform duration-300 {{ request()->routeIs('admin.settings') ? 'rotate-180' : '' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                <svg id="adminSettingsChevron" class="h-4 w-4 shrink-0 transition-transform duration-300 {{ request()->routeIs('admin.settings.*') ? 'rotate-180' : '' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </button>
-            <div id="adminSettingsSubmenu" class="sidebar-settings-submenu {{ request()->routeIs('admin.settings') ? '' : 'hidden' }} ml-10 mt-1 space-y-1 overflow-hidden transition-all duration-300">
-                <a href="{{ route('admin.settings') }}" class="block rounded-lg px-3 py-2 text-xs font-medium text-[#DFEEE0] transition hover:bg-white/10 hover:text-white">Settings overview</a>
-                <a href="{{ route('admin.settings') }}#passwordPanel" class="block rounded-lg px-3 py-2 text-xs font-medium text-[#DFEEE0] transition hover:bg-white/10 hover:text-white">Change password</a>
-                <a href="{{ route('admin.settings') }}#createAdminPanel" class="block rounded-lg px-3 py-2 text-xs font-medium text-[#DFEEE0] transition hover:bg-white/10 hover:text-white">Create admin</a>
+            <div id="adminSettingsSubmenu" class="sidebar-settings-submenu {{ request()->routeIs('admin.settings.*') ? '' : 'hidden' }} ml-10 mt-1 space-y-1 overflow-hidden transition-all duration-300">
+                <a href="{{ route('admin.settings.password') }}" class="block rounded-lg px-3 py-2 text-xs font-medium {{ request()->routeIs('admin.settings.password') ? 'bg-white/10 text-white' : 'text-[#DFEEE0]' }} transition hover:bg-white/10 hover:text-white">Change password</a>
+                <a href="{{ route('admin.settings.admins') }}" class="block rounded-lg px-3 py-2 text-xs font-medium {{ request()->routeIs('admin.settings.admins') ? 'bg-white/10 text-white' : 'text-[#DFEEE0]' }} transition hover:bg-white/10 hover:text-white">Create admin</a>
             </div>
         </nav>
     </div>

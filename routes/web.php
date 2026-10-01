@@ -195,9 +195,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/gallery/{id}/delete', [PageController::class, 'deleteGallery'])->name('admin.gallery.delete');
     Route::get('/admin/users', [PageController::class, 'adminUsers'])->name('admin.users');
     Route::get('/admin/reports', [PageController::class, 'adminReports'])->name('admin.reports');
-    Route::get('/admin/settings', [PageController::class, 'adminSettings'])->name('admin.settings');
-    Route::post('/admin/settings/password', [PageController::class, 'updatePassword'])->name('admin.settings.password');
-    Route::post('/admin/settings/admins', [PageController::class, 'storeAdmin'])->name('admin.settings.admins');
+    Route::get('/admin/settings/password', [PageController::class, 'adminPassword'])->name('admin.settings.password');
+    Route::post('/admin/settings/password', [PageController::class, 'updatePassword'])->name('admin.settings.password.update');
+    Route::get('/admin/settings/admins', [PageController::class, 'adminAdmins'])->name('admin.settings.admins');
+    Route::post('/admin/settings/admins', [PageController::class, 'storeAdmin'])->name('admin.settings.admins.store');
     Route::post('/admin/logout', function () {
         Auth::logout();
         request()->session()->invalidate();
