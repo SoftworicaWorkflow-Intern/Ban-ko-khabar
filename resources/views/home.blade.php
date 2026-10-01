@@ -206,11 +206,16 @@
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             @foreach($highlights as $item)
-                <a href="{{ route('category.show', $item['slug']) }}" aria-label="Open insight: {{ $item['title'] }}" class="block rounded-[24px] border border-[#dfeae0] bg-white p-5 shadow-[0_18px_45px_rgba(19,41,26,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(19,41,26,0.08)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:border-white/10 dark:bg-[#17242b]">
-                    <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#edf6ee] text-2xl dark:bg-[#20332d]">{{ $item['icon'] }}</div>
-                    <div class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#2E7D32]">{{ $item['label'] }}</div>
-                    <h3 class="mt-3 font-display text-xl font-bold text-[#1d2a1d] dark:text-[#edf5ee]">{{ $item['title'] }}</h3>
-                    <p class="mt-3 text-sm leading-6 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $item['description'] }}</p>
+                <a href="{{ route('category.show', $item['slug']) }}" aria-label="Open insight: {{ $item['title'] }}" class="group block overflow-hidden rounded-[24px] border border-[#dfeae0] bg-white p-5 shadow-[0_18px_45px_rgba(19,41,26,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(19,41,26,0.08)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:border-white/10 dark:bg-[#17242b]">
+                    <div class="mb-4 overflow-hidden rounded-2xl">
+                        <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-36 w-full object-cover transition duration-500 group-hover:scale-105">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-[10px] font-bold uppercase tracking-[0.22em] text-[#2E7D32]">{{ $item['label'] }}</div>
+                        <span class="text-lg">{{ $item['icon'] }}</span>
+                    </div>
+                    <h3 class="mt-2 font-display text-xl font-bold text-[#1d2a1d] dark:text-[#edf5ee]">{{ $item['title'] }}</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $item['description'] }}</p>
                 </a>
             @endforeach
         </div>

@@ -319,18 +319,18 @@ class PageController extends Controller
     private function homeHighlights(): array
     {
         return [
-            ['title' => 'वन निगरानी', 'slug' => 'forest-conservation', 'label' => 'Field Report', 'icon' => '🌲', 'description' => 'वन क्षेत्रको दृश्य स्थिति र नवाचार'],
-            ['title' => 'प्रकृति पर्यटन', 'slug' => 'national-park', 'label' => 'Travel Guide', 'icon' => '🦌', 'description' => 'पर्यटन र संरक्षण बीचको संतुलन'],
-            ['title' => 'जल संरक्षण', 'slug' => 'environment', 'label' => 'Water Watch', 'icon' => '💧', 'description' => 'नदी र जलाशयको स्थिरता'],
-            ['title' => 'वन्यजन्तु', 'slug' => 'wildlife', 'label' => 'Wildlife', 'icon' => '🦏', 'description' => 'जीवविविधता र आवास संरक्षण'],
-            ['title' => 'आग्लो फायर', 'slug' => 'forest-conservation', 'label' => 'Risk Monitor', 'icon' => '🔥', 'description' => 'द्वितीय श्रेणी वनमा जोखिम'],
-            ['title' => 'ग्रामिण वन', 'slug' => 'community-forest', 'label' => 'Community', 'icon' => '🌱', 'description' => 'स्थानीय नेतृत्वमा संरक्षण'],
-            ['title' => 'मौसम परिवर्तन', 'slug' => 'climate-change', 'label' => 'Climate', 'icon' => '🌦️', 'description' => 'पर्यावरणीय परिवर्तन र असर'],
-            ['title' => 'शिक्षा अभियान', 'slug' => 'community-forest', 'label' => 'Youth', 'icon' => '🎓', 'description' => 'विद्यार्थीलाई संरक्षण शिक्षा'],
-            ['title' => 'निती अनुगमन', 'slug' => 'forest-conservation', 'label' => 'Policy', 'icon' => '📜', 'description' => 'सरकारी नीति र प्रभाव'],
-            ['title' => 'संकट व्यवस्थापन', 'slug' => 'wildlife', 'label' => 'Response', 'icon' => '🚑', 'description' => 'जंगली घटनामा तत्काल सहयोग'],
-            ['title' => 'पर्यावरण सर्वेक्षण', 'slug' => 'environment', 'label' => 'Survey', 'icon' => '📊', 'description' => 'डाटा आधारित संरक्षण रिपोर्ट'],
-            ['title' => 'स्थानीय आवाज', 'slug' => 'community-forest', 'label' => 'Voices', 'icon' => '🗣️', 'description' => 'समुदायका कथाहरू र अनुभव'],
+            ['title' => 'वन निगरानी', 'slug' => 'forest-conservation', 'label' => 'Field Report', 'icon' => '🌲', 'image' => 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80', 'description' => 'वन क्षेत्रको दृश्य स्थिति र नवाचार'],
+            ['title' => 'प्रकृति पर्यटन', 'slug' => 'national-park', 'label' => 'Travel Guide', 'icon' => '🦌', 'image' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=600&q=80', 'description' => 'पर्यटन र संरक्षण बीचको संतुलन'],
+            ['title' => 'जल संरक्षण', 'slug' => 'environment', 'label' => 'Water Watch', 'icon' => '💧', 'image' => 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=600&q=80', 'description' => 'नदी र जलाशयको स्थिरता'],
+            ['title' => 'वन्यजन्तु', 'slug' => 'wildlife', 'label' => 'Wildlife', 'icon' => '🦏', 'image' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=600&q=80', 'description' => 'जीवविविधता र आवास संरक्षण'],
+            ['title' => 'आग्लो फायर', 'slug' => 'forest-conservation', 'label' => 'Risk Monitor', 'icon' => '🔥', 'image' => 'https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=600&q=80', 'description' => 'द्वितीय श्रेणी वनमा जोखिम'],
+            ['title' => 'ग्रामिण वन', 'slug' => 'community-forest', 'label' => 'Community', 'icon' => '🌱', 'image' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=600&q=80', 'description' => 'स्थानीय नेतृत्वमा संरक्षण'],
+            ['title' => 'मौसम परिवर्तन', 'slug' => 'climate-change', 'label' => 'Climate', 'icon' => '🌦️', 'image' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=600&q=80', 'description' => 'पर्यावरणीय परिवर्तन र असर'],
+            ['title' => 'शिक्षा अभियान', 'slug' => 'community-forest', 'label' => 'Youth', 'icon' => '🎓', 'image' => 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?auto=format&fit=crop&w=600&q=80', 'description' => 'विद्यार्थीलाई संरक्षण शिक्षा'],
+            ['title' => 'निती अनुगमन', 'slug' => 'forest-conservation', 'label' => 'Policy', 'icon' => '📜', 'image' => 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=600&q=80', 'description' => 'सरकारी नीति र प्रभाव'],
+            ['title' => 'संकट व्यवस्थापन', 'slug' => 'wildlife', 'label' => 'Response', 'icon' => '🚑', 'image' => 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=600&q=80', 'description' => 'जंगली घटनामा तत्काल सहयोग'],
+            ['title' => 'पर्यावरण सर्वेक्षण', 'slug' => 'environment', 'label' => 'Survey', 'icon' => '📊', 'image' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80', 'description' => 'डाटा आधारित संरक्षण रिपोर्ट'],
+            ['title' => 'स्थानीय आवाज', 'slug' => 'community-forest', 'label' => 'Voices', 'icon' => '🗣️', 'image' => 'https://images.unsplash.com/photo-1501691223387-dd0500403074?auto=format&fit=crop&w=600&q=80', 'description' => 'समुदायका कथाहरू र अनुभव'],
         ];
     }
 
@@ -470,16 +470,17 @@ class PageController extends Controller
         ];
 
         $defaultImages = [
-            'forest' => asset('image/samples/01.svg'),
-            'forest-conservation' => asset('image/samples/01.svg'),
-            'wildlife' => asset('image/samples/02.svg'),
-            'environment' => asset('image/samples/03.svg'),
-            'climate' => asset('image/samples/04.svg'),
-            'climate-change' => asset('image/samples/04.svg'),
-            'community' => asset('image/samples/05.svg'),
-            'community-forest' => asset('image/samples/05.svg'),
-            'national-park' => asset('image/samples/06.svg'),
-            'tourism' => asset('image/samples/06.svg'),
+            'forest' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
+            'forest-conservation' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80',
+            'wildlife' => 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=900&q=80',
+            'environment' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
+            'conservation' => 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
+            'climate' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80',
+            'climate-change' => 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=900&q=80',
+            'community' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80',
+            'community-forest' => 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=900&q=80',
+            'national-park' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80',
+            'tourism' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80',
         ];
 
         return $categories->map(function (Category $category) use ($storiesByCategory, $icons, $defaultImages): array {
@@ -491,7 +492,7 @@ class PageController extends Controller
                 'slug' => $category->slug,
                 'icon' => $icons[$category->slug] ?? '🌿',
                 'count' => (int) $category->published_news_count,
-                'image' => $representativeStory?->image_url ?: ($defaultImages[$category->slug] ?? asset('image/samples/01.svg')),
+                'image' => $representativeStory ? $this->resolveStoryImage($representativeStory->image_url, $category->slug) : ($defaultImages[$category->slug] ?? 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80'),
             ];
         })->all();
     }
