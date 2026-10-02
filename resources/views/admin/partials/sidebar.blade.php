@@ -92,6 +92,22 @@
                 </span>
             </a>
 
+            {{-- Advertisements --}}
+            <a href="{{ route('admin.advertisements') }}"
+               class="sidebar-item {{ request()->routeIs('admin.advertisements') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">
+                <span class="flex items-center gap-3">
+                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#98D28E] transition-colors group-hover:bg-[#98D28E] group-hover:text-[#173B27]">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 7h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"/>
+                            <path d="M7 17V7"/>
+                            <path d="m17 7 2-3"/>
+                            <path d="M9 17l6-10"/>
+                        </svg>
+                    </span>
+                    <span class="sidebar-label">Advertisements</span>
+                </span>
+            </a>
+
             {{-- Users --}}
             <a href="{{ route('admin.users') }}" 
                class="sidebar-item {{ request()->routeIs('admin.users') ? 'active bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-[#DFEEE0] hover:bg-white/5 hover:text-white' }} group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150">

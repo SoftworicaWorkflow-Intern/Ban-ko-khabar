@@ -58,52 +58,74 @@
                     </div>
                 @endif
 
-                <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
-                    <div>
-                        <span class="inline-flex rounded-full bg-[#eaf7ea] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#173b27]">Admin section</span>
-                        <h1 class="mt-3 text-4xl font-black tracking-tight text-[#1b2433]">{{ $pageTitle }}</h1>
-                        <p class="mt-2 text-sm text-[#51657c]">{{ $subtitle }}</p>
-                    </div>
+                @if ($pageType === 'advertisements')
+                    <div id="advertisementHeaderBlock" class="{{ request()->boolean('create') || request()->filled('edit') ? 'hidden' : '' }} mb-6 flex flex-wrap items-end justify-between gap-4">
+                        <div>
+                            <nav class="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                                <span>Advertisements</span>
+                                <svg class="h-3.5 w-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="m9 18 6-6-6-6"/>
+                                </svg>
+                                <span class="text-slate-700">List</span>
+                            </nav>
+                            <h1 class="text-3xl font-black tracking-tight text-[#1b2433]">Advertisement</h1>
+                        </div>
 
-                    @if ($pageType === 'articles')
-                        <button type="button"
-                                onclick="toggleArticleComposer()"
-                                aria-controls="articleComposer"
-                                class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                        <button type="button" onclick="toggleAdvertisementCreateForm()" class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
                                 <path d="M12 5v14M5 12h14"/>
                             </svg>
-                            New Article
+                            New Advertisement
                         </button>
-                    @elseif ($pageType === 'categories')
-                        <button type="button"
-                                onclick="document.getElementById('category-create-row').classList.toggle('hidden')"
-                                class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
-                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-                                <path d="M12 5v14M5 12h14"/>
-                            </svg>
-                            New Category
-                        </button>
-                    @elseif ($pageType === 'users')
-                        <button type="button"
-                                class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
-                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-                                <path d="M12 5v14M5 12h14"/>
-                            </svg>
-                            New users
-                        </button>
-                    @elseif ($pageType === 'gallery')
-                        <button type="button"
-                                id="galleryCreateButton"
-                                onclick="toggleGalleryComposer()"
-                                aria-controls="galleryComposer"
-                                aria-expanded="{{ $errors->any() ? 'true' : 'false' }}"
-                                class="inline-flex items-center gap-2 rounded-xl bg-[#173b27] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#214d35] focus:outline-none focus:ring-2 focus:ring-emerald-300">
-                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-                            Create
-                        </button>
-                    @endif
-                </div>
+                    </div>
+                @else
+                    <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+                        <div>
+                            <span class="inline-flex rounded-full bg-[#eaf7ea] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#173b27]">Admin section</span>
+                            <h1 class="mt-3 text-4xl font-black tracking-tight text-[#1b2433]">{{ $pageTitle }}</h1>
+                            <p class="mt-2 text-sm text-[#51657c]">{{ $subtitle }}</p>
+                        </div>
+
+                        @if ($pageType === 'articles')
+                            <button type="button"
+                                    onclick="toggleArticleComposer()"
+                                    aria-controls="articleComposer"
+                                    class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                                    <path d="M12 5v14M5 12h14"/>
+                                </svg>
+                                New Article
+                            </button>
+                        @elseif ($pageType === 'categories')
+                            <button type="button"
+                                    onclick="document.getElementById('category-create-row').classList.toggle('hidden')"
+                                    class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                                    <path d="M12 5v14M5 12h14"/>
+                                </svg>
+                                New Category
+                            </button>
+                        @elseif ($pageType === 'users')
+                            <button type="button"
+                                    class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                                    <path d="M12 5v14M5 12h14"/>
+                                </svg>
+                                New users
+                            </button>
+                        @elseif ($pageType === 'gallery')
+                            <button type="button"
+                                    id="galleryCreateButton"
+                                    onclick="toggleGalleryComposer()"
+                                    aria-controls="galleryComposer"
+                                    aria-expanded="{{ $errors->any() ? 'true' : 'false' }}"
+                                    class="inline-flex items-center gap-2 rounded-xl bg-[#173b27] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#214d35] focus:outline-none focus:ring-2 focus:ring-emerald-300">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                                Create
+                            </button>
+                        @endif
+                    </div>
+                @endif
 
                 @if (!empty($stats))
                     <div class="grid gap-4 {{ count($stats) > 2 ? 'sm:grid-cols-2 md:grid-cols-3' : 'grid-cols-2' }}">
@@ -210,6 +232,8 @@
                     </div>
                 @elseif ($pageType === 'articles')
                     @include('admin.partials.articles-panel')
+                @elseif ($pageType === 'advertisements')
+                    @include('admin.partials.advertisements-panel')
                 @elseif ($pageType === 'categories')
 
                     <div class="mt-6 overflow-hidden rounded-[20px] border border-slate-200 bg-white shadow-[0_10px_22px_rgba(19,41,26,0.05)]">

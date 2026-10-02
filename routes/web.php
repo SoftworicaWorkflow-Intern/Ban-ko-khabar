@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/news/{slug}', [PageController::class, 'showNews'])->name('news.show');
+Route::post('/news/{slug}/comments', [PageController::class, 'storeNewsComment'])->middleware('throttle:10,1')->name('news.comments.store');
 Route::get('/search', [PageController::class, 'search'])->name('search');
 Route::get('/gallery', [PageController::class, 'gallery'])->name('gallery');
 Route::get('/about', [PageController::class, 'about'])->name('about');
@@ -185,6 +186,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/gallery', [PageController::class, 'adminGallery'])->name('admin.gallery');
     Route::post('/admin/gallery', [PageController::class, 'storeGallery'])->name('admin.gallery.store');
     Route::post('/admin/gallery/{id}/delete', [PageController::class, 'deleteGallery'])->name('admin.gallery.delete');
+    Route::get('/admin/advertisements', [PageController::class, 'adminAdvertisements'])->name('admin.advertisements');
+    Route::post('/admin/advertisements', [PageController::class, 'storeAdvertisement'])->name('admin.advertisements.store');
+    Route::post('/admin/advertisements/{advertisement}/update', [PageController::class, 'updateAdvertisement'])->name('admin.advertisements.update');
+    Route::post('/admin/advertisements/{advertisement}/toggle-status', [PageController::class, 'toggleAdvertisementStatus'])->name('admin.advertisements.status');
+    Route::post('/admin/advertisements/{advertisement}/delete', [PageController::class, 'deleteAdvertisement'])->name('admin.advertisements.delete');
     Route::get('/admin/users', [PageController::class, 'adminUsers'])->name('admin.users');
     Route::get('/admin/reports', [PageController::class, 'adminReports'])->name('admin.reports');
     Route::get('/admin/settings/password', [PageController::class, 'adminPassword'])->name('admin.settings.password');

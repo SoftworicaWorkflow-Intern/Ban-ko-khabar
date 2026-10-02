@@ -6,7 +6,7 @@
     <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div class="mb-10 text-center">
             <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Gallery</p>
-            <h1 class="mt-3 font-display text-4xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">फोटो ग्यालरी</h1>
+            <h1 class="mt-3 font-display text-4xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">फोटो ग्यालरी</h1>
         </div>
 
         <div class="mb-8 flex flex-wrap gap-3">

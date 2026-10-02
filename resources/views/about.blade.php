@@ -6,7 +6,7 @@
     <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         <div class="mb-10 text-center">
             <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">About us</p>
-            <h1 class="mt-3 font-display text-4xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">वनको खबरको कथा</h1>
+            <h1 class="mt-3 font-display text-4xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">वनको खबरको कथा</h1>
         </div>
 
         <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -37,7 +37,7 @@
         <div class="mt-16">
             <div class="mb-8 text-center">
                 <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Team</p>
-                <h2 class="mt-3 font-display text-3xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">सम्पादकीय टोली</h2>
+                <h2 class="mt-3 font-display text-3xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">सम्पादकीय टोली</h2>
             </div>
             <div class="grid gap-6 md:grid-cols-3">
                 @foreach($team as $member)

@@ -35,20 +35,26 @@
         </div>
     </div>
 
-    <section id="news" class="mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 lg:px-8">
+    @if ($homeAdvertisements->has('article-top'))
+        <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('article-top')])
+        </div>
+    @endif
+
+    <section id="news" class="scroll-mt-36 mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 lg:px-8">
         <div class="mb-10 flex items-end justify-between gap-4">
             <div>
                 <p class="text-xs font-bold uppercase tracking-[0.28em] text-[#2E7D32]">Featured</p>
-                <h2 class="mt-2 font-display text-3xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">मुख्य समाचार</h2>
+                <h2 class="mt-2 font-display text-3xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">मुख्य समाचार</h2>
             </div>
             <a href="#" class="text-sm font-semibold text-[#2E7D32] transition hover:text-[#1B5E20]">सबै समाचार</a>
         </div>
 
         <div class="grid gap-6 lg:grid-cols-[1.7fr_1fr]">
             @if ($featured)
-            <article class="group overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 dark:bg-[#17242b]">
+            <a href="{{ route('news.show', $featured['slug']) }}" aria-label="Open featured story: {{ $featured['title'] }}" class="group block overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:bg-[#17242b]">
                 <div class="relative overflow-hidden">
-                    <img src="{{ $featured['image'] }}" alt="{{ $featured['title'] }}" class="h-[420px] w-full object-cover transition duration-500 group-hover:scale-105">
+                    <img src="{{ $featured['image'] }}" alt="{{ $featured['title'] }}" class="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-80 lg:h-[420px]">
                     <span class="absolute left-5 top-5 rounded-full bg-[#2E7D32] px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white">{{ $featured['badge'] }}</span>
                 </div>
                 <div class="p-6 sm:p-8">
@@ -57,9 +63,9 @@
                         <span>•</span>
                         <span>{{ $featured['author'] }}</span>
                     </div>
-                    <a href="{{ route('news.show', $featured['slug']) }}" class="font-display text-2xl font-bold leading-snug text-[#1d2a1d] transition hover:text-[#2E7D32] dark:text-[#edf5ee]">
+                    <h3 class="font-display text-2xl font-bold leading-snug text-[#1d2a1d] transition group-hover:text-[#2E7D32] dark:text-[#edf5ee]">
                         {{ $featured['title'] }}
-                    </a>
+                    </h3>
                     <p class="mt-4 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $featured['excerpt'] }}</p>
                     <div class="mt-6 flex items-center justify-between">
                         <span class="rounded-full bg-[#edf6ee] px-3 py-1 text-xs font-semibold text-[#2E7D32] dark:bg-[#20332d] dark:text-[#dfeee2]">{{ $featured['category'] }}</span>
@@ -72,35 +78,45 @@
                                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                 {{ number_format((int) $featured['views']) }}
                             </span>
-                            <a href="{{ route('news.show', $featured['slug']) }}" class="inline-flex items-center gap-2 font-semibold text-[#2E7D32]">Read more <span>→</span></a>
+                            <span class="inline-flex items-center gap-2 font-semibold text-[#2E7D32]">Read more <span aria-hidden="true">→</span></span>
                         </div>
                     </div>
                 </div>
-            </article>
+            </a>
             @else
                 <div class="flex min-h-72 items-center justify-center rounded-lg border border-dashed border-[#c9d9c9] bg-white p-8 text-center text-sm text-[#5e6f61] dark:border-white/10 dark:bg-[#17242b] dark:text-[#bfd3c3]">No published stories yet.</div>
             @endif
 
             <div class="space-y-6">
                 @foreach($sideFeatures as $item)
-                    <article class="group overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 dark:bg-[#17242b]">
+                    <a href="{{ route('news.show', $item['slug']) }}" aria-label="Open featured story: {{ $item['title'] }}" class="group block overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:bg-[#17242b]">
                         <div class="flex gap-4 p-4">
                             <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-32 w-32 shrink-0 rounded-2xl object-cover">
-                            <div class="flex-1">
+                            <div class="min-w-0 flex-1">
                                 <div class="mb-2 flex items-center justify-between text-[11px] text-[#5e6f61] dark:text-[#bfd3c3]">
                                     <span>{{ $item['category'] }}</span>
                                     <span>{{ $item['date'] }}</span>
                                 </div>
-                                <a href="{{ route('news.show', $item['slug']) }}" class="font-display text-lg font-bold leading-snug text-[#1d2a1d] transition hover:text-[#2E7D32] dark:text-[#edf5ee]">
+                                <h3 class="font-display text-lg font-bold leading-snug text-[#1d2a1d] transition group-hover:text-[#2E7D32] dark:text-[#edf5ee]">
                                     {{ $item['title'] }}
-                                </a>
+                                </h3>
                             </div>
                         </div>
-                    </article>
+                    </a>
                 @endforeach
+                @if ($homeAdvertisements->has('sidebar'))
+                    @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('sidebar')])
+                @endif
             </div>
         </div>
+
     </section>
+
+    @if ($homeAdvertisements->has('article-center'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('article-center')])
+        </div>
+    @endif
 
     <section class="bg-[#F3F8F1] py-20 dark:bg-[#121d22]">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -148,10 +164,16 @@
         </div>
     </section>
 
-    <section id="categories" class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    @if ($homeAdvertisements->has('article-bottom'))
+        <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('article-bottom')])
+        </div>
+    @endif
+
+    <section id="categories" class="scroll-mt-36 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div class="mb-10 text-center">
             <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Categories</p>
-            <h2 class="mt-3 font-display text-3xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">विषयगत क्षेत्र</h2>
+            <h2 class="mt-3 font-display text-3xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">विषयगत क्षेत्र</h2>
         </div>
 
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -198,10 +220,16 @@
         </div>
     </section>
 
+    @if ($homeAdvertisements->has('insights-top'))
+        <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('insights-top')])
+        </div>
+    @endif
+
     <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div class="mb-10 text-center">
             <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Insights</p>
-            <h2 class="mt-3 font-display text-3xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">वन र वातावरणको १२+ प्रमुख क्षेत्र</h2>
+            <h2 class="mt-3 font-display text-3xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">वन र वातावरणको १२+ प्रमुख क्षेत्र</h2>
         </div>
 
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -221,11 +249,11 @@
         </div>
     </section>
 
-    <section id="environment" class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <section id="environment" class="scroll-mt-36 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div class="mb-10 flex items-end justify-between gap-4">
             <div>
                 <p class="text-xs font-bold uppercase tracking-[0.28em] text-[#2E7D32]">Gallery</p>
-                <h2 class="mt-2 font-display text-3xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">फोटो ग्यालरी</h2>
+                <h2 class="mt-2 font-display text-3xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">फोटो ग्यालरी</h2>
             </div>
             <a href="{{ route('gallery') }}" class="text-sm font-semibold text-[#2E7D32]">सबै ग्यालरी</a>
         </div>
@@ -248,30 +276,31 @@
     </section>
 
     <section class="bg-[#edf6ee] py-20 dark:bg-[#111f24]">
-        <div class="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
-            <div>
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
                 <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Video</p>
                 <h2 class="mt-3 font-display text-3xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">वन र वातावरणको भिडियो</h2>
-                <div class="mt-8 overflow-hidden rounded-[28px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] dark:bg-[#17242b]">
-                    <div class="relative aspect-video">
-                        <video class="h-full w-full bg-black object-cover" controls playsinline preload="metadata" poster="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80" aria-label="Flower and forest conservation video">
-                            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
-                            Your browser does not support HTML video.
-                        </video>
-                    </div>
-                </div>
             </div>
 
-            <div class="space-y-5">
-                <div class="rounded-[24px] bg-white p-5 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
-                    <p class="text-xs font-bold uppercase tracking-[0.25em] text-[#2E7D32]">Watch</p>
-                    <h3 class="mt-3 font-display text-2xl font-bold text-[#1d2a1d] dark:text-[#edf5ee]">मरुभूमिमा हृदयस्पर्शी वन संरक्षण</h3>
-                    <p class="mt-3 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">कर्मचारी र समुदायले सामूहिक प्रयासबाट पर्खालबाहिरको रणनीतिलाई कसरी सफल बनाएरहेका छन्।</p>
+            <div class="grid min-w-0 items-stretch gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+                <div class="relative aspect-video min-w-0 overflow-hidden rounded-[28px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] dark:bg-[#17242b]">
+                    <video class="absolute inset-0 h-full w-full bg-black object-cover" controls playsinline preload="metadata" poster="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80" aria-label="Flower and forest conservation video">
+                        <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                        Your browser does not support HTML video.
+                    </video>
                 </div>
-                <div class="rounded-[24px] bg-white p-5 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
-                    <p class="text-xs font-bold uppercase tracking-[0.25em] text-[#2E7D32]">Watch</p>
-                    <h3 class="mt-3 font-display text-2xl font-bold text-[#1d2a1d] dark:text-[#edf5ee]">हिमालको जलस्रोत संरक्षण</h3>
-                    <p class="mt-3 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">हिमाली क्षेत्रमा पलस्तर र जलाशय व्यवस्थापनले स्थानीय समुदायको अस्तित्वलाई कसरी सुरक्षित बनाउँछ।</p>
+
+                <div class="flex min-w-0 flex-col gap-5 lg:h-full">
+                    <div class="min-w-0 rounded-[24px] bg-white p-5 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b] lg:flex-1">
+                        <p class="text-xs font-bold uppercase tracking-[0.25em] text-[#2E7D32]">Watch</p>
+                        <h3 class="mt-3 font-display text-xl font-bold leading-snug text-[#1d2a1d] dark:text-[#edf5ee]">मरुभूमिमा हृदयस्पर्शी वन संरक्षण</h3>
+                        <p class="mt-3 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">कर्मचारी र समुदायले सामूहिक प्रयासबाट पर्खालबाहिरको रणनीतिलाई कसरी सफल बनाएरहेका छन्।</p>
+                    </div>
+                    <div class="min-w-0 rounded-[24px] bg-white p-5 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b] lg:flex-1">
+                        <p class="text-xs font-bold uppercase tracking-[0.25em] text-[#2E7D32]">Watch</p>
+                        <h3 class="mt-3 font-display text-xl font-bold leading-snug text-[#1d2a1d] dark:text-[#edf5ee]">हिमालको जलस्रोत संरक्षण</h3>
+                        <p class="mt-3 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">हिमाली क्षेत्रमा पलस्तर र जलाशय व्यवस्थापनले स्थानीय समुदायको अस्तित्वलाई कसरी सुरक्षित बनाउँछ।</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -317,10 +346,10 @@
                 </div>
             </div>
 
-            <div class="rounded-[28px] bg-[linear-gradient(135deg,#f4f9f3,#eaf4eb)] p-8 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
+            <div id="mission" class="scroll-mt-36 rounded-[28px] bg-[linear-gradient(135deg,#f4f9f3,#eaf4eb)] p-8 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
                 <p class="text-xs font-bold uppercase tracking-[0.28em] text-[#2E7D32]">Mission</p>
-                <h3 class="mt-3 font-display text-2xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">मिशन</h3>
-                <ul class="mt-5 space-y-4 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">
+                <h3 class="mt-3 font-display text-2xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">मिशन</h3>
+                <ul class="mt-5 space-y-4 text-sm leading-7 text-[#2E7D32] dark:text-[#dce8dd]">
                     <li>• नेपालमा वन संरक्षण र पर्यावरणीय सचेतना बढाउनु</li>
                     <li>• तथ्य र अनुसन्धानमा आधारित समाचार प्रस्तुत गर्नु</li>
                     <li>• समुदाय र निजीसंगठनो सहयोगलाई प्रोत्साहन गर्नु</li>

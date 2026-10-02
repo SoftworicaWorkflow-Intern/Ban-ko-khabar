@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Advertisement;
 use App\Models\Category;
 use App\Models\News;
 use App\Models\User;
@@ -20,6 +21,25 @@ class AdminSectionManagementTest extends TestCase
             'email' => 'admin@vankokhabar.com',
             'role' => 'admin',
         ]);
+    }
+
+    private function bannerUpload(string $name): UploadedFile
+    {
+        return UploadedFile::fake()->createWithContent(
+            $name,
+            base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=')
+        );
+    }
+
+    private function advertisement(array $attributes = []): Advertisement
+    {
+        return Advertisement::create(array_merge([
+            'title' => 'Forest awareness campaign',
+            'position' => 'header',
+            'banner_path' => 'advertisements/forest-awareness.png',
+            'click_url' => 'https://example.com/forest',
+            'active' => true,
+        ], $attributes));
     }
 
     public function test_admin_can_update_a_category(): void
@@ -81,6 +101,175 @@ class AdminSectionManagementTest extends TestCase
             ->assertRedirect('/admin/gallery');
 
         $this->assertDatabaseMissing('news', ['id' => $photo->id]);
+    }
+
+    public function test_admin_can_create_an_advertisement(): void
+    {
+        Storage::fake('public');
+        $banner = $this->bannerUpload('header-campaign.png');
+
+        $response = $this->actingAs($this->admin())
+            ->post('/admin/advertisements', [
+                'title' => 'Forest conservation campaign',
+                'position' => 'header',
+                'banner' => $banner,
+                'click_url' => 'https://example.com/campaign',
+                'active' => '1',
+                'starts_at' => '',
+                'ends_at' => '',
+                'save_behavior' => 'create',
+            ]);
+
+        $response->assertRedirect('/admin/advertisements');
+        $this->assertDatabaseHas('advertisements', [
+            'title' => 'Forest conservation campaign',
+            'position' => 'header',
+            'click_url' => 'https://example.com/campaign',
+            'active' => true,
+            'starts_at' => null,
+            'ends_at' => null,
+        ]);
+        $this->assertNotEmpty(Storage::disk('public')->files('advertisements'));
+
+        $this->get('/admin/advertisements')
+            ->assertOk()
+            ->assertSee('Forest conservation campaign')
+            ->assertSee('Header center - 728 x 90');
+    }
+
+    public function test_admin_can_create_a_center_of_article_advertisement_that_appears_on_homepage(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get('/admin/advertisements?create=1')
+            ->assertOk()
+            ->assertSee('data-stage-option="article-center"', false)
+            ->assertSee('name="position" value="article-center"', false);
+
+        $this->actingAs($admin)
+            ->post('/admin/advertisements', [
+                'title' => 'Article center sponsor',
+                'position' => 'article-center',
+                'banner' => $this->bannerUpload('article-center.png'),
+                'active' => '1',
+            ])
+            ->assertRedirect('/admin/advertisements');
+
+        $this->assertDatabaseHas('advertisements', [
+            'title' => 'Article center sponsor',
+            'position' => 'article-center',
+            'active' => true,
+        ]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('/storage/advertisements/', false)
+            ->assertSee('Article center sponsor');
+    }
+
+    public function test_admin_can_save_an_advertisement_and_start_another(): void
+    {
+        Storage::fake('public');
+
+        $response = $this->actingAs($this->admin())
+            ->post('/admin/advertisements', [
+                'title' => 'Second campaign',
+                'position' => 'article-top',
+                'banner' => $this->bannerUpload('article-campaign.png'),
+                'active' => '0',
+                'save_behavior' => 'another',
+            ]);
+
+        $response->assertRedirect('/admin/advertisements?create=1');
+        $this->assertDatabaseHas('advertisements', [
+            'title' => 'Second campaign',
+            'position' => 'article-top',
+            'active' => false,
+        ]);
+    }
+
+    public function test_advertisement_creation_rejects_missing_required_fields(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->from('/admin/advertisements?create=1')
+            ->post('/admin/advertisements', [])
+            ->assertRedirect('/admin/advertisements?create=1')
+            ->assertSessionHasErrors(['title', 'position', 'banner']);
+
+        $this->assertDatabaseCount('advertisements', 0);
+    }
+
+    public function test_admin_can_edit_an_advertisement_and_keep_its_current_banner(): void
+    {
+        $advertisement = $this->advertisement();
+
+        $this->actingAs($this->admin())
+            ->get('/admin/advertisements?edit='.$advertisement->id)
+            ->assertOk()
+            ->assertSee('value="Forest awareness campaign"', false)
+            ->assertSee('value="https://example.com/forest"', false)
+            ->assertSee('/storage/advertisements/forest-awareness.png', false);
+
+        $this->post('/admin/advertisements/'.$advertisement->id.'/update', [
+            'title' => 'Updated forest awareness campaign',
+            'position' => 'article-top',
+            'click_url' => 'https://example.com/updated',
+            'active' => '1',
+            'starts_at' => '',
+            'ends_at' => '',
+        ])->assertRedirect('/admin/advertisements');
+
+        $this->assertDatabaseHas('advertisements', [
+            'id' => $advertisement->id,
+            'title' => 'Updated forest awareness campaign',
+            'position' => 'article-top',
+            'banner_path' => 'advertisements/forest-awareness.png',
+        ]);
+    }
+
+    public function test_admin_can_toggle_advertisement_active_status(): void
+    {
+        $advertisement = $this->advertisement();
+
+        $this->actingAs($this->admin())
+            ->post('/admin/advertisements/'.$advertisement->id.'/toggle-status')
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('advertisements', [
+            'id' => $advertisement->id,
+            'active' => false,
+        ]);
+    }
+
+    public function test_admin_can_delete_an_advertisement_and_its_banner(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('advertisements/forest-awareness.png', 'banner contents');
+        $advertisement = $this->advertisement();
+
+        $this->actingAs($this->admin())
+            ->post('/admin/advertisements/'.$advertisement->id.'/delete')
+            ->assertRedirect('/admin/advertisements');
+
+        $this->assertDatabaseMissing('advertisements', ['id' => $advertisement->id]);
+        Storage::disk('public')->assertMissing('advertisements/forest-awareness.png');
+    }
+
+    public function test_advertisement_action_menu_links_to_view_edit_toggle_and_delete_actions(): void
+    {
+        $advertisement = $this->advertisement();
+
+        $this->actingAs($this->admin())
+            ->get('/admin/advertisements')
+            ->assertOk()
+            ->assertSee('data-view-advertisement="'.$advertisement->id.'"', false)
+            ->assertSee('/admin/advertisements?edit='.$advertisement->id, false)
+            ->assertSee('/admin/advertisements/'.$advertisement->id.'/toggle-status', false)
+            ->assertSee('/admin/advertisements/'.$advertisement->id.'/delete', false);
     }
 
     public function test_gallery_page_offers_media_upload_preview_delete_and_type_filter(): void

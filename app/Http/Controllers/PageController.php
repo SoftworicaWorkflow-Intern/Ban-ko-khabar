@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Advertisement;
+use App\Models\ArticleComment;
 use App\Models\Category;
 use App\Models\News;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class PageController extends Controller
 {
@@ -375,6 +379,20 @@ class PageController extends Controller
             ->take(5)
             ->pluck('title')
             ->all();
+        $currentTime = now();
+        $homeAdvertisements = Advertisement::query()
+            ->where('active', true)
+            ->where(function ($query) use ($currentTime) {
+                $query->whereNull('starts_at')
+                    ->orWhere('starts_at', '<=', $currentTime);
+            })
+            ->where(function ($query) use ($currentTime) {
+                $query->whereNull('ends_at')
+                    ->orWhere('ends_at', '>=', $currentTime);
+            })
+            ->latest()
+            ->get()
+            ->groupBy('position');
 
         return view('home', [
             'featured' => $featured,
@@ -385,6 +403,7 @@ class PageController extends Controller
             'highlights' => $this->homeHighlights(),
             'breakingNews' => $breakingNews,
             'gallery' => array_slice($this->galleryItems(), 0, 6),
+            'homeAdvertisements' => $homeAdvertisements,
         ]);
     }
 
@@ -530,6 +549,15 @@ class PageController extends Controller
                 ->get()
                 ->map(fn (News $relatedStory): array => $this->newsCardData($relatedStory))
                 ->all();
+            $mostRead = News::query()
+                ->with('category')
+                ->where('status', 'published')
+                ->whereKeyNot($story->id)
+                ->orderByDesc('views')
+                ->take(6)
+                ->get()
+                ->map(fn (News $popularStory): array => $this->newsCardData($popularStory))
+                ->all();
         } else {
             $news = $this->newsItems();
             $article = collect($news)->firstWhere('slug', $slug) ?? $news[0];
@@ -539,12 +567,78 @@ class PageController extends Controller
                 ->take(3)
                 ->values()
                 ->all();
+            $mostRead = collect($news)
+                ->reject(fn (array $item): bool => $item['slug'] === $article['slug'])
+                ->sortByDesc('views')
+                ->take(6)
+                ->values()
+                ->all();
         }
+
+        $currentTime = now();
+        $articleSidebarAdvertisements = Advertisement::query()
+            ->where('position', 'sidebar')
+            ->where('active', true)
+            ->where(function ($query) use ($currentTime) {
+                $query->whereNull('starts_at')
+                    ->orWhere('starts_at', '<=', $currentTime);
+            })
+            ->where(function ($query) use ($currentTime) {
+                $query->whereNull('ends_at')
+                    ->orWhere('ends_at', '>=', $currentTime);
+            })
+            ->latest()
+            ->get();
+        $articleCenterAdvertisements = Advertisement::query()
+            ->where('position', 'article-center')
+            ->where('active', true)
+            ->where(function ($query) use ($currentTime) {
+                $query->whereNull('starts_at')
+                    ->orWhere('starts_at', '<=', $currentTime);
+            })
+            ->where(function ($query) use ($currentTime) {
+                $query->whereNull('ends_at')
+                    ->orWhere('ends_at', '>=', $currentTime);
+            })
+            ->latest()
+            ->get();
+        $comments = ArticleComment::query()
+            ->where('article_slug', $article['slug'])
+            ->latest()
+            ->get();
 
         return view('news.show', [
             'article' => $article,
             'related' => $related,
+            'mostRead' => $mostRead,
+            'articleSidebarAdvertisements' => $articleSidebarAdvertisements,
+            'articleCenterAdvertisements' => $articleCenterAdvertisements,
+            'comments' => $comments,
         ]);
+    }
+
+    public function storeNewsComment(Request $request, string $slug)
+    {
+        $isPublishedArticle = News::query()
+            ->where('status', 'published')
+            ->where('slug', $slug)
+            ->exists();
+        $isFallbackArticle = collect($this->newsItems())
+            ->contains(fn (array $article): bool => $article['slug'] === $slug);
+
+        abort_unless($isPublishedArticle || $isFallbackArticle, 404);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:100'],
+            'body' => ['required', 'string', 'max:2000'],
+        ]);
+
+        ArticleComment::create([
+            'article_slug' => $slug,
+            ...$validated,
+        ]);
+
+        return redirect()->to(route('news.show', $slug).'#comments')->with('success', 'Your comment has been added.');
     }
 
     public function search(Request $request)
@@ -928,6 +1022,137 @@ class PageController extends Controller
             'filters' => ['type' => $typeFilter],
             'activeFilters' => $typeFilter !== '',
         ]);
+    }
+
+    public function adminAdvertisements(Request $request)
+    {
+        $search = trim((string) $request->query('search', ''));
+        $perPage = (int) $request->query('per_page', 10);
+        $editingAdvertisement = $request->filled('edit')
+            ? Advertisement::findOrFail($request->integer('edit'))
+            : null;
+
+        if (! in_array($perPage, [10, 25, 50, 100], true)) {
+            $perPage = 10;
+        }
+
+        $items = Advertisement::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('title', 'like', '%'.$search.'%')
+                        ->orWhere('position', 'like', '%'.$search.'%');
+                });
+            })
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString()
+            ->through(fn (Advertisement $advertisement): array => [
+                'id' => $advertisement->id,
+                'title' => $advertisement->title,
+                'position' => Advertisement::POSITIONS[$advertisement->position],
+                'active' => $advertisement->active,
+                'starts_at' => $advertisement->starts_at?->format('Y-m-d') ?? 'Immediately',
+                'ends_at' => $advertisement->ends_at?->format('Y-m-d') ?? 'No end date',
+                'banner' => '/storage/'.$advertisement->banner_path,
+                'click_url' => $advertisement->click_url,
+            ]);
+
+        return $this->adminSection('Advertisement', 'Promote campaigns, featured stories, and sponsor placements across the newsroom.', [], $items, 'advertisements', [
+            'filters' => ['search' => $search],
+            'activeFilters' => $search !== '',
+            'perPage' => $perPage,
+            'editingAdvertisement' => $editingAdvertisement,
+        ]);
+    }
+
+    public function storeAdvertisement(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'position' => ['required', 'in:'.implode(',', array_keys(Advertisement::POSITIONS))],
+            'banner' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'click_url' => ['nullable', 'url', 'max:2048'],
+            'active' => ['nullable', 'boolean'],
+            'starts_at' => ['nullable', 'date'],
+            'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
+            'save_behavior' => ['nullable', 'in:create,another'],
+        ]);
+
+        $bannerPath = $request->file('banner')->store('advertisements', 'public');
+
+        Advertisement::create([
+            'title' => $validated['title'],
+            'position' => $validated['position'],
+            'banner_path' => $bannerPath,
+            'click_url' => $validated['click_url'] ?? null,
+            'active' => $request->boolean('active'),
+            'starts_at' => isset($validated['starts_at'])
+                ? Carbon::parse($validated['starts_at'])->toDateTimeString()
+                : null,
+            'ends_at' => isset($validated['ends_at'])
+                ? Carbon::parse($validated['ends_at'])->toDateTimeString()
+                : null,
+        ]);
+
+        if (($validated['save_behavior'] ?? 'create') === 'another') {
+            return redirect()->route('admin.advertisements', ['create' => 1])
+                ->with('success', 'Advertisement saved. You can create another.');
+        }
+
+        return redirect()->route('admin.advertisements')->with('success', 'Advertisement created.');
+    }
+
+    public function updateAdvertisement(Request $request, Advertisement $advertisement)
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'position' => ['required', 'in:'.implode(',', array_keys(Advertisement::POSITIONS))],
+            'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'click_url' => ['nullable', 'url', 'max:2048'],
+            'active' => ['nullable', 'boolean'],
+            'starts_at' => ['nullable', 'date'],
+            'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
+        ]);
+
+        if ($request->hasFile('banner')) {
+            $oldBannerPath = $advertisement->banner_path;
+            $validated['banner_path'] = $request->file('banner')->store('advertisements', 'public');
+            Storage::disk('public')->delete($oldBannerPath);
+        }
+
+        $advertisement->update([
+            'title' => $validated['title'],
+            'position' => $validated['position'],
+            'banner_path' => $validated['banner_path'] ?? $advertisement->banner_path,
+            'click_url' => $validated['click_url'] ?? null,
+            'active' => $request->boolean('active'),
+            'starts_at' => isset($validated['starts_at'])
+                ? Carbon::parse($validated['starts_at'])->toDateTimeString()
+                : null,
+            'ends_at' => isset($validated['ends_at'])
+                ? Carbon::parse($validated['ends_at'])->toDateTimeString()
+                : null,
+        ]);
+
+        return redirect()->route('admin.advertisements')->with('success', 'Advertisement updated.');
+    }
+
+    public function toggleAdvertisementStatus(Advertisement $advertisement)
+    {
+        $advertisement->update(['active' => ! $advertisement->active]);
+
+        return redirect()->route('admin.advertisements')->with(
+            'success',
+            $advertisement->active ? 'Advertisement activated.' : 'Advertisement deactivated.'
+        );
+    }
+
+    public function deleteAdvertisement(Advertisement $advertisement)
+    {
+        Storage::disk('public')->delete($advertisement->banner_path);
+        $advertisement->delete();
+
+        return redirect()->route('admin.advertisements')->with('success', 'Advertisement deleted.');
     }
 
     public function adminUsers(Request $request)
@@ -1327,6 +1552,7 @@ class PageController extends Controller
             'mediaCounts' => $meta['mediaCounts'] ?? [],
             'mediaTotal' => $meta['mediaTotal'] ?? 0,
             'typeFilter' => $meta['typeFilter'] ?? '',
+            'editingAdvertisement' => $meta['editingAdvertisement'] ?? null,
             'article' => $meta['article'] ?? null,
             'category' => $meta['category'] ?? null,
             'maxMonthlyNews' => $meta['maxMonthlyNews'] ?? 1,

@@ -3,96 +3,157 @@
 @section('title', $article['title'])
 
 @section('content')
-    <section class="mx-auto max-w-5xl px-4 pb-20 pt-12 sm:px-6 lg:px-8">
-        <nav class="mb-8 flex items-center gap-3 text-sm text-[#5e6f61] dark:text-[#bfcebf]">
-            <a href="{{ route('home') }}" class="hover:text-[#2E7D32]">गृहपृष्ठ</a>
-            <span>›</span>
-            <a href="{{ route('home') }}#news" class="hover:text-[#2E7D32]">समाचार</a>
-            <span>›</span>
-            <span class="text-[#2E7D32]">{{ $article['category'] }}</span>
-        </nav>
+    <section class="bg-white text-black">
+        <div class="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+            <div id="articleBodyWithAds" class="grid min-w-0 items-stretch gap-10 lg:grid-cols-2">
+                <div class="min-w-0">
+                    <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-2 text-sm text-neutral-500">
+                        <a href="{{ route('home') }}" class="transition hover:text-red-700">गृहपृष्ठ</a>
+                        <span aria-hidden="true">/</span>
+                        <a href="{{ route('home') }}#news" class="transition hover:text-red-700">समाचार</a>
+                        <span aria-hidden="true">/</span>
+                        <span class="text-neutral-700">{{ $article['category'] }}</span>
+                    </nav>
 
-        <article class="overflow-hidden rounded-[30px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.06)] dark:bg-[#17242b]">
-            <img src="{{ $article['image'] }}" alt="{{ $article['title'] }}" class="h-[420px] w-full object-cover">
-            <div class="p-6 sm:p-8 lg:p-10">
-                <div class="mb-5 flex flex-wrap items-center gap-3 text-xs text-[#6a7c6c] dark:text-[#bfd3c3]">
-                    <span class="rounded-full bg-[#edf6ee] px-3 py-1 font-semibold text-[#2E7D32] dark:bg-[#20332d] dark:text-[#dfeee2]">{{ $article['category'] }}</span>
-                    <span>{{ $article['date'] }}</span>
-                    <span>•</span>
-                    <span>{{ $article['author'] }}</span>
-                    <span>•</span>
-                    <span>{{ $article['reading_time'] }}</span>
-                </div>
+                    <article class="min-w-0">
+                        <header>
+                            <span class="inline-flex bg-neutral-100 px-3 py-1 text-xs font-semibold text-neutral-700">{{ $article['category'] }}</span>
+                            <h1 class="mt-4 max-w-4xl text-3xl font-extrabold leading-tight text-neutral-950 sm:text-4xl lg:text-5xl">{{ $article['title'] }}</h1>
 
-                <h1 class="font-display text-3xl font-black leading-tight text-[#1B5E20] sm:text-4xl dark:text-[#edf5ee]">{{ $article['title'] }}</h1>
+                            <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-neutral-200 py-4 text-sm text-neutral-600">
+                                <div class="flex items-center gap-3">
+                                    <img src="{{ asset('image/fev icon.png') }}" alt="वनको खबर" class="h-10 w-10 rounded-full border border-neutral-200 object-cover">
+                                    <span class="font-semibold text-neutral-900">{{ $article['author'] }}</span>
+                                </div>
+                                <span>{{ $article['date'] }}</span>
+                                <span>{{ number_format((int) ($article['views'] ?? 0)) }} views</span>
+                                <span>{{ $article['reading_time'] }} पढ्ने समय</span>
+                            </div>
+                        </header>
 
-                <div class="mt-8 flex items-center justify-between border-y border-[#edf1ed] py-4 dark:border-white/10">
-                    <div class="flex items-center gap-3">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" alt="{{ $article['author'] }}" class="h-12 w-12 rounded-full object-cover">
-                        <div>
-                            <div class="font-semibold text-[#1d2a1d] dark:text-[#edf5ee]">{{ $article['author'] }}</div>
-                            <div class="text-xs text-[#6a7c6c] dark:text-[#bfd3c3]">News Editor</div>
+                        <img src="{{ $article['image'] }}" alt="{{ $article['title'] }}" class="mt-7 aspect-[16/9] w-full object-cover">
+
+                        <div class="mt-8 max-w-none text-base leading-8 text-neutral-800 sm:text-lg">
+                            <p class="mb-6 font-medium leading-8">{{ $article['excerpt'] }}</p>
+                            @if (!empty($article['body']) && $article['body'] !== '...')
+                                @php
+                                    $articleParagraphs = preg_split('/\R+/u', trim($article['body']), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+                                @endphp
+                                <ul class="space-y-4 pl-6 marker:text-red-600">
+                                    @foreach ($articleParagraphs as $paragraph)
+                                        <li class="pl-2 whitespace-pre-line">{{ $paragraph }}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <ul class="space-y-4 pl-6 marker:text-red-600">
+                                    <li class="pl-2">नेपालमा वन संरक्षण र वातावरणीय नीतिमा स्थानीय समुदाय तथा सरकारी संस्थाबीच थप सहकार्य आवश्यक छ।</li>
+                                    <li class="pl-2">उच्च हिमाली क्षेत्रका जलस्रोत, वन्यजन्तुका बासस्थान र स्थानीय जीविकोपार्जनलाई संरक्षण योजनासँग जोड्नुपर्ने देखिन्छ।</li>
+                                    <li class="pl-2">समुदायको सहभागिता र तथ्यमा आधारित रिपोर्टिङले दीर्घकालीन संरक्षण प्रयासलाई बलियो बनाउँछ।</li>
+                                </ul>
+                            @endif
                         </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="flex h-10 w-10 items-center justify-center rounded-full border border-[#dfeae0] bg-white text-sm dark:border-white/10 dark:bg-[#20332d]">f</button>
-                        <button class="flex h-10 w-10 items-center justify-center rounded-full border border-[#dfeae0] bg-white text-sm dark:border-white/10 dark:bg-[#20332d]">x</button>
-                        <button class="flex h-10 w-10 items-center justify-center rounded-full border border-[#dfeae0] bg-white text-sm dark:border-white/10 dark:bg-[#20332d]">in</button>
-                    </div>
-                </div>
 
-                <div class="prose prose-lg mt-8 max-w-none leading-9 text-[#2b3a2d] dark:prose-invert dark:text-[#dfeee2]">
-                    <p>{{ $article['excerpt'] }}</p>
-                    @if (!empty($article['body']) && $article['body'] !== '...')
-                        <p class="whitespace-pre-line">{{ $article['body'] }}</p>
-                    @else
-                        <p>नेपालमा वन संरक्षण, जलवायु परिवर्तन, और पर्यावरणीय मैत्री नीति आदानप्रदानका लागि स्थानीय समुदाय र सरकारी संस्थाहरुलाई थप सहयोग आवश्यक छ। यस्ता मुद्दाहरूमा तथ्य र प्रमाणिकता महत्त्वपूर्ण हुन्छ, र इस लेखले यस्ता विषयलाई सहज र स्पष्ट रूपमा प्रस्तुत गर्न प्रयास गर्छ।</p>
-                        <p>उच्च हिमाली क्षेत्रमा स्थिर जलस्रोत, वन्यजन्तु आवास, और सहर-गाउँको जीवनस्तरलाई ध्यानमा राख्दै भविष्यमा अधिक समन्वयात्मक रणनीतिका आवश्यकता छ। समुदायले वनका लागि सहमति बनाउने र स्थानीय सहभागिता बढाउने प्रयत्नले स्थिरता र सुरक्षा हुँदै जान्छ।</p>
-                        <p>यस पहलको मुख्य उद्देश्य केवल समाचार रिपोर्ट गर्नु मात्र होईन, बल्कि सामाजिक परिप्रेक्ष्यमा नागरिकहरूमा चेतना जगाउनु हो। सहर, गाउँ, र राष्ट्रीय संरचनामा जन्मिने स्वभावजन्य परिवर्तनलाई अपस्ट्रीम रणनीतिसँग जोड्न आवश्यक छ।</p>
-                    @endif
-                </div>
-
-                <div class="mt-10 rounded-[24px] bg-[#edf6ee] p-5 text-[#1B5E20] dark:bg-[#20332d] dark:text-[#edf5ee]">
-                    <div class="text-xs font-bold uppercase tracking-[0.25em]">Key takeaway</div>
-                    <p class="mt-3 text-sm leading-7">वन संरक्षणका लागि स्थानीय समुदाय, सरकारी नीति, र पर्यावरणीय शिक्षा एकैसाथ समन्वय हुनु आवश्यक छ।</p>
-                </div>
-            </div>
-        </article>
-
-        <section class="mt-16">
-            <div class="mb-6 flex items-center justify-between">
-                <h2 class="font-display text-2xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">सम्बन्धित समाचार</h2>
-            </div>
-            <div class="grid gap-6 md:grid-cols-3">
-                @foreach($related as $item)
-                    <article class="overflow-hidden rounded-[24px] bg-white shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
-                        <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-48 w-full object-cover">
-                        <div class="p-5">
-                            <span class="text-[10px] uppercase tracking-[0.18em] text-[#2E7D32]">{{ $item['category'] }}</span>
-                            <a href="{{ route('news.show', $item['slug']) }}" class="mt-3 block font-display text-xl font-bold leading-snug text-[#1d2a1d] dark:text-[#edf5ee]">{{ $item['title'] }}</a>
+                        <div class="mt-8 flex justify-end gap-2 border-t border-neutral-200 pt-5" aria-label="Share article">
+                            <button type="button" aria-label="Share on Facebook" class="flex h-10 w-10 items-center justify-center border border-neutral-200 text-sm font-semibold text-neutral-800 transition hover:border-red-600 hover:text-red-700">f</button>
+                            <button type="button" aria-label="Share on X" class="flex h-10 w-10 items-center justify-center border border-neutral-200 text-sm font-semibold text-neutral-800 transition hover:border-red-600 hover:text-red-700">x</button>
+                            <button type="button" aria-label="Share on LinkedIn" class="flex h-10 w-10 items-center justify-center border border-neutral-200 text-xs font-semibold text-neutral-800 transition hover:border-red-600 hover:text-red-700">in</button>
                         </div>
                     </article>
-                @endforeach
-            </div>
-        </section>
 
-        <section class="mt-16 rounded-[28px] bg-white p-6 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b] sm:p-8">
-            <h3 class="font-display text-2xl font-bold text-[#1B5E20] dark:text-[#edf5ee]">Comments</h3>
-            <div class="mt-6 space-y-5">
-                <div class="rounded-2xl bg-[#f7faf7] p-4 dark:bg-[#20332d]">
-                    <div class="font-semibold text-[#1d2a1d] dark:text-[#edf5ee]">मंगला</div>
-                    <p class="mt-2 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">वन संरक्षणको महत्वलाई यसरी स्पष्टरुपमा प्रस्तुत गर्नु राम्रो भयो। समुदायले पनि यसलाई सहयोग गर्नुपर्छ।</p>
+                    <section id="comments" class="mt-12 border-t border-neutral-200 pt-8">
+                        <h2 class="text-2xl font-bold text-neutral-950">Comments ({{ $comments->count() }})</h2>
+
+                        @if (session('success'))
+                            <p class="mt-4 border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ session('success') }}</p>
+                        @endif
+
+                        @if ($errors->any())
+                            <div class="mt-4 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                                <ul class="list-disc space-y-1 pl-5">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <div class="mt-6 space-y-4">
+                            @forelse ($comments as $comment)
+                                <article class="border border-neutral-200 p-4">
+                                    <div class="font-semibold text-neutral-900">{{ $comment->name }}</div>
+                                    <p class="mt-2 whitespace-pre-line text-sm leading-7 text-neutral-700">{{ $comment->body }}</p>
+                                </article>
+                            @empty
+                                <p class="border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-600">अहिलेसम्म कुनै टिप्पणी छैन। पहिलो टिप्पणी लेख्नुहोस्।</p>
+                            @endforelse
+                        </div>
+
+                        <form method="POST" action="{{ route('news.comments.store', $article['slug']) }}" class="mt-8 space-y-4">
+                            @csrf
+                            <div>
+                                <label for="comment-name" class="mb-2 block text-sm font-medium text-neutral-900">तपाईंको नाम</label>
+                                <input id="comment-name" type="text" name="name" value="{{ old('name') }}" required maxlength="100" class="w-full border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100">
+                            </div>
+                            <div>
+                                <label for="comment-body" class="mb-2 block text-sm font-medium text-neutral-900">तपाईंको टिप्पणी</label>
+                                <textarea id="comment-body" name="body" rows="4" required maxlength="2000" class="w-full border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100" placeholder="तपाईंको विचार लेख्नुहोस्...">{{ old('body') }}</textarea>
+                            </div>
+                            <button type="submit" class="bg-red-700 px-6 py-3 text-sm font-bold text-white transition hover:bg-red-800">Comment</button>
+                        </form>
+                    </section>
                 </div>
-                <div class="rounded-2xl bg-[#f7faf7] p-4 dark:bg-[#20332d]">
-                    <div class="font-semibold text-[#1d2a1d] dark:text-[#edf5ee]">गणेश</div>
-                    <p class="mt-2 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">पर्यावरणीय रिपोर्टिङमा सही तथ्य र तालिका समावेश हुनु राम्रो छ।</p>
-                </div>
+
+                <aside aria-label="Most read and advertisements" class="flex h-full flex-col gap-8">
+                    <section class="border-l-4 border-red-700 pl-5">
+                        <h2 class="text-xl font-bold text-neutral-950">Most Read</h2>
+                        <ol class="mt-5 divide-y divide-neutral-200">
+                            @forelse ($mostRead as $item)
+                                <li class="py-4 first:pt-0 last:pb-0">
+                                    <a href="{{ route('news.show', $item['slug']) }}" class="group flex gap-3">
+                                        <span class="shrink-0 text-lg font-bold tabular-nums text-red-700">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                        <span class="min-w-0">
+                                            <span class="block text-sm font-semibold leading-6 text-neutral-900 transition group-hover:text-red-700">{{ $item['title'] }}</span>
+                                            <span class="mt-1 block text-xs text-neutral-500">{{ number_format((int) ($item['views'] ?? 0)) }} views</span>
+                                        </span>
+                                    </a>
+                                </li>
+                            @empty
+                                <li class="py-4 text-sm text-neutral-500">अहिलेसम्म समाचार उपलब्ध छैन।</li>
+                            @endforelse
+                        </ol>
+                    </section>
+
+                    @if ($articleCenterAdvertisements->isNotEmpty() || $articleSidebarAdvertisements->isNotEmpty())
+                        <div data-article-sidebar-ad class="space-y-4">
+                            @if ($articleCenterAdvertisements->isNotEmpty())
+                                <div data-article-center-sidebar-ad>
+                                    @include('partials.advertisement-placement', ['advertisements' => $articleCenterAdvertisements])
+                                </div>
+                            @endif
+                            @if ($articleSidebarAdvertisements->isNotEmpty())
+                                @include('partials.advertisement-placement', ['advertisements' => $articleSidebarAdvertisements])
+                            @endif
+                        </div>
+                    @else
+                        <img src="{{ asset('image/forest-campaign-728x90.png') }}" alt="वन जोगाऔँ, भविष्य बचाऔँ" class="block h-auto w-full object-cover">
+                    @endif
+                </aside>
             </div>
 
-            <form class="mt-8 space-y-4">
-                <textarea rows="4" class="w-full rounded-2xl border border-[#dfeae0] bg-[#f8faf8] px-4 py-3 text-sm text-[#212121] focus:outline-none dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]" placeholder="तपाईंको विचार लेख्नुहोस्..."></textarea>
-                <button type="submit" class="rounded-full bg-[#2E7D32] px-6 py-3 text-sm font-bold text-white hover:bg-[#1B5E20]">Comment</button>
-            </form>
-        </section>
+            <section class="mt-16 border-t border-neutral-200 pt-10">
+                <h2 class="mb-6 text-2xl font-bold text-neutral-950">सम्बन्धित समाचार</h2>
+                <div class="grid gap-6 md:grid-cols-3">
+                    @foreach($related as $item)
+                        <article class="overflow-hidden border border-neutral-200 bg-white">
+                            <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-48 w-full object-cover">
+                            <div class="p-5">
+                                <span class="text-xs font-semibold text-red-700">{{ $item['category'] }}</span>
+                                <a href="{{ route('news.show', $item['slug']) }}" class="mt-3 block text-xl font-bold leading-snug text-neutral-900 transition hover:text-red-700">{{ $item['title'] }}</a>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </section>
+        </div>
     </section>
 @endsection
