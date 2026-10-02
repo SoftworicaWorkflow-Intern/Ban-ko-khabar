@@ -5,7 +5,7 @@
 @section('content')
     <section class="bg-white text-black">
         <div class="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
-            <div id="articleBodyWithAds" class="grid min-w-0 items-stretch gap-10 lg:grid-cols-2">
+            <div id="articleBodyWithAds" class="grid min-w-0 items-stretch gap-10 xl:grid-cols-[minmax(0,4fr)_minmax(250px,1fr)]">
                 <div class="min-w-0">
                     <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-2 text-sm text-neutral-500">
                         <a href="{{ route('home') }}" class="transition hover:text-red-700">गृहपृष्ठ</a>
