@@ -13,12 +13,12 @@
             <form method="GET" action="{{ route('search') }}" class="grid gap-4 lg:grid-cols-[1.4fr_0.7fr_0.7fr_0.4fr]">
                 <input name="q" value="{{ $query }}" placeholder="समाचार खोज्नुहोस्..." class="h-14 rounded-full border border-[#dfeae0] bg-[#f8faf8] px-5 text-sm text-[#212121] outline-none focus:border-[#2E7D32] dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]">
                 <select name="category" class="h-14 rounded-full border border-[#dfeae0] bg-[#f8faf8] px-5 text-sm text-[#212121] outline-none focus:border-[#2E7D32] dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]">
-                    <option value="all">सबै</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category }}" {{ $category == $category ? '' : '' }}>{{ $category }}</option>
+                    <option value="all" @selected($category === 'all')>सबै</option>
+                    @foreach($categories as $option)
+                        <option value="{{ $option }}" @selected($category === $option)>{{ $option }}</option>
                     @endforeach
                 </select>
-                <input type="date" class="h-14 rounded-full border border-[#dfeae0] bg-[#f8faf8] px-5 text-sm text-[#212121] outline-none focus:border-[#2E7D32] dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]">
+                <input type="date" name="date" class="h-14 rounded-full border border-[#dfeae0] bg-[#f8faf8] px-5 text-sm text-[#212121] outline-none focus:border-[#2E7D32] dark:border-white/10 dark:bg-[#0f1720] dark:text-[#edf5ee]">
                 <button type="submit" class="h-14 rounded-full bg-[#2E7D32] px-6 text-sm font-bold text-white hover:bg-[#1B5E20]">खोज्नुहोस्</button>
             </form>
 
@@ -33,7 +33,6 @@
                                 <span>{{ $item['author'] }}</span>
                             </div>
                             <a href="{{ route('news.show', $item['slug']) }}" class="mt-3 block font-display text-xl font-bold text-[#1d2a1d] hover:text-[#2E7D32] dark:text-[#edf5ee]">{{ $item['title'] }}</a>
-                            <p class="mt-3 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $item['excerpt'] }}</p>
                         </div>
                     </article>
                 @empty

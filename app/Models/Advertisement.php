@@ -11,6 +11,7 @@ class Advertisement extends Model
         'article-top' => 'Top of article - 728 x 90',
         'article-center' => 'Center of article - 728 x 90',
         'article-bottom' => 'Bottom of article - 728 x 90',
+        'latest-bottom' => 'Bottom of latest section - 728 x 90',
         'sidebar' => 'Right sidebar - 300 x 250',
         'footer' => 'Footer - 728 x 90',
         'insights-top' => 'Top of insights - 728 x 90',

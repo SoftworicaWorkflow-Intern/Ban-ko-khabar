@@ -5,7 +5,7 @@
 @section('content')
     <section class="bg-white text-black">
         <div class="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
-            <div id="articleBodyWithAds" class="grid min-w-0 items-stretch gap-10 xl:grid-cols-[minmax(0,4fr)_minmax(250px,1fr)]">
+            <div id="articleBodyWithAds" class="grid min-w-0 items-stretch gap-10 xl:grid-cols-[minmax(0,7fr)_minmax(280px,3fr)]">
                 <div class="min-w-0">
                     <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-2 text-sm text-neutral-500">
                         <a href="{{ route('home') }}" class="transition hover:text-red-700">गृहपृष्ठ</a>
@@ -54,9 +54,13 @@
                         </div>
 
                         <div class="mt-8 flex justify-end gap-2 border-t border-neutral-200 pt-5" aria-label="Share article">
-                            <button type="button" aria-label="Share on Facebook" class="flex h-10 w-10 items-center justify-center border border-neutral-200 text-sm font-semibold text-neutral-800 transition hover:border-red-600 hover:text-red-700">f</button>
-                            <button type="button" aria-label="Share on X" class="flex h-10 w-10 items-center justify-center border border-neutral-200 text-sm font-semibold text-neutral-800 transition hover:border-red-600 hover:text-red-700">x</button>
-                            <button type="button" aria-label="Share on LinkedIn" class="flex h-10 w-10 items-center justify-center border border-neutral-200 text-xs font-semibold text-neutral-800 transition hover:border-red-600 hover:text-red-700">in</button>
+                            <button type="button" aria-label="Share on Facebook" class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1877F2] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#1464d1]">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="currentColor"><path d="M14 8.5V6.74c0-.78.52-1.29 1.3-1.29h1.7V1.1h-2.92C9.9 1.1 8.5 2.5 8.5 5.45v3.05H6v3.8h2.5V23h5.5v-10.7H14Z"/></svg>
+                            </button>
+                            <button type="button" aria-label="Share on X" class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#111827] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#1f2937]">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.7 22H2.6l7.3-8.4L.8 2h6.48l4.46 5.9L18.9 2Zm-1.1 18h1.7L6.33 3.9H4.55L17.8 20Z" transform="scale(.9) translate(1.2 1.2)"/></svg>
+                            </button>
+                            <button type="button" aria-label="Share on LinkedIn" class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0A66C2] text-xs font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#084c97]">in</button>
                         </div>
                     </article>
 
@@ -103,7 +107,8 @@
                     </section>
                 </div>
 
-                <aside aria-label="Most read and advertisements" class="flex h-full flex-col gap-8">
+                <aside aria-label="Most read and advertisements" class="xl:sticky xl:top-28 xl:self-start">
+                    <div class="flex flex-col gap-8">
                     <section class="border-l-4 border-red-700 pl-5">
                         <h2 class="text-xl font-bold text-neutral-950">Most Read</h2>
                         <ol class="mt-5 divide-y divide-neutral-200">
@@ -137,6 +142,7 @@
                     @else
                         <img src="{{ asset('image/forest-campaign-728x90.png') }}" alt="वन जोगाऔँ, भविष्य बचाऔँ" class="block h-auto w-full object-cover">
                     @endif
+                    </div>
                 </aside>
             </div>
 

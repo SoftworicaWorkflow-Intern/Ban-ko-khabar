@@ -318,6 +318,7 @@ class AuthRouteTest extends TestCase
             ->assertDontSee('�')
             ->assertSee('500 views', false)
             ->assertSee('id="articleBodyWithAds"', false)
+            ->assertSee('xl:grid-cols-[minmax(0,7fr)_minmax(280px,3fr)]', false)
             ->assertSee('name="name"', false)
             ->assertSee('name="body"', false)
             ->assertDontSee('मंगला')

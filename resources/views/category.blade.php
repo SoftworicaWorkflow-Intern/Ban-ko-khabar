@@ -38,7 +38,6 @@
                         <a href="{{ route('news.show', $article['slug']) }}" class="font-display text-xl font-bold leading-relaxed text-[#1d2a1d] transition hover:text-[#2E7D32] dark:text-[#edf5ee]">
                             {{ $article['title'] }}
                         </a>
-                        <p class="mt-4 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $article['excerpt'] }}</p>
                         <div class="mt-5 flex items-center justify-between">
                             <span class="text-xs text-[#6a7c6c] dark:text-[#bfd3c3]">{{ $article['reading_time'] }}</span>
                             <a href="{{ route('news.show', $article['slug']) }}" class="inline-flex items-center gap-2 rounded-full bg-[#edf6ee] px-4 py-2 text-xs font-semibold text-[#2E7D32] transition hover:bg-[#dfeee2] dark:bg-[#20332d] dark:text-[#dfeee2]">Read more</a>

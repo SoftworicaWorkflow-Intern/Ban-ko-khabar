@@ -13,7 +13,7 @@
             <div class="space-y-5">
                 <div class="rounded-[24px] bg-white p-6 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
                     <div class="text-sm font-bold uppercase tracking-[0.25em] text-[#2E7D32]">Address</div>
-                    <p class="mt-3 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">काठमाण्डौ, नेपाल<br>गणेशमान नजिक, वनको खबर</p>
+                    <p class="mt-3 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">कावासोती<br>गणेशमान नजिक, वनको खबर</p>
                 </div>
                 <div class="rounded-[24px] bg-white p-6 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
                     <div class="text-sm font-bold uppercase tracking-[0.25em] text-[#2E7D32]">Phone</div>
@@ -45,7 +45,7 @@
         </div>
 
         <div class="mt-12 overflow-hidden rounded-[30px] bg-white p-3 shadow-[0_18px_45px_rgba(19,41,26,0.05)] dark:bg-[#17242b]">
-            <iframe src="https://www.google.com/maps?q=Kathmandu%20Nepal&output=embed" class="h-[350px] w-full rounded-[24px] border-0" loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps?q=Kawasoti&output=embed" class="h-[350px] w-full rounded-[24px] border-0" loading="lazy"></iframe>
         </div>
     </section>
 @endsection

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'वनको खबर | नेपाली वन र वातावरण समाचार')
 
@@ -21,19 +21,13 @@
             </div>
         </div>
     </section>
-
-    <div class="border-y border-[#dfeae0] bg-[#1b5e20] text-white dark:border-white/10 dark:bg-[#112822]">
-        <div class="mx-auto flex max-w-7xl items-center gap-4 overflow-hidden px-4 py-3 sm:px-6 lg:px-8">
-            <span class="shrink-0 rounded-full bg-[#e53935] px-3 py-1 text-xs font-bold uppercase tracking-wide">Breaking</span>
-            <div class="relative flex-1 overflow-hidden">
-                <div class="animate-[marquee_20s_linear_infinite] whitespace-nowrap text-sm font-medium" data-breaking-count="{{ count($breakingNews) }}">
-                    @foreach($breakingNews as $item)
-                        <span class="mr-10">{{ $item }}</span>
-                    @endforeach
-                </div>
-            </div>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
         </div>
-    </div>
+    @endif
+
+    @include('partials.breaking-news', ['breakingNews' => $breakingNews])
 
     @if ($homeAdvertisements->has('article-top'))
         <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
@@ -50,36 +44,36 @@
             <a href="#" class="text-sm font-semibold text-[#2E7D32] transition hover:text-[#1B5E20]">सबै समाचार</a>
         </div>
 
-        <div class="grid gap-6 lg:grid-cols-[1.7fr_1fr]">
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
             @if ($featured)
-            <a href="{{ route('news.show', $featured['slug']) }}" aria-label="Open featured story: {{ $featured['title'] }}" class="group block overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:bg-[#17242b]">
+            <a href="{{ route('news.show', $featured['slug']) }}" aria-label="Open featured story: {{ $featured['title'] }}" class="group block min-w-0 overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:bg-[#17242b]">
                 <div class="relative overflow-hidden">
-                    <img src="{{ $featured['image'] }}" alt="{{ $featured['title'] }}" class="h-64 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-80 lg:h-[420px]">
+                    <img src="{{ $featured['image'] }}" alt="{{ $featured['title'] }}" class="h-56 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-64 lg:h-[220px]">
                     <span class="absolute left-5 top-5 rounded-full bg-[#2E7D32] px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-white">{{ $featured['badge'] }}</span>
+                    <div class="absolute right-4 top-4 flex items-center gap-2 rounded-full bg-[#17242b]/85 px-3 py-1.5 text-[10px] font-semibold text-white shadow-sm backdrop-blur-sm">
+                        <span class="inline-flex items-center gap-1" title="Reading time">
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                            {{ $featured['reading_time'] }}
+                        </span>
+                        <span>•</span>
+                        <span class="inline-flex items-center gap-1" title="Story views">
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            {{ number_format((int) $featured['views']) }}
+                        </span>
+                    </div>
                 </div>
-                <div class="p-6 sm:p-8">
+                <div class="p-5 sm:p-6">
                     <div class="mb-4 flex flex-wrap items-center gap-4 text-xs text-[#5e6f61] dark:text-[#bfd3c3]">
                         <span>{{ $featured['date'] }}</span>
                         <span>•</span>
                         <span>{{ $featured['author'] }}</span>
                     </div>
-                    <h3 class="font-display text-2xl font-bold leading-snug text-[#1d2a1d] transition group-hover:text-[#2E7D32] dark:text-[#edf5ee]">
+                    <h3 class="font-display text-lg font-bold leading-snug text-[#1d2a1d] transition group-hover:text-[#2E7D32] dark:text-[#edf5ee] sm:text-xl">
                         {{ $featured['title'] }}
                     </h3>
-                    <p class="mt-4 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $featured['excerpt'] }}</p>
-                    <div class="mt-6 flex items-center justify-between">
-                        <span class="rounded-full bg-[#edf6ee] px-3 py-1 text-xs font-semibold text-[#2E7D32] dark:bg-[#20332d] dark:text-[#dfeee2]">{{ $featured['category'] }}</span>
-                        <div class="flex flex-wrap items-center justify-end gap-4 text-xs text-[#6a7c6c] dark:text-[#bfd3c3]">
-                            <span class="inline-flex items-center gap-1.5" title="Reading time">
-                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                                {{ $featured['reading_time'] }}
-                            </span>
-                            <span class="inline-flex items-center gap-1.5" title="Story views">
-                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                {{ number_format((int) $featured['views']) }}
-                            </span>
-                            <span class="inline-flex items-center gap-2 font-semibold text-[#2E7D32]">Read more <span aria-hidden="true">→</span></span>
-                        </div>
+                    <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <span class="w-fit rounded-full bg-[#edf6ee] px-3 py-1 text-xs font-semibold text-[#2E7D32] dark:bg-[#20332d] dark:text-[#dfeee2]">{{ $featured['category'] }}</span>
+                        <span class="inline-flex items-center gap-2 font-semibold text-[#2E7D32]">Read more →</span>
                     </div>
                 </div>
             </a>
@@ -87,30 +81,30 @@
                 <div class="flex min-h-72 items-center justify-center rounded-lg border border-dashed border-[#c9d9c9] bg-white p-8 text-center text-sm text-[#5e6f61] dark:border-white/10 dark:bg-[#17242b] dark:text-[#bfd3c3]">No published stories yet.</div>
             @endif
 
-            <div class="space-y-6">
+            <div class="flex flex-col gap-4">
                 @foreach($sideFeatures as $item)
-                    <a href="{{ route('news.show', $item['slug']) }}" aria-label="Open featured story: {{ $item['title'] }}" class="group block overflow-hidden rounded-lg bg-white shadow-[0_18px_45px_rgba(19,41,26,0.08)] transition duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:bg-[#17242b]">
-                        <div class="flex gap-4 p-4">
-                            <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-32 w-32 shrink-0 rounded-2xl object-cover">
-                            <div class="min-w-0 flex-1">
-                                <div class="mb-2 flex items-center justify-between text-[11px] text-[#5e6f61] dark:text-[#bfd3c3]">
-                                    <span>{{ $item['category'] }}</span>
-                                    <span>{{ $item['date'] }}</span>
-                                </div>
-                                <h3 class="font-display text-lg font-bold leading-snug text-[#1d2a1d] transition group-hover:text-[#2E7D32] dark:text-[#edf5ee]">
-                                    {{ $item['title'] }}
-                                </h3>
+                    <a href="{{ route('news.show', $item['slug']) }}" aria-label="Open featured story: {{ $item['title'] }}" class="group flex items-center gap-3 overflow-hidden rounded-xl bg-white p-3 shadow-[0_6px_20px_rgba(19,41,26,0.07)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(19,41,26,0.12)] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#8FD58F] dark:bg-[#17242b]">
+                        <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-20 w-20 shrink-0 rounded-xl object-cover">
+                        <div class="min-w-0 flex-1">
+                            <div class="mb-1 flex items-center justify-between text-[10px] text-[#5e6f61] dark:text-[#bfd3c3]">
+                                <span class="rounded-full bg-[#edf6ee] px-2 py-0.5 font-semibold text-[#2E7D32] dark:bg-[#20332d] dark:text-[#dfeee2]">{{ $item['category'] }}</span>
+                                <span>{{ $item['date'] }}</span>
                             </div>
+                            <h3 class="mt-1 font-display text-sm font-bold leading-snug text-[#1d2a1d] transition group-hover:text-[#2E7D32] dark:text-[#edf5ee] line-clamp-2">
+                                {{ $item['title'] }}
+                            </h3>
                         </div>
                     </a>
                 @endforeach
-                @if ($homeAdvertisements->has('sidebar'))
-                    @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('sidebar')])
-                @endif
             </div>
         </div>
 
     </section>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+        </div>
+    @endif
 
     @if ($homeAdvertisements->has('article-center'))
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -133,6 +127,17 @@
                         <div class="relative overflow-hidden">
                             <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-56 w-full object-cover transition duration-500 group-hover:scale-105">
                             <span class="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#2E7D32]">{{ $item['category'] }}</span>
+                            <div class="absolute right-4 top-4 flex items-center gap-2 rounded-full bg-[#17242b]/85 px-3 py-1.5 text-[10px] font-semibold text-white shadow-sm backdrop-blur-sm">
+                                <span class="inline-flex items-center gap-1" title="Reading time">
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                                    {{ $item['reading_time'] }}
+                                </span>
+                        <span>•</span>
+                                <span class="inline-flex items-center gap-1" title="Story views">
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    {{ number_format((int) $item['views']) }}
+                                </span>
+                            </div>
                         </div>
                         <div class="p-5">
                             <div class="mb-3 flex items-center justify-between text-[11px] text-[#6a7c6c] dark:text-[#bfd3c3]">
@@ -142,19 +147,8 @@
                             <a href="{{ route('news.show', $item['slug']) }}" class="font-display text-xl font-bold leading-relaxed text-[#1d2a1d] transition hover:text-[#2E7D32] dark:text-[#edf5ee]">
                                 {{ $item['title'] }}
                             </a>
-                            <p class="mt-4 text-sm leading-7 text-[#4f5c4f] dark:text-[#dce8dd]">{{ $item['excerpt'] }}</p>
-                            <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#edf1ed] pt-4 dark:border-white/10">
-                                <a href="{{ route('news.show', $item['slug']) }}" class="text-xs font-semibold text-[#2E7D32]">Read more <span aria-hidden="true">→</span></a>
-                                <div class="flex flex-wrap items-center justify-end gap-3 text-xs text-[#6a7c6c] dark:text-[#bfd3c3]">
-                                    <span class="inline-flex items-center gap-1.5" title="Reading time">
-                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                                        {{ $item['reading_time'] }}
-                                    </span>
-                                    <span class="inline-flex items-center gap-1.5" title="Story views">
-                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                        {{ number_format((int) $item['views']) }}
-                                    </span>
-                                </div>
+                            <div class="mt-5 flex items-center justify-between gap-3 border-t border-[#edf1ed] pt-4 dark:border-white/10">
+                                <a href="{{ route('news.show', $item['slug']) }}" class="text-xs font-semibold text-[#2E7D32]">Read more →</a>
                             </div>
                         </div>
                     </article>
@@ -163,10 +157,15 @@
 
         </div>
     </section>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+        </div>
+    @endif
 
-    @if ($homeAdvertisements->has('article-bottom'))
+    @if ($homeAdvertisements->has('latest-bottom'))
         <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('article-bottom')])
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('latest-bottom')])
         </div>
     @endif
 
@@ -192,8 +191,13 @@
             @endforeach
         </div>
     </section>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+        </div>
+    @endif
 
-    <section id="wildlife" class="bg-[#0f1720] py-20 text-white">
+    <section id="wildlife" class="mt-12 bg-[#0f1720] py-20 text-white">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mb-10 flex items-end justify-between gap-4">
                 <div>
@@ -201,8 +205,8 @@
                     <h2 class="mt-2 font-display text-3xl font-bold text-white">ट्रेन्डिङ समाचार</h2>
                 </div>
                 <div class="flex gap-2">
-                    <button class="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-lg">←</button>
-                    <button class="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-lg">→</button>
+                    <button class="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-lg">â†</button>
+                    <button class="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-lg">â†’</button>
                 </div>
             </div>
 
@@ -219,10 +223,15 @@
             </div>
         </div>
     </section>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+        </div>
+    @endif
 
-    @if ($homeAdvertisements->has('insights-top'))
+    @if ($homeAdvertisements->has('article-bottom'))
         <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('insights-top')])
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('article-bottom')])
         </div>
     @endif
 
@@ -248,6 +257,17 @@
             @endforeach
         </div>
     </section>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+        </div>
+    @endif
+
+    @if ($homeAdvertisements->has('insights-top'))
+        <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('insights-top')])
+        </div>
+    @endif
 
     <section id="environment" class="scroll-mt-36 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div class="mb-10 flex items-end justify-between gap-4">
@@ -274,6 +294,11 @@
             @endforeach
         </div>
     </section>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+        </div>
+    @endif
 
     <section class="bg-[#edf6ee] py-20 dark:bg-[#111f24]">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -305,6 +330,11 @@
             </div>
         </div>
     </section>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+        </div>
+    @endif
 
     <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div class="overflow-hidden rounded-[30px] bg-[linear-gradient(135deg,#163f21,#2E7D32,#1B5E20)] px-6 py-10 text-white shadow-[0_24px_60px_rgba(38,82,44,0.25)] sm:px-10 lg:px-14">
@@ -321,6 +351,11 @@
             </div>
         </div>
     </section>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+        </div>
+    @endif
 
     <section class="mx-auto max-w-7xl px-4 pb-20 pt-20 sm:px-6 lg:px-8">
         <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -357,4 +392,15 @@
             </div>
         </div>
     </section>
+    @if ($homeAdvertisements->has('section-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+        </div>
+    @endif
+
+    @if ($homeAdvertisements->has('footer'))
+        <div class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('footer')])
+        </div>
+    @endif
 @endsection

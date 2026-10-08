@@ -643,22 +643,56 @@ class PageController extends Controller
 
     public function search(Request $request)
     {
-        $query = trim((string) $request->get('q', ''));
-        $category = $request->get('category');
-        $results = $this->newsItems();
+        $query = trim((string) $request->input('q', ''));
+        $category = $request->input('category', 'all');
+        $normalizedQuery = strtolower($query);
 
-        if ($query !== '') {
-            $results = array_values(array_filter($results, fn ($item) => str_contains(strtolower($item['title']), strtolower($query)) || str_contains(strtolower($item['excerpt']), strtolower($query))));
+        // Build a merged pool: DB published articles + static fallback items
+        $publishedStories = News::query()
+            ->with('category')
+            ->where('status', 'published')
+            ->latest()
+            ->get();
+
+        $fallbackItems = collect($this->newsItems());
+
+        if ($publishedStories->isNotEmpty()) {
+            $dbItems = $publishedStories->map(fn (News $story): array => $this->newsCardData($story));
+            $existingSlugs = $dbItems->pluck('slug')->all();
+            $pool = $dbItems->concat(
+                $fallbackItems->reject(fn (array $item): bool => in_array($item['slug'], $existingSlugs, true))
+            )->values();
+        } else {
+            $pool = $fallbackItems;
         }
 
-        if ($category && $category !== 'all') {
-            $results = array_values(array_filter($results, fn ($item) => $item['category'] === $category));
+        // Apply keyword filter
+        if ($normalizedQuery !== '') {
+            $pool = $pool->filter(function (array $item) use ($normalizedQuery): bool {
+                $searchableText = implode(' ', [
+                    $item['title'],
+                    $item['excerpt'],
+                    $item['category'],
+                    $item['category_slug'],
+                    $item['author'],
+                ]);
+
+                return str_contains(strtolower($searchableText), $normalizedQuery);
+            })->values();
+        }
+
+        // Apply category filter
+        if ($category !== 'all' && $category !== '') {
+            $pool = $pool->filter(function (array $item) use ($category): bool {
+                return $item['category'] === $category
+                    || $item['category_slug'] === $category;
+            })->values();
         }
 
         return view('search', [
             'query' => $query,
-            'category' => $category ?? 'all',
-            'results' => $results,
+            'category' => $category,
+            'results' => $pool->all(),
             'categories' => collect($this->categoryCards())->pluck('name')->all(),
         ]);
     }

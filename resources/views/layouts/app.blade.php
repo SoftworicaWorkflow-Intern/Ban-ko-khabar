@@ -21,36 +21,25 @@
                         </a>
 
                         <div aria-label="Social media" class="col-start-2 row-start-1 flex items-center justify-self-end gap-2 sm:col-start-3 sm:gap-3">
-                            <span title="Facebook" class="flex h-12 w-12 items-center justify-center rounded-full bg-[#1877F2] text-xl font-bold text-white shadow-sm sm:h-14 sm:w-14 sm:text-2xl">f</span>
-                            <span title="YouTube" class="flex h-12 w-12 items-center justify-center rounded-full bg-[#FF0000] text-white shadow-sm sm:h-14 sm:w-14">
-                                <span aria-hidden="true" class="ml-0.5 h-0 w-0 border-y-[7px] border-y-transparent border-l-[12px] border-l-white"></span>
-                            </span>
+                            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook" class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#1464d1] sm:h-10 sm:w-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="currentColor"><path d="M14 8.5V6.74c0-.78.52-1.29 1.3-1.29h1.7V1.1h-2.92C9.9 1.1 8.5 2.5 8.5 5.45v3.05H6v3.8h2.5V23h5.5v-10.7H14Z"/></svg>
+                            </a>
+                            <a href="https://x.com/" target="_blank" rel="noopener noreferrer" title="X" aria-label="X" class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#111827] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#1f2937] sm:h-10 sm:w-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.7 22H2.6l7.3-8.4L.8 2h6.48l4.46 5.9L18.9 2Zm-1.1 18h1.7L6.33 3.9H4.55L17.8 20Z" transform="scale(.9) translate(1.2 1.2)"/></svg>
+                            </a>
+                            <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube" class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF0000] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#dc0000] sm:h-10 sm:w-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="currentColor"><path d="M21.6 7.2a2.78 2.78 0 0 0-1.96-1.96C17.9 4.5 12 4.5 12 4.5s-5.9 0-7.64.74A2.78 2.78 0 0 0 2.4 7.2 28.9 28.9 0 0 0 1.66 12c0 1.6.25 3.2.74 4.8a2.78 2.78 0 0 0 1.96 1.96c1.74.74 7.64.74 7.64.74s5.9 0 7.64-.74a2.78 2.78 0 0 0 1.96-1.96c.49-1.6.74-3.2.74-4.8 0-1.6-.25-3.2-.74-4.8ZM10 15.2V8.8l5.5 3.2L10 15.2Z"/></svg>
+                            </a>
                         </div>
 
-                        <div class="relative col-span-2 row-start-2 min-w-0 sm:col-span-1 sm:col-start-2 sm:row-start-1">
-                            @if (isset($homeAdvertisements) && $homeAdvertisements->has('header'))
-                                @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('header')])
-                            @else
-                                <div class="relative min-w-0 overflow-hidden border-l-4 border-[#f5c64a] bg-[#b5162a] text-white shadow-md shadow-red-950/10">
-                                    <div class="relative grid grid-cols-[48px_minmax(0,1fr)] items-center gap-2 px-3 py-3 md:grid-cols-[64px_minmax(0,1fr)_230px] md:gap-3 md:px-4">
-                                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=180&h=220&q=85" alt="व्यवसाय प्रतिनिधि" class="h-14 w-12 rounded-sm object-cover object-top md:h-[66px] md:w-16">
-                                        <div class="min-w-0 text-center md:text-left">
-                                            <p class="text-[8px] font-bold uppercase tracking-[0.12em] text-[#ffe59a] sm:text-[9px]">Education · Skills · Careers</p>
-                                            <h2 class="mt-0.5 font-display text-base font-black leading-tight sm:text-lg">तपाईंको उज्ज्वल भविष्यको सुरुवात</h2>
-                                            <div class="mt-1.5 flex flex-wrap justify-center gap-1 md:justify-start">
-                                                <span class="rounded-sm bg-white/15 px-1.5 py-0.5 text-[8px] font-semibold">उच्च शिक्षा</span>
-                                                <span class="rounded-sm bg-white/15 px-1.5 py-0.5 text-[8px] font-semibold">प्राविधिक सीप</span>
-                                                <span class="rounded-sm bg-white/15 px-1.5 py-0.5 text-[8px] font-semibold">करियर तालिम</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-span-2 border-t border-white/25 pt-2 text-center text-[9px] leading-4 md:col-span-1 md:border-l md:border-t-0 md:pl-3 md:pt-0 md:text-left md:text-[10px] md:leading-5">
-                                            <p class="font-bold">Bharatpur · Gaindakot · Kawasoti</p>
-                                            <p>056-594273 · 078-540086 · 9855063983</p>
-                                            <a href="https://www.centralcollege.com.np" target="_blank" rel="noopener noreferrer" class="mt-1 inline-flex rounded-sm bg-[#f5c64a] px-2 py-1 font-extrabold text-[#54202a] transition hover:bg-white">www.centralcollege.com.np <span aria-hidden="true" class="ml-1">↗</span></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
+                        <div class="col-span-2 row-start-2 flex flex-col items-center justify-center text-center sm:col-span-1 sm:col-start-2 sm:row-start-1">
+                            <p class="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#2E7D32] dark:text-[#8FD58F]">
+                                {{ now()->format('l') }}
+                            </p>
+                            @php($bikramSambhat = \App\Services\BikramSambat::fromGregorian(now()))
+                            <p class="mt-0.5 text-sm font-bold text-[#1d2a1d] dark:text-[#edf5ee] sm:text-base">
+                                {{ $bikramSambhat['formatted'] }}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -63,18 +52,27 @@
                             <img src="{{ asset('image/logo.png') }}" alt="वनको खबर logo" class="h-12 w-auto max-w-[140px] object-contain sm:h-14 sm:max-w-[220px]">
                         </a>
 
-                        <div aria-label="Social media" class="col-start-2 row-start-1 flex items-center justify-self-end gap-2 sm:col-start-3 sm:gap-3">
-                            <span title="Facebook" class="flex h-12 w-12 items-center justify-center rounded-full bg-[#1877F2] text-xl font-bold text-white shadow-sm sm:h-14 sm:w-14 sm:text-2xl">f</span>
-                            <span title="YouTube" class="flex h-12 w-12 items-center justify-center rounded-full bg-[#FF0000] text-white shadow-sm sm:h-14 sm:w-14">
-                                <span aria-hidden="true" class="ml-0.5 h-0 w-0 border-y-[7px] border-y-transparent border-l-[12px] border-l-white"></span>
-                            </span>
+                        <div class="col-span-2 row-start-2 flex flex-col items-center justify-center text-center sm:col-span-1 sm:col-start-2 sm:row-start-1">
+                            <p class="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#2E7D32] dark:text-[#8FD58F]">
+                                {{ now()->format('l') }}
+                            </p>
+                            @php($bikramSambhat = \App\Services\BikramSambat::fromGregorian(now()))
+                            <p class="mt-0.5 text-sm font-bold text-[#1d2a1d] dark:text-[#edf5ee] sm:text-base">
+                                {{ $bikramSambhat['formatted'] }}
+                            </p>
                         </div>
 
-                        @if (isset($sharedHeaderAdvertisements) && $sharedHeaderAdvertisements->isNotEmpty())
-                            <div class="relative col-span-2 row-start-2 min-w-0 sm:col-span-1 sm:col-start-2 sm:row-start-1">
-                                @include('partials.advertisement-placement', ['advertisements' => $sharedHeaderAdvertisements])
-                            </div>
-                        @endif
+                        <div aria-label="Social media" class="col-start-2 row-start-1 flex items-center justify-self-end gap-2 sm:col-start-3 sm:gap-3">
+                            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook" class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#1464d1] sm:h-10 sm:w-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="currentColor"><path d="M14 8.5V6.74c0-.78.52-1.29 1.3-1.29h1.7V1.1h-2.92C9.9 1.1 8.5 2.5 8.5 5.45v3.05H6v3.8h2.5V23h5.5v-10.7H14Z"/></svg>
+                            </a>
+                            <a href="https://x.com/" target="_blank" rel="noopener noreferrer" title="X" aria-label="X" class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#111827] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#1f2937] sm:h-10 sm:w-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-6.4L6.7 22H2.6l7.3-8.4L.8 2h6.48l4.46 5.9L18.9 2Zm-1.1 18h1.7L6.33 3.9H4.55L17.8 20Z" transform="scale(.9) translate(1.2 1.2)"/></svg>
+                            </a>
+                            <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube" class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF0000] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#dc0000] sm:h-10 sm:w-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="currentColor"><path d="M21.6 7.2a2.78 2.78 0 0 0-1.96-1.96C17.9 4.5 12 4.5 12 4.5s-5.9 0-7.64.74A2.78 2.78 0 0 0 2.4 7.2 28.9 28.9 0 0 0 1.66 12c0 1.6.25 3.2.74 4.8a2.78 2.78 0 0 0 1.96 1.96c1.74.74 7.64.74 7.64.74s5.9 0 7.64-.74a2.78 2.78 0 0 0 1.96-1.96c.49-1.6.74-3.2.74-4.8 0-1.6-.25-3.2-.74-4.8ZM10 15.2V8.8l5.5 3.2L10 15.2Z"/></svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -152,12 +150,6 @@
         <main>
             @yield('content')
         </main>
-
-        @if (request()->routeIs('home') && isset($homeAdvertisements) && $homeAdvertisements->has('footer'))
-            <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('footer')])
-            </div>
-        @endif
 
         <footer class="mt-20 border-t border-green-900/20 bg-[#0f3d24] text-green-50 dark:border-white/10 dark:bg-[#101b1f]">
             <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
