@@ -1,10 +1,18 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'वनको खबर | नेपाली वन र वातावरण समाचार')
 
 @section('content')
-    <section class="relative isolate overflow-hidden">
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center"></div>
+    <section data-hero-slider class="relative isolate overflow-hidden">
+        <div data-hero-slide class="absolute inset-0 opacity-100 transition-opacity duration-700 motion-reduce:transition-none">
+            <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1800&q=80" alt="" class="h-full w-full object-cover object-center">
+        </div>
+        <div data-hero-slide aria-hidden="true" class="absolute inset-0 opacity-0 transition-opacity duration-700 motion-reduce:transition-none">
+            <img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1800&q=80" alt="" class="h-full w-full object-cover object-center">
+        </div>
+        <div data-hero-slide aria-hidden="true" class="absolute inset-0 opacity-0 transition-opacity duration-700 motion-reduce:transition-none">
+            <img src="https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1800&q=80" alt="" class="h-full w-full object-cover object-center">
+        </div>
         <div class="absolute inset-0 bg-gradient-to-r from-[#0d1f11]/80 via-[#102f18]/65 to-[#1b5e20]/35"></div>
 
         <div class="relative mx-auto max-w-7xl px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pb-28 lg:pt-28">
@@ -20,7 +28,78 @@
                 </div>
             </div>
         </div>
+        <div role="group" aria-label="Hero image slides" class="absolute inset-x-0 bottom-6 z-10 flex justify-center gap-3">
+            <button type="button" data-hero-slide-button aria-label="Show hero image 1" aria-pressed="true" class="h-2 w-10 rounded-full bg-[#dc2626] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1b5e20]"></button>
+            <button type="button" data-hero-slide-button aria-label="Show hero image 2" aria-pressed="false" class="h-2 w-10 rounded-full bg-white/70 transition-colors hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1b5e20]"></button>
+            <button type="button" data-hero-slide-button aria-label="Show hero image 3" aria-pressed="false" class="h-2 w-10 rounded-full bg-white/70 transition-colors hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1b5e20]"></button>
+        </div>
     </section>
+    @pushOnce('scripts')
+        <script>
+            (() => {
+                const heroSlider = document.querySelector('[data-hero-slider]');
+
+                if (heroSlider) {
+                    const heroSlides = heroSlider.querySelectorAll('[data-hero-slide]');
+                    const heroSlideButtons = heroSlider.querySelectorAll('[data-hero-slide-button]');
+                    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    let activeHeroSlide = 0;
+                    let heroSlideTimer;
+
+                    const showHeroSlide = (index) => {
+                        activeHeroSlide = index;
+
+                        heroSlides.forEach((slide, slideIndex) => {
+                            const isActive = slideIndex === activeHeroSlide;
+                            slide.classList.toggle('opacity-100', isActive);
+                            slide.classList.toggle('opacity-0', !isActive);
+                            slide.setAttribute('aria-hidden', String(!isActive));
+                        });
+
+                        heroSlideButtons.forEach((button, buttonIndex) => {
+                            const isActive = buttonIndex === activeHeroSlide;
+                            button.setAttribute('aria-pressed', String(isActive));
+                            button.classList.toggle('bg-[#dc2626]', isActive);
+                            button.classList.toggle('bg-white/70', !isActive);
+                        });
+                    };
+
+                    const stopHeroSlideTimer = () => {
+                        window.clearInterval(heroSlideTimer);
+                    };
+
+                    const startHeroSlideTimer = () => {
+                        stopHeroSlideTimer();
+
+                        if (!prefersReducedMotion && heroSlides.length > 1 && !heroSlider.matches(':hover, :focus-within')) {
+                            heroSlideTimer = window.setInterval(() => {
+                                showHeroSlide((activeHeroSlide + 1) % heroSlides.length);
+                            }, 5000);
+                        }
+                    };
+
+                    heroSlideButtons.forEach((button, index) => {
+                        button.addEventListener('click', () => {
+                            showHeroSlide(index);
+                            startHeroSlideTimer();
+                        });
+                    });
+
+                    heroSlider.addEventListener('mouseenter', stopHeroSlideTimer);
+                    heroSlider.addEventListener('mouseleave', startHeroSlideTimer);
+                    heroSlider.addEventListener('focusin', stopHeroSlideTimer);
+                    heroSlider.addEventListener('focusout', (event) => {
+                        if (!heroSlider.contains(event.relatedTarget)) {
+                            startHeroSlideTimer();
+                        }
+                    });
+
+                    showHeroSlide(0);
+                    startHeroSlideTimer();
+                }
+            })();
+        </script>
+    @endPushOnce
     @if ($homeAdvertisements->has('section-bottom'))
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
@@ -112,7 +191,7 @@
         </div>
     @endif
 
-    <section class="bg-[#F3F8F1] py-20 dark:bg-[#121d22]">
+    <section class="bg-[#F3F8F1] pb-4 pt-20 dark:bg-[#121d22]">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mb-10 flex items-end justify-between gap-4">
                 <div>
@@ -157,19 +236,30 @@
 
         </div>
     </section>
-    @if ($homeAdvertisements->has('section-bottom'))
-        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
-        </div>
-    @endif
-
     @if ($homeAdvertisements->has('latest-bottom'))
-        <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
             @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('latest-bottom')])
         </div>
+    @else
+        <div class="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
+            <a href="{{ route('contact') }}" data-ad-placement="latest-bottom-fallback" class="group flex flex-col gap-5 overflow-hidden rounded-2xl bg-gradient-to-r from-[#143b22] via-[#246b35] to-[#2E7D32] p-6 text-white shadow-lg shadow-[#1B5E20]/15 transition hover:-translate-y-0.5 hover:shadow-xl sm:flex-row sm:items-center sm:justify-between sm:px-8">
+                <div class="flex items-start gap-4">
+                    <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/15 text-2xl" aria-hidden="true">🌿</span>
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#d9f7d6]">वनको खबरसँग सहकार्य</p>
+                        <h3 class="mt-1 font-display text-lg font-bold sm:text-xl">वन र वातावरणका अभियान पाठकसम्म पुर्‍याउनुहोस्</h3>
+                        <p class="mt-2 text-sm leading-6 text-white/80">विज्ञापन तथा सहकार्यका लागि हामीलाई सम्पर्क गर्नुहोस्।</p>
+                    </div>
+                </div>
+                <span class="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#F4B942] px-5 py-3 text-sm font-bold text-[#1b2b1a] transition group-hover:bg-[#efad1e]">
+                    विज्ञापनका लागि सम्पर्क
+                    <span aria-hidden="true">→</span>
+                </span>
+            </a>
+        </div>
     @endif
 
-    <section id="categories" class="scroll-mt-36 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <section id="categories" class="scroll-mt-36 mx-auto max-w-7xl px-4 pb-4 pt-4 sm:px-6 lg:px-8">
         <div class="mb-10 text-center">
             <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Categories</p>
             <h2 class="mt-3 font-display text-3xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">विषयगत क्षेत्र</h2>
@@ -191,13 +281,13 @@
             @endforeach
         </div>
     </section>
-    @if ($homeAdvertisements->has('section-bottom'))
-        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+    @if ($homeAdvertisements->has('categories-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('categories-bottom')])
         </div>
     @endif
 
-    <section id="wildlife" class="mt-12 bg-[#0f1720] py-20 text-white">
+    <section id="wildlife" class="mt-4 bg-[#0f1720] py-20 text-white">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mb-10 flex items-end justify-between gap-4">
                 <div>
@@ -223,19 +313,13 @@
             </div>
         </div>
     </section>
-    @if ($homeAdvertisements->has('section-bottom'))
+    @if ($homeAdvertisements->has('trending-bottom'))
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('trending-bottom')])
         </div>
     @endif
 
-    @if ($homeAdvertisements->has('article-bottom'))
-        <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('article-bottom')])
-        </div>
-    @endif
-
-    <section class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <section class="mx-auto max-w-7xl px-4 pb-4 pt-20 sm:px-6 lg:px-8">
         <div class="mb-10 text-center">
             <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Insights</p>
             <h2 class="mt-3 font-display text-3xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">वन र वातावरणको १२+ प्रमुख क्षेत्र</h2>
@@ -257,19 +341,13 @@
             @endforeach
         </div>
     </section>
-    @if ($homeAdvertisements->has('section-bottom'))
-        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+    @if ($homeAdvertisements->has('insights-bottom'))
+        <div class="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('insights-bottom')])
         </div>
     @endif
 
-    @if ($homeAdvertisements->has('insights-top'))
-        <div class="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('insights-top')])
-        </div>
-    @endif
-
-    <section id="environment" class="scroll-mt-36 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <section id="environment" class="scroll-mt-36 mx-auto max-w-7xl px-4 pb-20 pt-4 sm:px-6 lg:px-8">
         <div class="mb-10 flex items-end justify-between gap-4">
             <div>
                 <p class="text-xs font-bold uppercase tracking-[0.28em] text-[#2E7D32]">Gallery</p>

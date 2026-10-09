@@ -96,6 +96,42 @@
                                 <span>Bottom of article - 728 x 90</span>
                             </span>
                         </label>
+                        <label data-stage-option="latest-bottom" class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 hover:border-slate-300">
+                            <input type="radio" name="position" value="latest-bottom" @checked(old('position', $editingAdvertisement?->position) === 'latest-bottom') class="h-4 w-4 border-slate-300 text-red-600 focus:ring-red-500">
+                            <span class="flex items-center gap-3">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-500">
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M5 8h14M5 12h14M5 16h14"/>
+                                        <path d="M8 19h8"/>
+                                    </svg>
+                                </span>
+                                <span>Bottom of Latest - before Categories - 728 x 90</span>
+                            </span>
+                        </label>
+                        <label data-stage-option="categories-bottom" class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 hover:border-slate-300">
+                            <input type="radio" name="position" value="categories-bottom" @checked(old('position', $editingAdvertisement?->position) === 'categories-bottom') class="h-4 w-4 border-slate-300 text-red-600 focus:ring-red-500">
+                            <span class="flex items-center gap-3">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-500">
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M5 8h14M5 12h14M5 16h14"/>
+                                        <path d="M8 19h8"/>
+                                    </svg>
+                                </span>
+                                <span>Between categories and trending - 728 x 90</span>
+                            </span>
+                        </label>
+                        <label data-stage-option="trending-bottom" class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 hover:border-slate-300">
+                            <input type="radio" name="position" value="trending-bottom" @checked(old('position', $editingAdvertisement?->position) === 'trending-bottom') class="h-4 w-4 border-slate-300 text-red-600 focus:ring-red-500">
+                            <span class="flex items-center gap-3">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-500">
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M5 8h14M5 12h14M5 16h14"/>
+                                        <path d="M8 19h8"/>
+                                    </svg>
+                                </span>
+                                <span>Bottom of trending - 728 x 90</span>
+                            </span>
+                        </label>
                         <label data-stage-option="sidebar" class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 hover:border-slate-300">
                             <input type="radio" name="position" value="sidebar" @checked(old('position', $editingAdvertisement?->position) === 'sidebar') class="h-4 w-4 border-slate-300 text-red-600 focus:ring-red-500">
                             <span class="flex items-center gap-3">
@@ -131,6 +167,17 @@
                                 <span>Top of insights - 728 x 90</span>
                             </span>
                         </label>
+                        <label data-stage-option="insights-bottom" class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 hover:border-slate-300">
+                            <input type="radio" name="position" value="insights-bottom" @checked(old('position', $editingAdvertisement?->position) === 'insights-bottom') class="h-4 w-4 border-slate-300 text-red-600 focus:ring-red-500">
+                            <span class="flex items-center gap-3">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-500">
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M4 19h16M6 16V8m4 8V5m4 11v-6m4 6V3"/>
+                                    </svg>
+                                </span>
+                                <span>Between insights and gallery - 728 x 90</span>
+                            </span>
+                        </label>
                     </div>
                 </div>
 
@@ -148,6 +195,9 @@
                             <div data-stage-preview="article-top" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Article top 728x90</div>
                             <div data-stage-preview="article-center" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Article center 728x90</div>
                             <div data-stage-preview="article-bottom" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Article bottom 728x90</div>
+                            <div data-stage-preview="latest-bottom" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Latest bottom 728x90</div>
+                            <div data-stage-preview="categories-bottom" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Categories to trending 728x90</div>
+                            <div data-stage-preview="trending-bottom" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Trending bottom 728x90</div>
                         </div>
 
                         <div class="mt-3 flex gap-3">
@@ -157,6 +207,7 @@
 
                         <div data-stage-preview="footer" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Footer 728x90</div>
                         <div data-stage-preview="insights-top" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Insights 728x90</div>
+                        <div data-stage-preview="insights-bottom" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Insights to gallery 728x90</div>
                     </div>
                 </div>
             </div>
@@ -257,6 +308,9 @@
                         <div data-review-preview="article-top" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Article top 728x90</div>
                         <div data-review-preview="article-center" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Article center 728x90</div>
                         <div data-review-preview="article-bottom" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Article bottom 728x90</div>
+                        <div data-review-preview="latest-bottom" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Latest bottom 728x90</div>
+                        <div data-review-preview="categories-bottom" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Categories to trending 728x90</div>
+                        <div data-review-preview="trending-bottom" class="rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Trending bottom 728x90</div>
                     </div>
                     <div class="mt-3 flex gap-3">
                         <div class="flex-1"></div>
@@ -264,6 +318,7 @@
                     </div>
                     <div data-review-preview="footer" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Footer 728x90</div>
                     <div data-review-preview="insights-top" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Insights 728x90</div>
+                    <div data-review-preview="insights-bottom" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Insights to gallery 728x90</div>
                 </div>
             </div>
         </section>

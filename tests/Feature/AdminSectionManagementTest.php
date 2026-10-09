@@ -146,7 +146,11 @@ class AdminSectionManagementTest extends TestCase
             ->get('/admin/advertisements?create=1')
             ->assertOk()
             ->assertSee('data-stage-option="article-center"', false)
-            ->assertSee('name="position" value="article-center"', false);
+            ->assertSee('name="position" value="article-center"', false)
+            ->assertSee('name="position" value="latest-bottom"', false)
+            ->assertSee('name="position" value="categories-bottom"', false)
+            ->assertSee('name="position" value="trending-bottom"', false)
+            ->assertSee('name="position" value="insights-bottom"', false);
 
         $this->actingAs($admin)
             ->post('/admin/advertisements', [
@@ -167,6 +171,41 @@ class AdminSectionManagementTest extends TestCase
             ->assertOk()
             ->assertSee('/storage/advertisements/', false)
             ->assertSee('Article center sponsor');
+    }
+
+    public function test_admin_can_upload_a_latest_section_banner_that_replaces_the_homepage_fallback(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get('/admin/advertisements?create=1')
+            ->assertOk()
+            ->assertSee('name="position" value="latest-bottom"', false)
+            ->assertSee('Bottom of Latest - before Categories - 728 x 90');
+
+        $this->actingAs($admin)
+            ->post('/admin/advertisements', [
+                'title' => 'Latest section sponsor',
+                'position' => 'latest-bottom',
+                'banner' => $this->bannerUpload('latest-section.png'),
+                'active' => '1',
+            ])
+            ->assertRedirect('/admin/advertisements');
+
+        $advertisement = Advertisement::query()->where('title', 'Latest section sponsor')->firstOrFail();
+        Storage::disk('public')->assertExists($advertisement->banner_path);
+        $this->assertDatabaseHas('advertisements', [
+            'id' => $advertisement->id,
+            'position' => 'latest-bottom',
+            'active' => true,
+        ]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('Latest section sponsor')
+            ->assertSee('/storage/'.$advertisement->banner_path, false)
+            ->assertDontSee('data-ad-placement="latest-bottom-fallback"', false);
     }
 
     public function test_admin_can_save_an_advertisement_and_start_another(): void

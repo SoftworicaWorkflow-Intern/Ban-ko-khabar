@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Advertisement;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,13 +31,13 @@ class SearchAndAdvertisementLayoutTest extends TestCase
         $response->assertSee('वन संरक्षण');
     }
 
-    public function test_home_banner_is_between_trending_and_insights(): void
+    public function test_home_banner_is_at_the_bottom_of_trending(): void
     {
         $view = file_get_contents(base_path('resources/views/home.blade.php'));
 
         $this->assertNotFalse($view);
         $trendingPosition = strpos($view, 'id="wildlife"');
-        $bannerPosition = strpos($view, '@if ($homeAdvertisements->has(\'article-bottom\'))');
+        $bannerPosition = strpos($view, '@if ($homeAdvertisements->has(\'trending-bottom\'))');
         $insightsPosition = strpos($view, '<p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Insights</p>');
 
         $this->assertNotFalse($trendingPosition);
@@ -44,6 +45,87 @@ class SearchAndAdvertisementLayoutTest extends TestCase
         $this->assertNotFalse($insightsPosition);
         $this->assertTrue($trendingPosition < $bannerPosition);
         $this->assertTrue($bannerPosition < $insightsPosition);
+    }
+
+    public function test_home_banners_are_rendered_between_latest_categories_trending_insights_and_gallery(): void
+    {
+        foreach ([
+            'latest-bottom' => 'Latest and categories banner',
+            'categories-bottom' => 'Categories and trending banner',
+            'trending-bottom' => 'Trending banner',
+            'insights-bottom' => 'Insights and gallery banner',
+        ] as $position => $title) {
+            Advertisement::create([
+                'title' => $title,
+                'position' => $position,
+                'banner_path' => 'advertisements/'.str_replace(' ', '-', strtolower($title)).'.png',
+                'active' => true,
+            ]);
+        }
+
+        $response = $this->get('/');
+        $html = $response->getContent();
+        $latestPosition = strpos($html, '>Latest</p>');
+        $latestBannerPosition = strpos($html, 'alt="Latest and categories banner"');
+        $categoriesPosition = strpos($html, '>Categories</p>');
+        $categoriesBannerPosition = strpos($html, 'alt="Categories and trending banner"');
+        $trendingPosition = strpos($html, '>Trending</p>');
+        $trendingBannerPosition = strpos($html, 'alt="Trending banner"');
+        $insightsPosition = strpos($html, '>Insights</p>');
+        $insightsBannerPosition = strpos($html, 'alt="Insights and gallery banner"');
+        $galleryPosition = strpos($html, '>Gallery</p>');
+
+        $response->assertOk();
+        $this->assertNotFalse($latestPosition);
+        $this->assertNotFalse($latestBannerPosition);
+        $this->assertNotFalse($categoriesPosition);
+        $this->assertNotFalse($categoriesBannerPosition);
+        $this->assertNotFalse($trendingPosition);
+        $this->assertNotFalse($trendingBannerPosition);
+        $this->assertNotFalse($insightsPosition);
+        $this->assertNotFalse($insightsBannerPosition);
+        $this->assertNotFalse($galleryPosition);
+        $this->assertTrue($latestPosition < $latestBannerPosition);
+        $this->assertTrue($latestBannerPosition < $categoriesPosition);
+        $this->assertTrue($categoriesPosition < $categoriesBannerPosition);
+        $this->assertTrue($categoriesBannerPosition < $trendingPosition);
+        $this->assertTrue($trendingPosition < $trendingBannerPosition);
+        $this->assertTrue($trendingBannerPosition < $insightsPosition);
+        $this->assertTrue($insightsPosition < $insightsBannerPosition);
+        $this->assertTrue($insightsBannerPosition < $galleryPosition);
+    }
+
+    public function test_home_shows_three_hero_slides_with_selectable_indicators(): void
+    {
+        $response = $this->get('/');
+        $html = $response->getContent();
+
+        $response->assertSee('aria-label="Show hero image 1"', false)
+            ->assertSee('aria-label="Show hero image 2"', false)
+            ->assertSee('aria-label="Show hero image 3"', false)
+            ->assertSee('prefers-reduced-motion: reduce', false);
+
+        $this->assertSame(3, substr_count($html, '<div data-hero-slide'));
+        $this->assertSame(3, substr_count($html, 'data-hero-slide-button aria-label='));
+    }
+
+    public function test_home_displays_a_contact_house_ad_after_latest_when_no_latest_ad_is_active(): void
+    {
+        $response = $this->get('/');
+        $html = $response->getContent();
+        $latestPosition = strpos($html, '>Latest</p>');
+        $houseAdPosition = strpos($html, 'data-ad-placement="latest-bottom-fallback"');
+        $categoriesPosition = strpos($html, '>Categories</p>');
+
+        $response->assertOk()
+            ->assertSee('वन र वातावरणका अभियान पाठकसम्म पुर्‍याउनुहोस्')
+            ->assertSee('विज्ञापनका लागि सम्पर्क')
+            ->assertSee('href="'.route('contact').'"', false);
+        $this->assertNotFalse($latestPosition);
+        $this->assertNotFalse($houseAdPosition);
+        $this->assertNotFalse($categoriesPosition);
+        $this->assertTrue($latestPosition < $houseAdPosition);
+        $this->assertTrue($houseAdPosition < $categoriesPosition);
     }
 
     public function test_home_footer_ad_is_placed_after_the_final_home_section(): void
