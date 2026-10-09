@@ -114,7 +114,7 @@
         </div>
     @endif
 
-    <section id="news" class="scroll-mt-36 mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 lg:px-8">
+    <section id="news" class="scroll-mt-36 mx-auto max-w-7xl px-4 pb-4 pt-16 sm:px-6 lg:px-8">
         <div class="mb-10 flex items-end justify-between gap-4">
             <div>
                 <p class="text-xs font-bold uppercase tracking-[0.28em] text-[#2E7D32]">Featured</p>
@@ -180,7 +180,7 @@
 
     </section>
     @if ($homeAdvertisements->has('section-bottom'))
-        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
             @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
         </div>
     @endif
@@ -191,7 +191,7 @@
         </div>
     @endif
 
-    <section class="bg-[#F3F8F1] pb-4 pt-20 dark:bg-[#121d22]">
+    <section class="bg-[#F3F8F1] pb-4 pt-4 dark:bg-[#121d22]">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mb-10 flex items-end justify-between gap-4">
                 <div>
@@ -314,12 +314,12 @@
         </div>
     </section>
     @if ($homeAdvertisements->has('trending-bottom'))
-        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
             @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('trending-bottom')])
         </div>
     @endif
 
-    <section class="mx-auto max-w-7xl px-4 pb-4 pt-20 sm:px-6 lg:px-8">
+    <section class="mx-auto max-w-7xl px-4 pb-4 pt-4 sm:px-6 lg:px-8">
         <div class="mb-10 text-center">
             <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Insights</p>
             <h2 class="mt-3 font-display text-3xl font-bold text-[#2E7D32] dark:text-[#edf5ee]">वन र वातावरणको १२+ प्रमुख क्षेत्र</h2>
