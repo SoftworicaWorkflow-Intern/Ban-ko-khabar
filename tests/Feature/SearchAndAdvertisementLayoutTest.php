@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Advertisement;
+use App\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -197,5 +198,38 @@ class SearchAndAdvertisementLayoutTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('२०८३ असोज २२');
+    }
+
+    public function test_home_header_shows_two_newest_header_ads_when_date_is_disabled(): void
+    {
+        $this->travelTo(now()->setDate(2026, 10, 8));
+
+        SiteSetting::query()->create([
+            'key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE,
+            'value' => '0',
+        ]);
+
+        foreach ([
+            ['title' => 'Newest header ad', 'path' => 'advertisements/newest.png', 'created_at' => now()],
+            ['title' => 'Second header ad', 'path' => 'advertisements/second.png', 'created_at' => now()->subHour()],
+            ['title' => 'Older header ad', 'path' => 'advertisements/older.png', 'created_at' => now()->subHours(2)],
+        ] as $ad) {
+            $advertisement = Advertisement::query()->create([
+                'title' => $ad['title'],
+                'position' => 'header',
+                'banner_path' => $ad['path'],
+                'active' => true,
+            ]);
+            $advertisement->created_at = $ad['created_at'];
+            $advertisement->save();
+        }
+
+        $response = $this->get(route('home'));
+
+        $response->assertSee('advertisements/newest.png')
+            ->assertSee('advertisements/second.png')
+            ->assertSee('grid-cols-1 gap-2 sm:grid-cols-2', false)
+            ->assertDontSee('advertisements/older.png')
+            ->assertDontSee('२०८३ असोज २२');
     }
 }

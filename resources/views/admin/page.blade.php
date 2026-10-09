@@ -923,6 +923,24 @@
                         </div>
                         @include('admin.partials.pagination', ['paginator' => $items, 'ariaLabel' => 'Reports pagination'])
                     </div>
+                @elseif ($pageType === 'homepage-header')
+                    <section class="mt-6 max-w-3xl rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)] sm:p-7">
+                        <div class="mb-6 border-b border-slate-100 pb-4">
+                            <h2 class="text-lg font-bold text-[#1b2433]">Homepage date and advertisements</h2>
+                            <p class="mt-1 text-sm text-[#51657c]">When the date is off, up to two active Header center advertisements will appear between the logo and social links.</p>
+                        </div>
+                        <form method="POST" action="{{ route('admin.settings.homepage-header.update') }}" class="space-y-5">
+                            @csrf
+                            <label for="show-bikram-sambat-date" class="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                <input id="show-bikram-sambat-date" type="checkbox" name="show_bikram_sambat_date" value="1" @checked($homepageBikramSambatDateEnabled) class="mt-1 h-4 w-4 rounded border-slate-300 text-[#2f7d4d] focus:ring-[#2f7d4d]">
+                                <span>
+                                    <span class="block text-sm font-semibold text-[#1b2433]">Show English day and Bikram Sambat date</span>
+                                    <span class="mt-1 block text-sm text-[#51657c]">Enabled by default. Turn this off to show homepage header advertisements instead.</span>
+                                </span>
+                            </label>
+                            <button type="submit" class="rounded-xl bg-[#173b27] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#214d35]">Save settings</button>
+                        </form>
+                    </section>
                 @elseif ($pageType === 'password')
                     <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">
                         <section class="rounded-[20px] bg-white p-5 shadow-[0_10px_22px_rgba(19,41,26,0.04)] sm:p-7">

@@ -197,6 +197,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/settings/password', [PageController::class, 'updatePassword'])->name('admin.settings.password.update');
     Route::get('/admin/settings/admins', [PageController::class, 'adminAdmins'])->name('admin.settings.admins');
     Route::post('/admin/settings/admins', [PageController::class, 'storeAdmin'])->name('admin.settings.admins.store');
+    Route::get('/admin/settings/homepage-header', [PageController::class, 'adminHomepageHeader'])->name('admin.settings.homepage-header');
+    Route::post('/admin/settings/homepage-header', [PageController::class, 'updateAdminHomepageHeader'])->name('admin.settings.homepage-header.update');
     Route::post('/admin/logout', function () {
         Auth::logout();
         request()->session()->invalidate();

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Advertisement;
 use App\Models\Category;
 use App\Models\News;
+use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -78,6 +79,65 @@ class AdminSectionManagementTest extends TestCase
             ])
             ->assertRedirect('/admin/categories')
             ->assertSessionHasErrors('slug');
+    }
+
+    public function test_admin_can_toggle_and_persist_the_homepage_header_date_setting(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get(route('admin.settings.homepage-header'))
+            ->assertSee('Show English day and Bikram Sambat date')
+            ->assertSee('checked', false);
+
+        $this->actingAs($admin)
+            ->post(route('admin.settings.homepage-header.update'), [])
+            ->assertRedirect(route('admin.settings.homepage-header'))
+            ->assertSessionHas('success', 'Homepage header settings updated.');
+
+        $this->assertDatabaseHas('site_settings', [
+            'key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE,
+            'value' => '0',
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.settings.homepage-header.update'), [
+                'show_bikram_sambat_date' => '1',
+            ])
+            ->assertRedirect(route('admin.settings.homepage-header'));
+
+        $this->assertDatabaseHas('site_settings', [
+            'key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE,
+            'value' => '1',
+        ]);
+    }
+
+    public function test_homepage_header_setting_rejects_invalid_values(): void
+    {
+        $this->actingAs($this->admin())
+            ->from(route('admin.settings.homepage-header'))
+            ->post(route('admin.settings.homepage-header.update'), [
+                'show_bikram_sambat_date' => 'not-a-boolean',
+            ])
+            ->assertRedirect(route('admin.settings.homepage-header'))
+            ->assertSessionHasErrors('show_bikram_sambat_date');
+
+        $this->assertDatabaseMissing('site_settings', [
+            'key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE,
+        ]);
+    }
+
+    public function test_non_admin_cannot_access_homepage_header_settings(): void
+    {
+        $editor = User::factory()->create(['role' => 'editor']);
+
+        $this->actingAs($editor)
+            ->get(route('admin.settings.homepage-header'))
+            ->assertForbidden();
+
+        $this->actingAs($editor)
+            ->post(route('admin.settings.homepage-header.update'), [])
+            ->assertForbidden();
     }
 
     public function test_admin_can_add_and_delete_a_gallery_photo(): void

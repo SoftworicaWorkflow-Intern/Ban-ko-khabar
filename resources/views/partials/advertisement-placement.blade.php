@@ -1,5 +1,5 @@
-<div class="space-y-3">
-    @foreach ($advertisements->take(1) as $advertisement)
+<div class="{{ $containerClass ?? 'space-y-3' }}">
+    @foreach ($advertisements->take($limit ?? 1) as $advertisement)
         @php
             $isSidebar = $advertisement->position === 'sidebar';
             $isArticleTop = $advertisement->position === 'article-top';

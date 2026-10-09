@@ -33,13 +33,21 @@
                         </div>
 
                         <div class="col-span-2 row-start-2 flex flex-col items-center justify-center text-center sm:col-span-1 sm:col-start-2 sm:row-start-1">
-                            <p class="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#2E7D32] dark:text-[#8FD58F]">
-                                {{ now()->format('l') }}
-                            </p>
-                            @php($bikramSambhat = \App\Services\BikramSambat::fromGregorian(now()))
-                            <p class="mt-0.5 text-sm font-bold text-[#1d2a1d] dark:text-[#edf5ee] sm:text-base">
-                                {{ $bikramSambhat['formatted'] }}
-                            </p>
+                            @if ($showHomepageBikramSambatDate)
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#2E7D32] dark:text-[#8FD58F]">
+                                    {{ now()->format('l') }}
+                                </p>
+                                @php($bikramSambhat = \App\Services\BikramSambat::fromGregorian(now()))
+                                <p class="mt-0.5 text-sm font-bold text-[#1d2a1d] dark:text-[#edf5ee] sm:text-base">
+                                    {{ $bikramSambhat['formatted'] }}
+                                </p>
+                            @else
+                                @include('partials.advertisement-placement', [
+                                    'advertisements' => $homeAdvertisements->get('header', collect()),
+                                    'limit' => 2,
+                                    'containerClass' => 'grid w-full grid-cols-1 gap-2 sm:grid-cols-2',
+                                ])
+                            @endif
                         </div>
                     </div>
                 </div>

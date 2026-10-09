@@ -159,6 +159,7 @@
             <div id="adminSettingsSubmenu" class="sidebar-settings-submenu {{ request()->routeIs('admin.settings.*') ? '' : 'hidden' }} ml-10 mt-1 space-y-1 overflow-hidden transition-all duration-300">
                 <a href="{{ route('admin.settings.password') }}" class="block rounded-lg px-3 py-2 text-xs font-medium {{ request()->routeIs('admin.settings.password') ? 'bg-white/10 text-white' : 'text-[#DFEEE0]' }} transition hover:bg-white/10 hover:text-white">Change password</a>
                 <a href="{{ route('admin.settings.admins') }}" class="block rounded-lg px-3 py-2 text-xs font-medium {{ request()->routeIs('admin.settings.admins') ? 'bg-white/10 text-white' : 'text-[#DFEEE0]' }} transition hover:bg-white/10 hover:text-white">Create admin</a>
+                <a href="{{ route('admin.settings.homepage-header') }}" class="block rounded-lg px-3 py-2 text-xs font-medium {{ request()->routeIs('admin.settings.homepage-header') ? 'bg-white/10 text-white' : 'text-[#DFEEE0]' }} transition hover:bg-white/10 hover:text-white">Homepage header</a>
             </div>
         </nav>
     </div>

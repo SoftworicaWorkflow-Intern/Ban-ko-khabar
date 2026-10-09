@@ -6,6 +6,7 @@ use App\Models\Advertisement;
 use App\Models\ArticleComment;
 use App\Models\Category;
 use App\Models\News;
+use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -404,6 +405,7 @@ class PageController extends Controller
             'breakingNews' => $breakingNews,
             'gallery' => array_slice($this->galleryItems(), 0, 6),
             'homeAdvertisements' => $homeAdvertisements,
+            'showHomepageBikramSambatDate' => SiteSetting::homepageBikramSambatDateEnabled(),
         ]);
     }
 
@@ -1280,6 +1282,15 @@ class PageController extends Controller
         ]);
     }
 
+    public function adminHomepageHeader()
+    {
+        abort_unless(Auth::user()?->isAdmin(), 403);
+
+        return $this->adminSection('Homepage header', 'Choose whether the homepage header shows the Bikram Sambat date or header advertisements', [], collect(), 'homepage-header', [
+            'homepageBikramSambatDateEnabled' => SiteSetting::homepageBikramSambatDateEnabled(),
+        ]);
+    }
+
     public function adminAdmins(Request $request)
     {
         $perPage = $this->resolveAdminPerPage($request, 5);
@@ -1534,6 +1545,22 @@ class PageController extends Controller
         return redirect()->route('admin.settings.password')->with('success', 'Password updated.');
     }
 
+    public function updateAdminHomepageHeader(Request $request)
+    {
+        abort_unless(Auth::user()?->isAdmin(), 403);
+
+        $validated = $request->validate([
+            'show_bikram_sambat_date' => ['sometimes', 'boolean'],
+        ]);
+
+        SiteSetting::query()->updateOrCreate(
+            ['key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE],
+            ['value' => ($validated['show_bikram_sambat_date'] ?? false) ? '1' : '0'],
+        );
+
+        return redirect()->route('admin.settings.homepage-header')->with('success', 'Homepage header settings updated.');
+    }
+
     /**
      * Paginate a plain array of rows so array-backed pages support ?page= links.
      *
@@ -1594,6 +1621,7 @@ class PageController extends Controller
             'topStories' => $meta['topStories'] ?? collect(),
             'topCategories' => $meta['topCategories'] ?? collect(),
             'maxCategoryViews' => $meta['maxCategoryViews'] ?? 1,
+            'homepageBikramSambatDateEnabled' => $meta['homepageBikramSambatDateEnabled'] ?? true,
             'cards' => $items,
         ]);
     }
