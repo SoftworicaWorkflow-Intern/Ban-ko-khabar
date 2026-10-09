@@ -103,6 +103,8 @@ class SearchAndAdvertisementLayoutTest extends TestCase
         $response->assertSee('aria-label="Show hero image 1"', false)
             ->assertSee('aria-label="Show hero image 2"', false)
             ->assertSee('aria-label="Show hero image 3"', false)
+            ->assertSee('src="'.asset('image/hero-forest-ridge.png').'"', false)
+            ->assertSee('src="'.asset('image/hero-forest-valley.png').'"', false)
             ->assertSee('prefers-reduced-motion: reduce', false);
 
         $this->assertSame(3, substr_count($html, '<div data-hero-slide'));

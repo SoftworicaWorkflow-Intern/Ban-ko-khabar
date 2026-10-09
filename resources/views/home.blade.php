@@ -8,10 +8,10 @@
             <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1800&q=80" alt="" class="h-full w-full object-cover object-center">
         </div>
         <div data-hero-slide aria-hidden="true" class="absolute inset-0 opacity-0 transition-opacity duration-700 motion-reduce:transition-none">
-            <img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1800&q=80" alt="" class="h-full w-full object-cover object-center">
+            <img src="{{ asset('image/hero-forest-ridge.png') }}" alt="" class="h-full w-full object-cover object-center">
         </div>
         <div data-hero-slide aria-hidden="true" class="absolute inset-0 opacity-0 transition-opacity duration-700 motion-reduce:transition-none">
-            <img src="https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1800&q=80" alt="" class="h-full w-full object-cover object-center">
+            <img src="{{ asset('image/hero-forest-valley.png') }}" alt="" class="h-full w-full object-cover object-center">
         </div>
         <div class="absolute inset-0 bg-gradient-to-r from-[#0d1f11]/80 via-[#102f18]/65 to-[#1b5e20]/35"></div>
 
