@@ -103,17 +103,17 @@
                     <a href="{{ route('contact') }}" class="py-2 transition hover:text-[#d4f6d8] {{ request()->routeIs('contact') ? 'text-[#d4f6d8]' : '' }}">सम्पर्क</a>
                 </nav>
 
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <a href="{{ route('search') }}" aria-label="खोज्नुहोस्" title="Search" class="flex h-10 items-center justify-center gap-1.5 rounded-full border border-[#dfeae0] bg-white px-2.5 text-[#1B5E20] transition hover:border-[#2E7D32] hover:text-[#2E7D32] sm:h-11 sm:gap-2 sm:px-3 dark:border-white/10 dark:bg-[#17242b] dark:text-[#edf5ee]">
+                <div class="ml-auto flex w-full items-center justify-end gap-2 sm:w-auto sm:gap-3 lg:ml-0">
+                    <a href="{{ route('search') }}" aria-label="खोज्नुहोस्" title="Search" class="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-full border border-[#dfeae0] bg-white px-2.5 text-[#1B5E20] transition hover:border-[#2E7D32] hover:text-[#2E7D32] sm:h-11 sm:gap-2 sm:px-3 dark:border-white/10 dark:bg-[#17242b] dark:text-[#edf5ee]">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="6"></circle>
                             <path d="M16 16L21 21"></path>
                         </svg>
                         <span class="text-[10px] font-semibold sm:text-xs">खोज्नुहोस्</span>
                     </a>
-                    <a href="{{ route('login') }}" class="inline-flex h-10 items-center rounded-full bg-[#2E7D32] px-3 text-xs font-semibold text-white shadow-md shadow-[#2E7D32]/20 transition hover:bg-[#1B5E20] sm:h-11 sm:px-4 sm:text-sm">Login</a>
-                    <a href="{{ route('register') }}" class="inline-flex h-10 items-center rounded-full border border-white px-3 text-xs font-semibold text-white transition hover:bg-white hover:text-[#1B5E20] sm:h-11 sm:px-4 sm:text-sm dark:text-[#edf5ee]">Register</a>
-                    <button type="button" data-menu-toggle aria-expanded="false" aria-label="Toggle navigation menu" class="flex h-10 w-10 items-center justify-center rounded-full border border-[#dfeae0] bg-white text-[#1B5E20] transition hover:border-[#2E7D32] sm:h-11 sm:w-11 lg:hidden dark:border-white/10 dark:bg-[#17242b] dark:text-[#edf5ee]">
+                    <a href="{{ route('login') }}" class="inline-flex h-10 shrink-0 items-center rounded-full bg-[#2E7D32] px-3 text-xs font-semibold text-white shadow-md shadow-[#2E7D32]/20 transition hover:bg-[#1B5E20] sm:h-11 sm:px-4 sm:text-sm">Login</a>
+                    <a href="{{ route('register') }}" class="inline-flex h-10 shrink-0 items-center rounded-full border border-white px-3 text-xs font-semibold text-white transition hover:bg-white hover:text-[#1B5E20] sm:h-11 sm:px-4 sm:text-sm dark:text-[#edf5ee]">Register</a>
+                    <button type="button" data-menu-toggle aria-expanded="false" aria-label="Toggle navigation menu" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#dfeae0] bg-white text-[#1B5E20] transition hover:border-[#2E7D32] sm:h-11 sm:w-11 lg:hidden dark:border-white/10 dark:bg-[#17242b] dark:text-[#edf5ee]">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path d="M4 7h16M4 12h16M4 17h16"></path>
                         </svg>
