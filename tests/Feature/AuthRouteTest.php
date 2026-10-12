@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Advertisement;
 use App\Models\Category;
 use App\Models\News;
+use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -125,6 +126,11 @@ class AuthRouteTest extends TestCase
     {
         $this->travelTo(now()->setDate(2026, 10, 2)->setTime(12, 0));
 
+        SiteSetting::query()->create([
+            'key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE,
+            'value' => '0',
+        ]);
+
         Advertisement::create([
             'title' => 'Live header sponsor',
             'position' => 'header',
@@ -144,8 +150,7 @@ class AuthRouteTest extends TestCase
 
         foreach ([
             'article-center' => 'Live center placement',
-            'article-bottom' => 'Live bottom placement',
-            'sidebar' => 'Live sidebar placement',
+            'trending-bottom' => 'Live bottom placement',
             'footer' => 'Live footer placement',
         ] as $position => $title) {
             Advertisement::create([
@@ -186,7 +191,6 @@ class AuthRouteTest extends TestCase
             ->assertSee('Live article placement')
             ->assertSee('Live center placement')
             ->assertSee('Live bottom placement')
-            ->assertSee('Live sidebar placement')
             ->assertSee('Live footer placement')
             ->assertDontSee('Inactive sponsor')
             ->assertDontSee('Future sponsor')
@@ -209,6 +213,11 @@ class AuthRouteTest extends TestCase
 
     public function test_header_advertisement_is_displayed_on_public_category_and_information_pages(): void
     {
+        SiteSetting::query()->create([
+            'key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE,
+            'value' => '0',
+        ]);
+
         Advertisement::create([
             'title' => 'Shared site banner',
             'position' => 'header',
@@ -235,7 +244,7 @@ class AuthRouteTest extends TestCase
         }
     }
 
-    public function test_article_detail_shows_sidebar_ads_and_a_dynamic_comment_form(): void
+    public function test_article_detail_shows_the_replacement_sidebar_image_and_dynamic_comment_form(): void
     {
         News::create([
             'title' => 'Community forest story',
@@ -299,7 +308,10 @@ class AuthRouteTest extends TestCase
 
         $this->get('/news/community-forest-story')
             ->assertOk()
-            ->assertSee('/storage/advertisements/article-center.png', false)
+            ->assertSee('aspect-[16/9] w-full object-contain', false)
+            ->assertSee('image/aura-digital-journey.jpg', false)
+            ->assertDontSee('/storage/advertisements/article-sidebar.png', false)
+            ->assertDontSee('/storage/advertisements/article-center.png', false)
             ->assertSeeInOrder([
                 'Most Read',
                 'Most read story',
@@ -308,12 +320,13 @@ class AuthRouteTest extends TestCase
                 'Fourth most read story',
                 'Fifth most read story',
                 'Sixth most read story',
-                '/storage/advertisements/article-center.png',
-                '/storage/advertisements/article-sidebar.png',
+                'image/aura-digital-journey.jpg',
             ], false)
             ->assertSee('data-article-sidebar-ad', false)
-            ->assertSee('data-article-center-sidebar-ad', false)
-            ->assertDontSee('data-article-center-ad', false)
+            ->assertSee('xl:sticky xl:top-28 xl:self-start', false)
+            ->assertSee('xl:max-h-[50dvh]', false)
+            ->assertDontSee('overflow-y-auto', false)
+            ->assertSee('alt="AURA Tech Solutions - Accelerate Your Digital Journey"', false)
             ->assertSee('वन विभागका अनुसार')
             ->assertDontSee('�')
             ->assertSee('500 views', false)

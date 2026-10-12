@@ -178,6 +178,18 @@
                                 <span>Between insights and gallery - 728 x 90</span>
                             </span>
                         </label>
+                        <label data-stage-option="gallery-bottom" class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700 hover:border-slate-300">
+                            <input type="radio" name="position" value="gallery-bottom" @checked(old('position', $editingAdvertisement?->position) === 'gallery-bottom') class="h-4 w-4 border-slate-300 text-red-600 focus:ring-red-500">
+                            <span class="flex items-center gap-3">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-500">
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M4 19h16M6 16V8m4 8V5m4 11v-6m4 6V3"/>
+                                        <path d="M8 22h8"/>
+                                    </svg>
+                                </span>
+                                <span>Bottom of Gallery - 728 x 90</span>
+                            </span>
+                        </label>
                     </div>
                 </div>
 
@@ -208,6 +220,7 @@
                         <div data-stage-preview="footer" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Footer 728x90</div>
                         <div data-stage-preview="insights-top" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Insights 728x90</div>
                         <div data-stage-preview="insights-bottom" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Insights to gallery 728x90</div>
+                        <div data-stage-preview="gallery-bottom" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Gallery bottom 728x90</div>
                     </div>
                 </div>
             </div>
@@ -319,6 +332,7 @@
                     <div data-review-preview="footer" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Footer 728x90</div>
                     <div data-review-preview="insights-top" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Insights 728x90</div>
                     <div data-review-preview="insights-bottom" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Insights to gallery 728x90</div>
+                    <div data-review-preview="gallery-bottom" class="mt-3 rounded-md border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Gallery bottom 728x90</div>
                 </div>
             </div>
         </section>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class Advertisement extends Model
@@ -18,6 +19,7 @@ class Advertisement extends Model
         'footer' => 'Footer - 728 x 90',
         'insights-top' => 'Top of insights - 728 x 90',
         'insights-bottom' => 'Between insights and gallery - 728 x 90',
+        'gallery-bottom' => 'Bottom of gallery - 728 x 90',
     ];
 
     protected $fillable = [
@@ -37,5 +39,30 @@ class Advertisement extends Model
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
         ];
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public static function homepageHeaderBanners(): Collection
+    {
+        $currentTime = now();
+
+        return static::query()
+            ->where('active', true)
+            ->where('position', '!=', 'sidebar')
+            ->where(function ($query) use ($currentTime) {
+                $query->whereNull('starts_at')
+                    ->orWhere('starts_at', '<=', $currentTime);
+            })
+            ->where(function ($query) use ($currentTime) {
+                $query->whereNull('ends_at')
+                    ->orWhere('ends_at', '>=', $currentTime);
+            })
+            ->orderByRaw('CASE WHEN position = ? THEN 0 ELSE 1 END', ['header'])
+            ->latest()
+            ->get()
+            ->take(2)
+            ->values();
     }
 }

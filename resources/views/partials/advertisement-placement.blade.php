@@ -1,8 +1,9 @@
 <div class="{{ $containerClass ?? 'space-y-3' }}">
     @foreach ($advertisements->take($limit ?? 1) as $advertisement)
         @php
-            $isSidebar = $advertisement->position === 'sidebar';
-            $isArticleTop = $advertisement->position === 'article-top';
+            $renderedPosition = $placementPosition ?? $advertisement->position;
+            $isSidebar = $renderedPosition === 'sidebar';
+            $isArticleTop = $renderedPosition === 'article-top';
             $bannerAspectRatio = $isSidebar ? 'aspect-[300/250]' : ($isArticleTop ? 'aspect-[760/90]' : 'aspect-[728/90]');
             $maxWidth = $isSidebar ? 'max-w-[300px]' : ($isArticleTop ? 'max-w-[760px]' : '');
             $objectFit = 'object-contain';

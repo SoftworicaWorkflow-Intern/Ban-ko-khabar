@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Advertisement;
 use App\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SearchAndAdvertisementLayoutTest extends TestCase
@@ -200,6 +201,31 @@ class SearchAndAdvertisementLayoutTest extends TestCase
         $response->assertSee('२०८३ असोज २२');
     }
 
+    public function test_disabling_homepage_date_hides_it_from_all_public_site_headers(): void
+    {
+        $this->travelTo(now()->setDate(2026, 10, 8));
+
+        SiteSetting::query()->create([
+            'key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE,
+            'value' => '0',
+        ]);
+
+        foreach ([
+            route('category.show', ['slug' => 'forest-conservation']),
+            route('category.show', ['slug' => 'wildlife']),
+            route('category.show', ['slug' => 'environment']),
+            route('category.show', ['slug' => 'climate-change']),
+            route('gallery'),
+            route('about'),
+            route('contact'),
+            route('search'),
+            route('login'),
+            route('register'),
+        ] as $url) {
+            $this->get($url)->assertDontSee('२०८३ असोज २२');
+        }
+    }
+
     public function test_home_header_shows_two_newest_header_ads_when_date_is_disabled(): void
     {
         $this->travelTo(now()->setDate(2026, 10, 8));
@@ -231,5 +257,81 @@ class SearchAndAdvertisementLayoutTest extends TestCase
             ->assertSee('grid-cols-1 gap-2 sm:grid-cols-2', false)
             ->assertDontSee('advertisements/older.png')
             ->assertDontSee('२०८३ असोज २२');
+    }
+
+    public function test_home_header_fills_missing_header_ads_with_other_active_ads_when_date_is_disabled(): void
+    {
+        SiteSetting::query()->create([
+            'key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE,
+            'value' => '0',
+        ]);
+
+        foreach ([
+            ['title' => 'Sidebar placement ad', 'position' => 'sidebar'],
+            ['title' => 'Latest placement ad', 'position' => 'latest-bottom'],
+            ['title' => 'Category placement ad', 'position' => 'categories-bottom'],
+        ] as $ad) {
+            Advertisement::query()->create([
+                'title' => $ad['title'],
+                'position' => $ad['position'],
+                'banner_path' => 'advertisements/'.str_replace(' ', '-', strtolower($ad['title'])).'.png',
+                'active' => true,
+            ]);
+        }
+
+        $response = $this->get(route('home'));
+        $html = $response->getContent();
+        $homepageHeaderStart = strpos($html, 'aria-label="Social media"');
+        $firstHeaderAdvertisement = strpos($html, 'alt="Latest placement ad"');
+        $secondHeaderAdvertisement = strpos($html, 'alt="Category placement ad"');
+
+        $response->assertSee('aspect-[728/90]', false)
+            ->assertDontSee('aspect-[300/250]', false)
+            ->assertDontSee('alt="Sidebar placement ad"', false)
+            ->assertDontSee('२०८३ असोज २२');
+        $this->assertNotFalse($homepageHeaderStart);
+        $this->assertNotFalse($firstHeaderAdvertisement);
+        $this->assertNotFalse($secondHeaderAdvertisement);
+        $this->assertTrue($homepageHeaderStart < $firstHeaderAdvertisement);
+        $this->assertTrue($firstHeaderAdvertisement < $secondHeaderAdvertisement);
+    }
+
+    public function test_date_disabled_public_headers_show_two_ads_even_when_image_content_repeats(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('advertisements/first.jpg', 'same image');
+        Storage::disk('public')->put('advertisements/duplicate.jpg', 'same image');
+        Storage::disk('public')->put('advertisements/second.jpg', 'different image');
+
+        SiteSetting::query()->create([
+            'key' => SiteSetting::HOMEPAGE_BIKRAM_SAMBAT_DATE,
+            'value' => '0',
+        ]);
+
+        foreach ([
+            ['title' => 'First ad', 'path' => 'advertisements/first.jpg', 'created_at' => now()],
+            ['title' => 'Duplicate ad', 'path' => 'advertisements/duplicate.jpg', 'created_at' => now()->subMinute()],
+            ['title' => 'Older ad', 'path' => 'advertisements/second.jpg', 'created_at' => now()->subMinutes(2)],
+        ] as $ad) {
+            $advertisement = Advertisement::query()->create([
+                'title' => $ad['title'],
+                'position' => 'header',
+                'banner_path' => $ad['path'],
+                'active' => true,
+            ]);
+            $advertisement->created_at = $ad['created_at'];
+            $advertisement->save();
+        }
+
+        foreach ([route('home'), route('category.show', ['slug' => 'forest-conservation'])] as $url) {
+            $response = $this->get($url);
+
+            $response->assertSee('alt="First ad"', false)
+                ->assertSee('alt="Duplicate ad"', false)
+                ->assertDontSee('alt="Older ad"', false)
+                ->assertDontSee('२०८३ असोज २२')
+                ->assertSee('grid-cols-1', false)
+                ->assertSee('sm:grid-cols-2', false);
+        }
     }
 }

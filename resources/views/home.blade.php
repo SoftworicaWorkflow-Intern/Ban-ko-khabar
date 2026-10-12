@@ -319,6 +319,12 @@
         </div>
     @endif
 
+    @if ($homeAdvertisements->has('insights-top'))
+        <div class="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('insights-top')])
+        </div>
+    @endif
+
     <section class="mx-auto max-w-7xl px-4 pb-4 pt-4 sm:px-6 lg:px-8">
         <div class="mb-10 text-center">
             <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#2E7D32]">Insights</p>
@@ -372,9 +378,9 @@
             @endforeach
         </div>
     </section>
-    @if ($homeAdvertisements->has('section-bottom'))
+    @if ($homeAdvertisements->has('gallery-bottom'))
         <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('section-bottom')])
+            @include('partials.advertisement-placement', ['advertisements' => $homeAdvertisements->get('gallery-bottom')])
         </div>
     @endif
 

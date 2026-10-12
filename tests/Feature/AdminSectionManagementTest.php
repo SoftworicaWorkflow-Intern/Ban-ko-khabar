@@ -233,6 +233,42 @@ class AdminSectionManagementTest extends TestCase
             ->assertSee('Article center sponsor');
     }
 
+    public function test_admin_can_place_a_banner_at_the_bottom_of_the_homepage_gallery(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get('/admin/advertisements?create=1')
+            ->assertOk()
+            ->assertSee('data-stage-option="gallery-bottom"', false)
+            ->assertSee('name="position" value="gallery-bottom"', false)
+            ->assertSee('data-stage-preview="gallery-bottom"', false)
+            ->assertSee('data-review-preview="gallery-bottom"', false);
+
+        $this->actingAs($admin)
+            ->post('/admin/advertisements', [
+                'title' => 'Gallery bottom sponsor',
+                'position' => 'gallery-bottom',
+                'banner' => $this->bannerUpload('gallery-bottom.png'),
+                'active' => '1',
+            ])
+            ->assertRedirect('/admin/advertisements');
+
+        $this->assertDatabaseHas('advertisements', [
+            'title' => 'Gallery bottom sponsor',
+            'position' => 'gallery-bottom',
+            'active' => true,
+        ]);
+
+        $this->get('/')
+            ->assertSeeInOrder([
+                '>Gallery</p>',
+                'alt="Gallery bottom sponsor"',
+                '>Video</p>',
+            ], false);
+    }
+
     public function test_admin_can_upload_a_latest_section_banner_that_replaces_the_homepage_fallback(): void
     {
         Storage::fake('public');

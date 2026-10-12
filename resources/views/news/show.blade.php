@@ -31,7 +31,7 @@
                             </div>
                         </header>
 
-                        <img src="{{ $article['image'] }}" alt="{{ $article['title'] }}" class="mt-7 aspect-[16/9] w-full object-cover">
+                        <img src="{{ $article['image'] }}" alt="{{ $article['title'] }}" class="mt-7 aspect-[16/9] w-full object-contain">
 
                         <div class="mt-8 max-w-none text-base leading-8 text-neutral-800 sm:text-lg">
                             <p class="mb-6 font-medium leading-8">{{ $article['excerpt'] }}</p>
@@ -107,8 +107,7 @@
                     </section>
                 </div>
 
-                <aside aria-label="Most read and advertisements" class="xl:sticky xl:top-28 xl:self-start">
-                    <div class="flex flex-col gap-8">
+                <aside aria-label="Most read and advertisement" class="flex flex-col gap-8 xl:sticky xl:top-28 xl:self-start">
                     <section class="border-l-4 border-red-700 pl-5">
                         <h2 class="text-xl font-bold text-neutral-950">Most Read</h2>
                         <ol class="mt-5 divide-y divide-neutral-200">
@@ -128,20 +127,8 @@
                         </ol>
                     </section>
 
-                    @if ($articleCenterAdvertisements->isNotEmpty() || $articleSidebarAdvertisements->isNotEmpty())
-                        <div data-article-sidebar-ad class="space-y-4">
-                            @if ($articleCenterAdvertisements->isNotEmpty())
-                                <div data-article-center-sidebar-ad>
-                                    @include('partials.advertisement-placement', ['advertisements' => $articleCenterAdvertisements])
-                                </div>
-                            @endif
-                            @if ($articleSidebarAdvertisements->isNotEmpty())
-                                @include('partials.advertisement-placement', ['advertisements' => $articleSidebarAdvertisements])
-                            @endif
-                        </div>
-                    @else
-                        <img src="{{ asset('image/forest-campaign-728x90.png') }}" alt="वन जोगाऔँ, भविष्य बचाऔँ" class="block h-auto w-full object-cover">
-                    @endif
+                    <div data-article-sidebar-ad class="flex shrink-0 justify-center">
+                        <img src="{{ asset('image/aura-digital-journey.jpg') }}" alt="AURA Tech Solutions - Accelerate Your Digital Journey" class="block h-auto max-w-full w-auto object-contain xl:max-h-[50dvh]">
                     </div>
                 </aside>
             </div>

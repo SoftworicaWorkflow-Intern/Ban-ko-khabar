@@ -15,9 +15,9 @@
         @if (request()->routeIs('home'))
             <header class="relative">
                 <div class="border-b border-[#e5ece5] bg-white text-[#1d2a1d] dark:border-white/10 dark:bg-[#17242b] dark:text-[#edf5ee]">
-                    <div class="mx-auto grid max-w-7xl grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-3 py-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-5 sm:px-6 lg:px-8">
+                    <div class="mx-auto grid max-w-[90rem] grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-3 py-4 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-5 sm:px-6 lg:px-8">
                         <a href="{{ route('home') }}" aria-label="वनको खबर गृहपृष्ठ" class="col-start-1 row-start-1 flex items-center">
-                            <img src="{{ asset('image/logo.png') }}" alt="वनको खबर logo" class="h-12 w-auto max-w-[140px] object-contain sm:h-14 sm:max-w-[220px]">
+                            <img src="{{ asset('image/logo.png') }}" alt="वनको खबर logo" class="h-14 w-auto max-w-[160px] object-contain sm:h-16 sm:max-w-[240px]">
                         </a>
 
                         <div aria-label="Social media" class="col-start-2 row-start-1 flex items-center justify-self-end gap-2 sm:col-start-3 sm:gap-3">
@@ -43,9 +43,10 @@
                                 </p>
                             @else
                                 @include('partials.advertisement-placement', [
-                                    'advertisements' => $homeAdvertisements->get('header', collect()),
+                                    'advertisements' => $homepageHeaderAdvertisements,
                                     'limit' => 2,
-                                    'containerClass' => 'grid w-full grid-cols-1 gap-2 sm:grid-cols-2',
+                                    'containerClass' => 'grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3',
+                                    'placementPosition' => 'header',
                                 ])
                             @endif
                         </div>
@@ -55,20 +56,31 @@
         @elseif (! request()->routeIs('admin.*'))
             <header class="relative">
                 <div class="border-b border-[#e5ece5] bg-white text-[#1d2a1d] dark:border-white/10 dark:bg-[#17242b] dark:text-[#edf5ee]">
-                    <div class="mx-auto grid max-w-7xl grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-3 py-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-5 sm:px-6 lg:px-8">
+                    <div class="mx-auto grid max-w-[90rem] grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-3 py-4 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-5 sm:px-6 lg:px-8">
                         <a href="{{ route('home') }}" aria-label="वनको खबर गृहपृष्ठ" class="col-start-1 row-start-1 flex items-center">
-                            <img src="{{ asset('image/logo.png') }}" alt="वनको खबर logo" class="h-12 w-auto max-w-[140px] object-contain sm:h-14 sm:max-w-[220px]">
+                            <img src="{{ asset('image/logo.png') }}" alt="वनको खबर logo" class="h-14 w-auto max-w-[160px] object-contain sm:h-16 sm:max-w-[240px]">
                         </a>
 
-                        <div class="col-span-2 row-start-2 flex flex-col items-center justify-center text-center sm:col-span-1 sm:col-start-2 sm:row-start-1">
-                            <p class="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#2E7D32] dark:text-[#8FD58F]">
-                                {{ now()->format('l') }}
-                            </p>
-                            @php($bikramSambhat = \App\Services\BikramSambat::fromGregorian(now()))
-                            <p class="mt-0.5 text-sm font-bold text-[#1d2a1d] dark:text-[#edf5ee] sm:text-base">
-                                {{ $bikramSambhat['formatted'] }}
-                            </p>
-                        </div>
+                        @if ($showHomepageBikramSambatDate)
+                            <div class="col-span-2 row-start-2 flex flex-col items-center justify-center text-center sm:col-span-1 sm:col-start-2 sm:row-start-1">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#2E7D32] dark:text-[#8FD58F]">
+                                    {{ now()->format('l') }}
+                                </p>
+                                @php($bikramSambhat = \App\Services\BikramSambat::fromGregorian(now()))
+                                <p class="mt-0.5 text-sm font-bold text-[#1d2a1d] dark:text-[#edf5ee] sm:text-base">
+                                    {{ $bikramSambhat['formatted'] }}
+                                </p>
+                            </div>
+                        @else
+                            <div class="col-span-2 row-start-2 min-w-0 sm:col-span-1 sm:col-start-2 sm:row-start-1">
+                                @include('partials.advertisement-placement', [
+                                    'advertisements' => $homepageHeaderAdvertisements,
+                                    'limit' => 2,
+                                    'containerClass' => 'grid w-full grid-cols-1 items-center gap-2 sm:grid-cols-2 sm:gap-3',
+                                    'placementPosition' => 'header',
+                                ])
+                            </div>
+                        @endif
 
                         <div aria-label="Social media" class="col-start-2 row-start-1 flex items-center justify-self-end gap-2 sm:col-start-3 sm:gap-3">
                             <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Facebook" class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1877F2] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#1464d1] sm:h-10 sm:w-10">

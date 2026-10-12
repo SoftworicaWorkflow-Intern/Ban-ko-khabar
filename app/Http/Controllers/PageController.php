@@ -405,7 +405,6 @@ class PageController extends Controller
             'breakingNews' => $breakingNews,
             'gallery' => array_slice($this->galleryItems(), 0, 6),
             'homeAdvertisements' => $homeAdvertisements,
-            'showHomepageBikramSambatDate' => SiteSetting::homepageBikramSambatDateEnabled(),
         ]);
     }
 
@@ -577,33 +576,6 @@ class PageController extends Controller
                 ->all();
         }
 
-        $currentTime = now();
-        $articleSidebarAdvertisements = Advertisement::query()
-            ->where('position', 'sidebar')
-            ->where('active', true)
-            ->where(function ($query) use ($currentTime) {
-                $query->whereNull('starts_at')
-                    ->orWhere('starts_at', '<=', $currentTime);
-            })
-            ->where(function ($query) use ($currentTime) {
-                $query->whereNull('ends_at')
-                    ->orWhere('ends_at', '>=', $currentTime);
-            })
-            ->latest()
-            ->get();
-        $articleCenterAdvertisements = Advertisement::query()
-            ->where('position', 'article-center')
-            ->where('active', true)
-            ->where(function ($query) use ($currentTime) {
-                $query->whereNull('starts_at')
-                    ->orWhere('starts_at', '<=', $currentTime);
-            })
-            ->where(function ($query) use ($currentTime) {
-                $query->whereNull('ends_at')
-                    ->orWhere('ends_at', '>=', $currentTime);
-            })
-            ->latest()
-            ->get();
         $comments = ArticleComment::query()
             ->where('article_slug', $article['slug'])
             ->latest()
@@ -613,8 +585,6 @@ class PageController extends Controller
             'article' => $article,
             'related' => $related,
             'mostRead' => $mostRead,
-            'articleSidebarAdvertisements' => $articleSidebarAdvertisements,
-            'articleCenterAdvertisements' => $articleCenterAdvertisements,
             'comments' => $comments,
         ]);
     }
@@ -1286,7 +1256,7 @@ class PageController extends Controller
     {
         abort_unless(Auth::user()?->isAdmin(), 403);
 
-        return $this->adminSection('Homepage header', 'Choose whether the homepage header shows the Bikram Sambat date or header advertisements', [], collect(), 'homepage-header', [
+        return $this->adminSection('Homepage header', 'Choose whether public page headers show the Bikram Sambat date; when disabled, the homepage displays header advertisements.', [], collect(), 'homepage-header', [
             'homepageBikramSambatDateEnabled' => SiteSetting::homepageBikramSambatDateEnabled(),
         ]);
     }

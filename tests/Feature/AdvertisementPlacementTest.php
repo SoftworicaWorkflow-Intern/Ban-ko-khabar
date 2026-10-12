@@ -40,7 +40,7 @@ class AdvertisementPlacementTest extends TestCase
         $this->assertStringContainsString('aspect-[300/250]', $html);
     }
 
-    public function test_only_the_second_banner_is_rendered_when_two_banners_are_present(): void
+    public function test_only_one_banner_is_rendered_when_two_banners_are_present(): void
     {
         $firstBanner = Advertisement::make([
             'title' => 'First banner',
@@ -57,7 +57,7 @@ class AdvertisementPlacementTest extends TestCase
             'advertisements' => Collection::make([$firstBanner, $secondBanner]),
         ])->render();
 
-        $this->assertStringNotContainsString('First banner', $html);
-        $this->assertStringContainsString('Second banner', $html);
+        $this->assertStringContainsString('First banner', $html);
+        $this->assertStringNotContainsString('Second banner', $html);
     }
 }
